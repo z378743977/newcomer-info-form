@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新人资料收集系统</title>
+    
+    <!-- 引入CSS文件 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 语言选择界面 -->
+        <div id="languageSelector" class="language-selector">
+            <h2 id="selectLanguageTitle">언어를 선택해 주세요 / Please Select Language</h2>
+            <div class="language-grid">
+                <button class="language-btn" onclick="selectLanguage('zh')">中文</button>
+                <button class="language-btn" onclick="selectLanguage('ko')">한국어</button>
+                <button class="language-btn" onclick="selectLanguage('vi')">Tiếng Việt</button>
+                <button class="language-btn" onclick="selectLanguage('ru')">Русский</button>
+            </div>
+        </div>
+
+        <!-- 隐私同意界面 -->
+        <div id="privacyConsent" class="privacy-consent hidden">
+            <button class="btn back-btn" onclick="showLanguageSelector()">← <span id="backToLanguageText">返回语言选择</span></button>
+            
+            <h2 id="privacyTitle">个人信息收集同意书</h2>
+            <div class="privacy-content">
+                <div class="privacy-text" id="privacyText">
+                    <p>为了完成入职手续，我们需要收集您的个人信息，包括：</p>
+                    <ul>
+                        <li>基本信息（姓名、生日、电话、住址、血型）</li>
+                        <li>证件信息（护照、签证、居民登录证等）</li>
+                        <li>证件照片</li>
+                        <li>电子签名</li>
+                    </ul>
+                    <p>您的个人信息将仅用于入职登记，我们承诺严格保护您的隐私安全。</p>
+                </div>
+                <div class="privacy-buttons">
+                    <button class="btn btn-agree" onclick="agreeToPrivacy()" id="agreeBtn">同意并继续</button>
+                    <button class="btn btn-decline" onclick="declinePrivacy()" id="declineBtn">不同意</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 表单界面 -->
+        <div id="formContainer" class="form-container hidden">
+            <button class="btn back-btn" onclick="showPrivacyConsent()">← <span id="backText">返回</span></button>
+            
+            <h1 class="form-title" id="formTitle">新人资料收集</h1>
+            
+            <form id="employeeForm">
+                <!-- 姓名 -->
+                <div class="form-group">
+                    <label for="name" id="nameLabel"></label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <!-- 韩文名字段（非韩文语言显示） -->
+                <div class="form-group" id="koreanNameGroup">
+                    <label for="koreanName" id="koreanNameLabel"></label>
+                    <input type="text" id="koreanName" name="koreanName">
+                </div>
+
+                <!-- 生日 -->
+                <div class="form-group">
+                    <label for="birthday" id="birthdayLabel"></label>
+                    <input type="date" id="birthday" name="birthday" required>
+                </div>
+
+                <!-- 电话 -->
+                <div class="form-group">
+                    <label for="phone" id="phoneLabel"></label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <!-- 护照号（非韩文语言显示） -->
+                <div class="form-group" id="passportGroup">
+                    <label for="passport" id="passportLabel"></label>
+                    <input type="text" id="passport" name="passport" required>
+                </div>
+
+                <!-- 居民登录证号（韩文语言显示） -->
+                <div class="form-group hidden" id="residentGroup">
+                    <label for="residentNumber" id="residentLabel"></label>
+                    <input type="text" id="residentNumber" name="residentNumber" placeholder="예: 123456-1234567">
+                </div>
+
+                <!-- 签证类型（非韩文语言显示） -->
+                <div class="form-group" id="visaTypeGroup">
+                    <label for="visaType" id="visaTypeLabel"></label>
+                    <select id="visaType" name="visaType">
+                        <option value="" id="visaTypeNone">无</option>
+                        <option value="A-1" id="visaA1">A-1 (外交)</option>
+                        <option value="A-2" id="visaA2">A-2 (公务)</option>
+                        <option value="A-3" id="visaA3">A-3 (协定)</option>
+                        <option value="B-1" id="visaB1">B-1 (免签)</option>
+                        <option value="B-2" id="visaB2">B-2 (观光过境)</option>
+                        <option value="C-1" id="visaC1">C-1 (临时采访)</option>
+                        <option value="C-2" id="visaC2">C-2 (短期商务)</option>
+                        <option value="C-3" id="visaC3">C-3 (短期访问)</option>
+                        <option value="C-4" id="visaC4">C-4 (短期就业)</option>
+                        <option value="D-1" id="visaD1">D-1 (文化艺术)</option>
+                        <option value="D-2" id="visaD2">D-2 (留学)</option>
+                        <option value="D-3" id="visaD3">D-3 (技术研修)</option>
+                        <option value="D-4" id="visaD4">D-4 (一般研修)</option>
+                        <option value="D-5" id="visaD5">D-5 (采访)</option>
+                        <option value="D-6" id="visaD6">D-6 (宗教)</option>
+                        <option value="D-7" id="visaD7">D-7 (驻在)</option>
+                        <option value="D-8" id="visaD8">D-8 (企业投资)</option>
+                        <option value="D-9" id="visaD9">D-9 (贸易经营)</option>
+                        <option value="D-10" id="visaD10">D-10 (求职)</option>
+                        <option value="E-1" id="visaE1">E-1 (教授)</option>
+                        <option value="E-2" id="visaE2">E-2 (会话指导)</option>
+                        <option value="E-3" id="visaE3">E-3 (研究)</option>
+                        <option value="E-4" id="visaE4">E-4 (技术指导)</option>
+                        <option value="E-5" id="visaE5">E-5 (专门职业)</option>
+                        <option value="E-6" id="visaE6">E-6 (艺术演出)</option>
+                        <option value="E-7" id="visaE7">E-7 (特定活动)</option>
+                        <option value="E-8" id="visaE8">E-8 (非专业就业)</option>
+                        <option value="E-9" id="visaE9">E-9 (非专业就业)</option>
+                        <option value="E-10" id="visaE10">E-10 (船员就业)</option>
+                        <option value="F-1" id="visaF1">F-1 (访问同居)</option>
+                        <option value="F-2" id="visaF2">F-2 (居住)</option>
+                        <option value="F-3" id="visaF3">F-3 (同伴)</option>
+                        <option value="F-4" id="visaF4">F-4 (在外同胞)</option>
+                        <option value="F-5" id="visaF5">F-5 (永久居住)</option>
+                        <option value="F-6" id="visaF6">F-6 (结婚移民)</option>
+                        <option value="G-1" id="visaG1">G-1 (其他)</option>
+                        <option value="H-1" id="visaH1">H-1 (观光就业)</option>
+                        <option value="H-2" id="visaH2">H-2 (访问就业)</option>
+                    </select>
+                </div>
+
+                <!-- 外国人登录号（非韩文语言显示） -->
+                <div class="form-group" id="foreignerNumberGroup">
+                    <label for="foreignerNumber" id="foreignerNumberLabel"></label>
+                    <input type="text" id="foreignerNumber" name="foreignerNumber" placeholder="">
+                </div>
+
+                <!-- 住址 -->
+                <div class="form-group">
+                    <label for="address" id="addressLabel"></label>
+                    <textarea id="address" name="address" rows="3" required></textarea>
+                </div>
+
+                <!-- 工种和工作经历 -->
+                <div class="form-group work-info-group">
+                    <div class="work-info-row">
+                        <div class="work-field">
+                            <label for="jobType" id="jobTypeLabel"></label>
+                            <input type="text" id="jobType" name="jobType" required>
+                        </div>
+                        <div class="work-field">
+                            <label for="workExperience" id="workExperienceLabel"></label>
+                            <input type="number" id="workExperience" name="workExperience" min="0" max="50" step="0.5" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 血型选择 -->
+                <div class="form-group">
+                    <label id="bloodTypeLabel"></label>
+                    <div class="blood-type-container">
+                        <!-- 主要血型 -->
+                        <div class="blood-type-section">
+                            <div class="blood-type-grid">
+                                <div class="blood-type-btn" onclick="selectMainBloodType('A')">A</div>
+                                <div class="blood-type-btn" onclick="selectMainBloodType('B')">B</div>
+                                <div class="blood-type-btn" onclick="selectMainBloodType('AB')">AB</div>
+                                <div class="blood-type-btn" onclick="selectMainBloodType('O')">O</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Rh因子 (可选) -->
+                        <div class="rh-factor-section">
+                            <label class="rh-label" id="rhFactorLabel">Rh因子 <span class="optional">(可选)</span></label>
+                            <div class="rh-factor-grid">
+                                <div class="rh-factor-btn" onclick="selectRhFactor('+')">+</div>
+                                <div class="rh-factor-btn" onclick="selectRhFactor('-')">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="bloodType" name="bloodType" required>
+                    <input type="hidden" id="rhFactor" name="rhFactor">
+                </div>
+
+                <!-- 多照片上传区域 -->
+                <div class="form-group photo-section">
+                    <label id="photoSectionLabel"></label>
+                    <div class="photo-categories">
+                        <!-- 必需照片区域 -->
+                        <div class="photo-category" id="requiredPhotos">
+                            <h4 class="category-title" id="requiredPhotosTitle"></h4>
+                            <div class="photo-grid" id="requiredPhotoGrid">
+                                <!-- 必需照片将通过JavaScript动态生成 -->
+                            </div>
+                        </div>
+                        
+                        <!-- 可选照片区域 -->
+                        <div class="photo-category" id="optionalPhotos">
+                            <h4 class="category-title" id="optionalPhotosTitle"></h4>
+                            <div class="photo-grid" id="optionalPhotoGrid">
+                                <!-- 可选照片将通过JavaScript动态生成（不包含存折照片） -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 工资支付方式 -->
+                <div class="form-group" id="paymentMethodGroup">
+                    <label for="paymentMethod" id="paymentMethodLabel"></label>
+                    <select id="paymentMethod" name="paymentMethod" required onchange="handlePaymentMethodChange()">
+                        <option value="" id="paymentMethodSelect">请选择支付方式</option>
+                        <option value="team_leader" id="paymentMethodTeamLeader">组长收款</option>
+                        <option value="individual" id="paymentMethodIndividual">个人收款</option>
+                    </select>
+                </div>
+
+                <!-- 组长姓名（组长收款时显示） -->
+                <div class="form-group hidden" id="teamLeaderNameGroup">
+                    <label for="teamLeaderName" id="teamLeaderNameLabel"></label>
+                    <input type="text" id="teamLeaderName" name="teamLeaderName">
+                </div>
+
+                <!-- 个人收款方式选择（个人收款时显示） -->
+                <div class="form-group hidden" id="individualPaymentGroup">
+                    <label id="individualPaymentLabel"></label>
+                    <div class="payment-method-options">
+                        <div class="payment-option recommended" onclick="selectIndividualMethod('photo')">
+                            <div class="option-header">
+                                <input type="radio" name="individualMethod" value="photo" id="individualMethodPhoto">
+                                <label for="individualMethodPhoto" id="individualMethodPhotoLabel"></label>
+                                <span class="recommended-badge" id="recommendedBadge"></span>
+                            </div>
+                            <div class="option-description" id="photoMethodDescription">
+                            </div>
+                        </div>
+                        <div class="payment-option" onclick="selectIndividualMethod('manual')">
+                            <div class="option-header">
+                                <input type="radio" name="individualMethod" value="manual" id="individualMethodManual">
+                                <label for="individualMethodManual" id="individualMethodManualLabel"></label>
+                            </div>
+                            <div class="option-description" id="manualMethodDescription">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 存折照片上传（选择照片上传时显示） -->
+                <div class="form-group hidden" id="bankbookPhotoGroup">
+                    <label id="bankbookPhotoLabel"></label>
+                    <div class="photo-grid">
+                        <div class="photo-item bankbook-photo-item" onclick="selectPhoto('bankbook')">
+                            <input type="file" id="photo_bankbook" accept="image/*" style="display: none;" onchange="handlePhotoUpload('bankbook', this)">
+                            <div class="photo-label" id="bankbookPhotoItemLabel">
+                            </div>
+                            <div class="photo-placeholder" id="placeholder_bankbook">
+                                <div style="font-size: 24px; color: #ccc; margin-bottom: 5px;">📷</div>
+                                <div class="photo-status" id="bankbookUploadText"></div>
+                            </div>
+                            <img id="preview_bankbook" class="photo-preview" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 手动输入账户信息（选择手动输入时显示） -->
+                <div class="form-group hidden" id="manualAccountGroup">
+                    <label for="bankName" id="bankNameLabel"></label>
+                    <input type="text" id="bankName" name="bankName" placeholder="">
+                    
+                    <label for="accountNumber" id="accountNumberLabel" style="margin-top: 15px;"></label>
+                    <input type="text" id="accountNumber" name="accountNumber" placeholder="">
+                    
+                    <label for="accountHolder" id="accountHolderLabel" style="margin-top: 15px;"></label>
+                    <input type="text" id="accountHolder" name="accountHolder" placeholder="">
+                </div>
+
+                <!-- 电子签名 -->
+                <div class="form-group signature-container">
+                    <label id="signatureLabel"></label>
+                    <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+                    <div class="signature-controls">
+                        <button type="button" class="btn btn-secondary" onclick="clearSignature()" id="clearSignBtn"></button>
+                    </div>
+                </div>
+
+                <!-- 提交按钮 -->
+                <button type="submit" class="btn btn-submit" id="submitBtn"></button>
+            </form>
+
+            <!-- 成功消息 -->
+            <div id="successMessage" class="success-message">
+                <h3 id="successTitle"></h3>
+                <p id="successText"></p>
+                <button class="btn download-btn" onclick="downloadPDF()" id="downloadBtn"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入JavaScript文件 -->
+    <script src="script.js"></script>
+</body>
+</html>

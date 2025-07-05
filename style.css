@@ -1,0 +1,784 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    max-width: 700px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* 界面切换渐变效果 */
+.privacy-consent,
+.language-selector,
+.form-container {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.privacy-consent.hidden,
+.language-selector.hidden,
+.form-container.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+.privacy-consent.show,
+.language-selector.show,
+.form-container.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* 语言选择器样式 */
+.language-selector {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.language-selector h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease-in-out;
+}
+
+.language-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.language-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.language-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 动态语言标题动画 */
+@keyframes textFadeOut {
+    0% { opacity: 1; transform: translateY(0); }
+    50% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+
+@keyframes textFadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    50% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.language-title-fade-out {
+    animation: textFadeOut 1s ease-in-out;
+}
+
+.language-title-fade-in {
+    animation: textFadeIn 1s ease-in-out;
+}
+
+/* 隐私同意界面样式 */
+.privacy-consent {
+    text-align: center;
+}
+
+.privacy-consent h2 {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: bold;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.privacy-content {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 20px;
+}
+
+.privacy-text {
+    text-align: left;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    color: #555;
+}
+
+.privacy-text p {
+    margin-bottom: 15px;
+}
+
+.privacy-text ul {
+    margin: 15px 0;
+    padding-left: 25px;
+}
+
+.privacy-text li {
+    margin-bottom: 8px;
+}
+
+.privacy-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-agree {
+    background: linear-gradient(45deg, #28a745, #20c997);
+}
+
+.btn-agree:hover {
+    background: linear-gradient(45deg, #218838, #1e7e34);
+}
+
+.btn-decline {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+}
+
+.btn-decline:hover {
+    background: linear-gradient(45deg, #c82333, #a71e2a);
+}
+
+/* 表单容器样式 */
+.form-container {
+    display: none;
+}
+
+.form-container.active {
+    display: block;
+}
+
+.form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: bold;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 表单组样式 */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* 照片上传区域样式 */
+.photo-section {
+    margin: 20px 0;
+}
+
+.photo-categories {
+    margin-top: 15px;
+}
+
+.photo-category {
+    margin-bottom: 25px;
+}
+
+.category-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    border-left: 4px solid #667eea;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+/* 存折照片区域特殊处理 - 单列网格 */
+#bankbookPhotoGroup .photo-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.photo-item {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.photo-item:hover {
+    border-color: #667eea;
+    background-color: #f8f9ff;
+}
+
+.photo-item.has-photo {
+    border-color: #4caf50;
+    border-style: solid;
+}
+
+.photo-item.required {
+    border-color: #dc3545;
+}
+
+.photo-item.required.has-photo {
+    border-color: #4caf50;
+}
+
+.photo-preview {
+    max-width: 100%;
+    max-height: 120px;
+    margin: 5px auto;
+    display: block;
+    border-radius: 4px;
+}
+
+.photo-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.photo-status {
+    font-size: 12px;
+    color: #666;
+}
+
+/* 修正存折照片上传特殊样式 - 让未选择状态更温和 */
+.bankbook-photo-item {
+    border: 2px dashed #c0c0c0;
+    background-color: #fafafa;
+}
+
+.bankbook-photo-item:hover {
+    border-color: #999;
+    background-color: #f0f0f0;
+}
+
+.bankbook-photo-item.has-photo {
+    border-color: #28a745;
+    border-style: solid;
+    background-color: #f8fff9;
+}
+
+/* 工资支付方式样式 */
+.payment-method-options {
+    margin-top: 15px;
+}
+
+.payment-option {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-option:hover {
+    border-color: #667eea;
+    background-color: #f8f9ff;
+}
+
+.payment-option.selected {
+    border-color: #667eea;
+    background-color: #f0f4ff;
+}
+
+/* 修正推荐选项的样式 - 让未选择状态看起来不像已选中 */
+.payment-option.recommended {
+    border-color: #d0d0d0;
+    background-color: #fcfcfc;
+}
+
+.payment-option.recommended.selected {
+    border-color: #28a745;
+    background-color: #e8f5e8;
+}
+
+.option-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.option-header input[type="radio"] {
+    margin-right: 10px;
+    width: auto;
+}
+
+.option-header label {
+    margin: 0;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1;
+}
+
+.recommended-badge {
+    background: #28a745;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 10px;
+}
+
+.option-description {
+    font-size: 12px;
+    color: #666;
+    margin-left: 25px;
+    line-height: 1.4;
+}
+
+/* 签名区域样式 */
+.signature-container {
+    margin: 20px 0;
+}
+
+.signature-canvas {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: crosshair;
+    width: 100%;
+    height: 200px;
+    display: block;
+}
+
+.signature-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* 按钮样式 */
+.btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary {
+    background: #6c757d;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    font-size: 18px;
+    background: linear-gradient(45deg, #4caf50, #45a049);
+}
+
+.back-btn {
+    background: #6c757d;
+    margin-bottom: 20px;
+}
+
+/* 成功消息样式 */
+.success-message {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    background: #d4edda;
+    color: #155724;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+/* 血型选择样式 */
+.blood-type-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.blood-type-section {
+    flex: 1;
+}
+
+.blood-type-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.blood-type-btn {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    padding: 12px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.blood-type-btn:hover {
+    border-color: #667eea;
+    background-color: #f0f4ff;
+}
+
+.blood-type-btn.selected {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border-color: #667eea;
+}
+
+/* Rh因子样式 */
+.rh-factor-section {
+    flex: 0 0 140px;
+}
+
+.rh-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+    font-size: 14px;
+    text-align: center;
+}
+
+.rh-factor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.rh-factor-btn {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    padding: 12px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    font-weight: bold;
+    color: #666;
+}
+
+.rh-factor-btn:hover {
+    border-color: #28a745;
+    background-color: #f8fff9;
+}
+
+.rh-factor-btn.selected {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    border-color: #28a745;
+}
+
+/* 工种和工作经历样式 */
+.work-info-group {
+    margin-bottom: 20px;
+}
+
+.work-info-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+}
+
+.work-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.work-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+.work-field input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.work-field input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.work-field input[type="number"] {
+    text-align: center;
+}
+
+/* 工具类样式 */
+.required {
+    color: #dc3545;
+}
+
+.optional {
+    color: #6c757d;
+    font-size: 12px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 下载按钮样式 */
+.download-btn {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    font-size: 18px;
+    position: relative;
+    overflow: hidden;
+}
+
+.download-btn::before {
+    content: '📄';
+    margin-right: 10px;
+}
+
+.download-btn:hover {
+    background: linear-gradient(45deg, #218838, #1e7e34);
+}
+
+/* 页面加载动画 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* 界面切换动画增强 */
+.container > div {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .language-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .blood-type-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .photo-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #bankbookPhotoGroup .photo-grid {
+        max-width: 100%;
+    }
+    
+    .form-title {
+        font-size: 24px;
+    }
+    
+    .privacy-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .privacy-content {
+        padding: 20px;
+    }
+    
+    .payment-method-options {
+        margin-top: 10px;
+    }
+    
+    .option-header {
+        flex-wrap: wrap;
+    }
+    
+    .recommended-badge {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+    
+    .work-info-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .language-btn {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 10px;
+        font-size: 14px;
+    }
+    
+    .privacy-text {
+        font-size: 14px;
+    }
+    
+    .category-title {
+        font-size: 14px;
+    }
+    
+    .payment-option {
+        padding: 12px;
+    }
+    
+    .option-description {
+        font-size: 11px;
+        margin-left: 20px;
+    }
+    
+    .language-selector h2 {
+        font-size: 18px;
+        min-height: 45px;
+    }
+}
