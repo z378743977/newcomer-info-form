@@ -148,7 +148,7 @@ body::before {
     margin-top: 30px;
 }
 
-/* 语言选择按钮 - 增强流星特效 */
+/* 语言选择按钮 - 密集流星雨特效 */
 .language-btn {
     background: rgba(255, 255, 255, 0.12);
     color: white;
@@ -187,38 +187,121 @@ body::before {
     opacity: 0;
 }
 
-/* 多重流星效果 - 大流星 */
+/* 密集流星雨效果 - 主流星（更长更明显） */
 .language-btn::after {
     content: '';
     position: absolute;
-    top: -15px;
-    left: -60px;
-    width: 40px;
-    height: 4px;
+    top: -25px;
+    left: -80px;
+    width: 120px;
+    height: 6px;
     background: linear-gradient(45deg, 
-        rgba(255, 255, 255, 0.9) 0%,
-        rgba(255, 215, 0, 1) 50%,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 215, 0, 1) 30%,
+        rgba(255, 223, 0, 0.9) 60%,
+        rgba(255, 215, 0, 0.6) 80%,
         transparent 100%
     );
-    border-radius: 2px;
+    border-radius: 3px;
     transform: rotate(25deg);
     opacity: 0;
     box-shadow: 
-        0 0 8px rgba(255, 215, 0, 0.8),
-        0 0 15px rgba(255, 215, 0, 0.4);
-    animation: meteorShower1 5s ease-in-out infinite;
+        0 0 12px rgba(255, 215, 0, 1),
+        0 0 25px rgba(255, 215, 0, 0.8),
+        0 0 40px rgba(255, 215, 0, 0.4);
+    animation: meteorShowerDense1 2.5s ease-in-out infinite;
     animation-delay: calc(var(--random-delay, 0) * 1s);
 }
 
-/* 为每个按钮添加随机延迟 */
-.language-btn:nth-child(1) { --random-delay: 0.5; }
-.language-btn:nth-child(2) { --random-delay: 1.2; }
-.language-btn:nth-child(3) { --random-delay: 2.1; }
-.language-btn:nth-child(4) { --random-delay: 0.8; }
+/* 为每个按钮添加更密集的随机延迟 */
+.language-btn:nth-child(1) { 
+    --random-delay: 0.2; 
+    --meteor2-delay: 0.8;
+    --meteor3-delay: 1.4;
+    --meteor4-delay: 2.0;
+}
+.language-btn:nth-child(2) { 
+    --random-delay: 0.6; 
+    --meteor2-delay: 1.2;
+    --meteor3-delay: 1.8;
+    --meteor4-delay: 0.4;
+}
+.language-btn:nth-child(3) { 
+    --random-delay: 1.0; 
+    --meteor2-delay: 1.6;
+    --meteor3-delay: 0.2;
+    --meteor4-delay: 2.2;
+}
+.language-btn:nth-child(4) { 
+    --random-delay: 0.4; 
+    --meteor2-delay: 1.0;
+    --meteor3-delay: 1.6;
+    --meteor4-delay: 2.2;
+}
 
-/* 中等流星 */
+/* 使用CSS创建多个流星层 */
 .language-btn {
     /* 添加多个伪元素效果的容器 */
+    --meteor1-delay: calc(var(--random-delay, 0) * 1s);
+    --meteor2-delay: calc(var(--meteor2-delay, 0.5) * 1s);
+    --meteor3-delay: calc(var(--meteor3-delay, 1) * 1s);
+    --meteor4-delay: calc(var(--meteor4-delay, 1.5) * 1s);
+}
+
+/* 创建额外的流星元素 */
+.language-btn:before {
+    /* 保持原有的流光效果 */
+}
+
+.language-btn:after {
+    /* 主流星已在上面定义 */
+}
+
+/* 通过多重box-shadow创建密集流星雨 */
+.language-btn::after {
+    box-shadow: 
+        /* 主流星 - 最亮最长 */
+        0 0 12px rgba(255, 215, 0, 1),
+        0 0 25px rgba(255, 215, 0, 0.8),
+        0 0 40px rgba(255, 215, 0, 0.4),
+        
+        /* 第二颗流星 - 中等大小 */
+        -40px -20px 0 -15px rgba(255, 255, 255, 0.9),
+        -45px -22px 8px -15px rgba(255, 215, 0, 0.9),
+        -50px -25px 15px -15px rgba(255, 215, 0, 0.6),
+        
+        /* 第三颗流星 - 较小 */
+        -20px -10px 0 -8px rgba(255, 255, 255, 0.8),
+        -25px -12px 6px -8px rgba(255, 215, 0, 0.8),
+        -30px -15px 12px -8px rgba(255, 215, 0, 0.5),
+        
+        /* 第四颗流星 - 小流星 */
+        -60px -30px 0 -20px rgba(255, 255, 255, 0.7),
+        -65px -32px 5px -20px rgba(255, 215, 0, 0.7),
+        -70px -35px 10px -20px rgba(255, 215, 0, 0.4),
+        
+        /* 第五颗流星 - 微小流星 */
+        -15px -8px 0 -5px rgba(255, 255, 255, 0.6),
+        -18px -9px 4px -5px rgba(255, 215, 0, 0.6),
+        -22px -11px 8px -5px rgba(255, 215, 0, 0.3),
+        
+        /* 第六颗流星 - 远距离流星 */
+        -80px -40px 0 -25px rgba(255, 255, 255, 0.5),
+        -85px -42px 4px -25px rgba(255, 215, 0, 0.5),
+        -90px -45px 8px -25px rgba(255, 215, 0, 0.2),
+        
+        /* 第七颗流星 - 快速流星 */
+        -10px -5px 0 -3px rgba(255, 255, 255, 0.7),
+        -12px -6px 3px -3px rgba(255, 215, 0, 0.7),
+        -15px -7px 6px -3px rgba(255, 215, 0, 0.4),
+        
+        /* 第八颗流星 - 延迟流星 */
+        -35px -18px 0 -12px rgba(255, 255, 255, 0.6),
+        -38px -19px 4px -12px rgba(255, 215, 0, 0.6),
+        -42px -21px 8px -12px rgba(255, 215, 0, 0.3);
+        
+    animation: meteorShowerDense1 2.5s ease-in-out infinite;
+    animation-delay: var(--meteor1-delay);
 }
 
 .language-btn:hover::before {
@@ -244,67 +327,186 @@ body::before {
     animation: streamingGlow 2s ease-in-out infinite;
 }
 
-/* 流星雨动画组 - 大流星 */
-@keyframes meteorShower1 {
-    0%, 85%, 100% { 
+/* 密集流星雨动画 - 主动画 */
+@keyframes meteorShowerDense1 {
+    0% { 
         opacity: 0;
-        transform: translate(-80px, -30px) rotate(25deg) scale(0.5);
+        transform: translate(-120px, -60px) rotate(25deg) scale(0.3);
+        box-shadow: 
+            0 0 0px rgba(255, 215, 0, 0),
+            0 0 0px rgba(255, 215, 0, 0),
+            0 0 0px rgba(255, 215, 0, 0),
+            -40px -20px 0 -15px rgba(255, 255, 255, 0),
+            -45px -22px 0px -15px rgba(255, 215, 0, 0),
+            -50px -25px 0px -15px rgba(255, 215, 0, 0),
+            -20px -10px 0 -8px rgba(255, 255, 255, 0),
+            -25px -12px 0px -8px rgba(255, 215, 0, 0),
+            -30px -15px 0px -8px rgba(255, 215, 0, 0),
+            -60px -30px 0 -20px rgba(255, 255, 255, 0),
+            -65px -32px 0px -20px rgba(255, 215, 0, 0),
+            -70px -35px 0px -20px rgba(255, 215, 0, 0),
+            -15px -8px 0 -5px rgba(255, 255, 255, 0),
+            -18px -9px 0px -5px rgba(255, 215, 0, 0),
+            -22px -11px 0px -5px rgba(255, 215, 0, 0),
+            -80px -40px 0 -25px rgba(255, 255, 255, 0),
+            -85px -42px 0px -25px rgba(255, 215, 0, 0),
+            -90px -45px 0px -25px rgba(255, 215, 0, 0),
+            -10px -5px 0 -3px rgba(255, 255, 255, 0),
+            -12px -6px 0px -3px rgba(255, 215, 0, 0),
+            -15px -7px 0px -3px rgba(255, 215, 0, 0),
+            -35px -18px 0 -12px rgba(255, 255, 255, 0),
+            -38px -19px 0px -12px rgba(255, 215, 0, 0),
+            -42px -21px 0px -12px rgba(255, 215, 0, 0);
     }
-    5% { 
+    
+    10% { 
         opacity: 1;
-        transform: translate(-40px, -15px) rotate(25deg) scale(1);
+        transform: translate(-80px, -40px) rotate(25deg) scale(1);
+        box-shadow: 
+            0 0 12px rgba(255, 215, 0, 1),
+            0 0 25px rgba(255, 215, 0, 0.8),
+            0 0 40px rgba(255, 215, 0, 0.4),
+            40px 20px 0 -15px rgba(255, 255, 255, 0.9),
+            45px 22px 8px -15px rgba(255, 215, 0, 0.9),
+            50px 25px 15px -15px rgba(255, 215, 0, 0.6),
+            20px 10px 0 -8px rgba(255, 255, 255, 0.8),
+            25px 12px 6px -8px rgba(255, 215, 0, 0.8),
+            30px 15px 12px -8px rgba(255, 215, 0, 0.5),
+            60px 30px 0 -20px rgba(255, 255, 255, 0.7),
+            65px 32px 5px -20px rgba(255, 215, 0, 0.7),
+            70px 35px 10px -20px rgba(255, 215, 0, 0.4),
+            15px 8px 0 -5px rgba(255, 255, 255, 0.6),
+            18px 9px 4px -5px rgba(255, 215, 0, 0.6),
+            22px 11px 8px -5px rgba(255, 215, 0, 0.3),
+            80px 40px 0 -25px rgba(255, 255, 255, 0.5),
+            85px 42px 4px -25px rgba(255, 215, 0, 0.5),
+            90px 45px 8px -25px rgba(255, 215, 0, 0.2),
+            10px 5px 0 -3px rgba(255, 255, 255, 0.7),
+            12px 6px 3px -3px rgba(255, 215, 0, 0.7),
+            15px 7px 6px -3px rgba(255, 215, 0, 0.4),
+            35px 18px 0 -12px rgba(255, 255, 255, 0.6),
+            38px 19px 4px -12px rgba(255, 215, 0, 0.6),
+            42px 21px 8px -12px rgba(255, 215, 0, 0.3);
     }
-    25% { 
-        opacity: 0.6;
-        transform: translate(120px, 80px) rotate(25deg) scale(0.3);
-    }
-}
-
-/* 中等流星 */
-@keyframes meteorShower2 {
-    0%, 88%, 100% { 
-        opacity: 0;
-        transform: translate(-60px, -25px) rotate(30deg) scale(0.3);
-    }
-    8% { 
+    
+    30% { 
         opacity: 0.8;
-        transform: translate(-30px, -10px) rotate(30deg) scale(0.8);
+        transform: translate(-20px, -10px) rotate(25deg) scale(0.9);
+        box-shadow: 
+            0 0 10px rgba(255, 215, 0, 0.8),
+            0 0 20px rgba(255, 215, 0, 0.6),
+            0 0 35px rgba(255, 215, 0, 0.3),
+            80px 40px 0 -15px rgba(255, 255, 255, 0.7),
+            85px 42px 6px -15px rgba(255, 215, 0, 0.7),
+            90px 45px 12px -15px rgba(255, 215, 0, 0.4),
+            60px 30px 0 -8px rgba(255, 255, 255, 0.6),
+            65px 32px 5px -8px rgba(255, 215, 0, 0.6),
+            70px 35px 10px -8px rgba(255, 215, 0, 0.3),
+            100px 50px 0 -20px rgba(255, 255, 255, 0.5),
+            105px 52px 4px -20px rgba(255, 215, 0, 0.5),
+            110px 55px 8px -20px rgba(255, 215, 0, 0.2),
+            55px 28px 0 -5px rgba(255, 255, 255, 0.4),
+            58px 29px 3px -5px rgba(255, 215, 0, 0.4),
+            62px 31px 6px -5px rgba(255, 215, 0, 0.2),
+            120px 60px 0 -25px rgba(255, 255, 255, 0.3),
+            125px 62px 3px -25px rgba(255, 215, 0, 0.3),
+            130px 65px 6px -25px rgba(255, 215, 0, 0.1),
+            50px 25px 0 -3px rgba(255, 255, 255, 0.5),
+            52px 26px 2px -3px rgba(255, 215, 0, 0.5),
+            55px 27px 4px -3px rgba(255, 215, 0, 0.2),
+            75px 38px 0 -12px rgba(255, 255, 255, 0.4),
+            78px 39px 3px -12px rgba(255, 215, 0, 0.4),
+            82px 41px 6px -12px rgba(255, 215, 0, 0.2);
     }
-    20% { 
+    
+    60% { 
         opacity: 0.4;
-        transform: translate(100px, 70px) rotate(30deg) scale(0.2);
+        transform: translate(40px, 20px) rotate(25deg) scale(0.6);
+        box-shadow: 
+            0 0 6px rgba(255, 215, 0, 0.4),
+            0 0 12px rgba(255, 215, 0, 0.3),
+            0 0 20px rgba(255, 215, 0, 0.1),
+            140px 70px 0 -15px rgba(255, 255, 255, 0.3),
+            145px 72px 3px -15px rgba(255, 215, 0, 0.3),
+            150px 75px 6px -15px rgba(255, 215, 0, 0.1),
+            120px 60px 0 -8px rgba(255, 255, 255, 0.2),
+            125px 62px 2px -8px rgba(255, 215, 0, 0.2),
+            130px 65px 4px -8px rgba(255, 215, 0, 0.1),
+            160px 80px 0 -20px rgba(255, 255, 255, 0.1),
+            165px 82px 1px -20px rgba(255, 215, 0, 0.1),
+            170px 85px 2px -20px rgba(255, 215, 0, 0.05),
+            115px 58px 0 -5px rgba(255, 255, 255, 0.2),
+            118px 59px 1px -5px rgba(255, 215, 0, 0.2),
+            122px 61px 2px -5px rgba(255, 215, 0, 0.1),
+            180px 90px 0 -25px rgba(255, 255, 255, 0.1),
+            185px 92px 1px -25px rgba(255, 215, 0, 0.1),
+            190px 95px 2px -25px rgba(255, 215, 0, 0.05),
+            110px 55px 0 -3px rgba(255, 255, 255, 0.2),
+            112px 56px 1px -3px rgba(255, 215, 0, 0.2),
+            115px 57px 2px -3px rgba(255, 215, 0, 0.1),
+            135px 68px 0 -12px rgba(255, 255, 255, 0.2),
+            138px 69px 1px -12px rgba(255, 215, 0, 0.2),
+            142px 71px 2px -12px rgba(255, 215, 0, 0.1);
     }
-}
-
-/* 小流星 */
-@keyframes meteorShower3 {
-    0%, 90%, 100% { 
+    
+    85% { 
+        opacity: 0.1;
+        transform: translate(100px, 50px) rotate(25deg) scale(0.2);
+        box-shadow: 
+            0 0 2px rgba(255, 215, 0, 0.1),
+            0 0 4px rgba(255, 215, 0, 0.1),
+            0 0 6px rgba(255, 215, 0, 0.05),
+            200px 100px 0 -15px rgba(255, 255, 255, 0.05),
+            205px 102px 0px -15px rgba(255, 215, 0, 0.05),
+            210px 105px 0px -15px rgba(255, 215, 0, 0.02),
+            180px 90px 0 -8px rgba(255, 255, 255, 0.05),
+            185px 92px 0px -8px rgba(255, 215, 0, 0.05),
+            190px 95px 0px -8px rgba(255, 215, 0, 0.02),
+            220px 110px 0 -20px rgba(255, 255, 255, 0.02),
+            225px 112px 0px -20px rgba(255, 215, 0, 0.02),
+            230px 115px 0px -20px rgba(255, 215, 0, 0.01),
+            175px 88px 0 -5px rgba(255, 255, 255, 0.05),
+            178px 89px 0px -5px rgba(255, 215, 0, 0.05),
+            182px 91px 0px -5px rgba(255, 215, 0, 0.02),
+            240px 120px 0 -25px rgba(255, 255, 255, 0.02),
+            245px 122px 0px -25px rgba(255, 215, 0, 0.02),
+            250px 125px 0px -25px rgba(255, 215, 0, 0.01),
+            170px 85px 0 -3px rgba(255, 255, 255, 0.05),
+            172px 86px 0px -3px rgba(255, 215, 0, 0.05),
+            175px 87px 0px -3px rgba(255, 215, 0, 0.02),
+            195px 98px 0 -12px rgba(255, 255, 255, 0.05),
+            198px 99px 0px -12px rgba(255, 215, 0, 0.05),
+            202px 101px 0px -12px rgba(255, 215, 0, 0.02);
+    }
+    
+    100% { 
         opacity: 0;
-        transform: translate(-40px, -20px) rotate(35deg) scale(0.2);
-    }
-    3% { 
-        opacity: 0.6;
-        transform: translate(-20px, -8px) rotate(35deg) scale(0.6);
-    }
-    15% { 
-        opacity: 0.3;
-        transform: translate(80px, 60px) rotate(35deg) scale(0.1);
-    }
-}
-
-/* 超小流星 */
-@keyframes meteorShower4 {
-    0%, 92%, 100% { 
-        opacity: 0;
-        transform: translate(-30px, -15px) rotate(20deg) scale(0.1);
-    }
-    6% { 
-        opacity: 0.4;
-        transform: translate(-15px, -5px) rotate(20deg) scale(0.4);
-    }
-    12% { 
-        opacity: 0.2;
-        transform: translate(60px, 45px) rotate(20deg) scale(0.05);
+        transform: translate(150px, 75px) rotate(25deg) scale(0.1);
+        box-shadow: 
+            0 0 0px rgba(255, 215, 0, 0),
+            0 0 0px rgba(255, 215, 0, 0),
+            0 0 0px rgba(255, 215, 0, 0),
+            250px 125px 0 -15px rgba(255, 255, 255, 0),
+            255px 127px 0px -15px rgba(255, 215, 0, 0),
+            260px 130px 0px -15px rgba(255, 215, 0, 0),
+            230px 115px 0 -8px rgba(255, 255, 255, 0),
+            235px 117px 0px -8px rgba(255, 215, 0, 0),
+            240px 120px 0px -8px rgba(255, 215, 0, 0),
+            270px 135px 0 -20px rgba(255, 255, 255, 0),
+            275px 137px 0px -20px rgba(255, 215, 0, 0),
+            280px 140px 0px -20px rgba(255, 215, 0, 0),
+            225px 113px 0 -5px rgba(255, 255, 255, 0),
+            228px 114px 0px -5px rgba(255, 215, 0, 0),
+            232px 116px 0px -5px rgba(255, 215, 0, 0),
+            290px 145px 0 -25px rgba(255, 255, 255, 0),
+            295px 147px 0px -25px rgba(255, 215, 0, 0),
+            300px 150px 0px -25px rgba(255, 215, 0, 0),
+            220px 110px 0 -3px rgba(255, 255, 255, 0),
+            222px 111px 0px -3px rgba(255, 215, 0, 0),
+            225px 112px 0px -3px rgba(255, 215, 0, 0),
+            245px 123px 0 -12px rgba(255, 255, 255, 0),
+            248px 124px 0px -12px rgba(255, 215, 0, 0),
+            252px 126px 0px -12px rgba(255, 215, 0, 0);
     }
 }
 
@@ -519,7 +721,7 @@ body::before {
     flex-wrap: wrap;
 }
 
-/* Q弹果冻按钮样式 - 增强流星特效 */
+/* Q弹果冻按钮样式 - 密集流星特效 */
 .btn {
     background: rgba(255, 255, 255, 0.08);
     color: white;
@@ -558,98 +760,219 @@ body::before {
     opacity: 0;
 }
 
-/* 增强的小流星效果 */
+/* 密集的小流星效果 */
 .btn::after {
     content: '';
     position: absolute;
-    top: -12px;
-    left: -35px;
-    width: 25px;
-    height: 2px;
+    top: -15px;
+    left: -50px;
+    width: 80px;
+    height: 3px;
     background: linear-gradient(45deg, 
-        rgba(255, 255, 255, 0.8) 0%,
-        rgba(255, 215, 0, 1) 50%,
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(255, 215, 0, 1) 40%,
+        rgba(255, 223, 0, 0.8) 70%,
         transparent 100%
     );
-    border-radius: 1px;
+    border-radius: 1.5px;
     transform: rotate(20deg);
     opacity: 0;
     box-shadow: 
-        0 0 4px rgba(255, 215, 0, 0.6),
-        0 0 8px rgba(255, 215, 0, 0.3),
-        /* 小拖尾流星 */
-        -15px -8px 0 -4px rgba(255, 255, 255, 0.6),
-        -15px -8px 3px -4px rgba(255, 215, 0, 0.5),
+        0 0 6px rgba(255, 215, 0, 0.8),
+        0 0 12px rgba(255, 215, 0, 0.5),
+        /* 密集小流星 */
+        -25px -12px 0 -10px rgba(255, 255, 255, 0.8),
+        -30px -15px 4px -10px rgba(255, 215, 0, 0.8),
+        -35px -17px 8px -10px rgba(255, 215, 0, 0.5),
+        /* 更多小流星 */
+        -15px -7px 0 -6px rgba(255, 255, 255, 0.7),
+        -18px -9px 3px -6px rgba(255, 215, 0, 0.7),
+        -22px -11px 6px -6px rgba(255, 215, 0, 0.4),
         /* 微小流星 */
-        -25px -12px 0 -6px rgba(255, 255, 255, 0.4),
-        -25px -12px 2px -6px rgba(255, 215, 0, 0.3);
-    animation: btnMeteorShower 7s ease-in-out infinite;
+        -40px -20px 0 -12px rgba(255, 255, 255, 0.6),
+        -43px -21px 3px -12px rgba(255, 215, 0, 0.6),
+        -47px -23px 6px -12px rgba(255, 215, 0, 0.3),
+        /* 快速流星 */
+        -8px -4px 0 -3px rgba(255, 255, 255, 0.8),
+        -10px -5px 2px -3px rgba(255, 215, 0, 0.8),
+        -13px -6px 4px -3px rgba(255, 215, 0, 0.5),
+        /* 延迟流星 */
+        -32px -16px 0 -8px rgba(255, 255, 255, 0.5),
+        -35px -17px 2px -8px rgba(255, 215, 0, 0.5),
+        -38px -19px 4px -8px rgba(255, 215, 0, 0.2);
+    animation: btnMeteorShowerDense 3s ease-in-out infinite;
     animation-delay: calc(var(--btn-random-delay, 0) * 1s);
 }
 
-/* 为按钮添加随机延迟 */
-.btn:nth-of-type(1) { --btn-random-delay: 0.3; }
-.btn:nth-of-type(2) { --btn-random-delay: 1.8; }
-.btn:nth-of-type(3) { --btn-random-delay: 2.5; }
-.btn:nth-of-type(4) { --btn-random-delay: 0.9; }
-.btn:nth-of-type(5) { --btn-random-delay: 1.4; }
+/* 为按钮添加更密集的随机延迟 */
+.btn:nth-of-type(1) { --btn-random-delay: 0.1; }
+.btn:nth-of-type(2) { --btn-random-delay: 0.7; }
+.btn:nth-of-type(3) { --btn-random-delay: 1.3; }
+.btn:nth-of-type(4) { --btn-random-delay: 0.4; }
+.btn:nth-of-type(5) { --btn-random-delay: 1.0; }
+.btn:nth-of-type(6) { --btn-random-delay: 1.6; }
 
-/* 按钮流星动画 */
-@keyframes btnMeteorShower {
-    0%, 88%, 100% { 
+/* 密集按钮流星动画 */
+@keyframes btnMeteorShowerDense {
+    0% { 
         opacity: 0;
-        transform: translate(-60px, -25px) rotate(20deg) scale(0.3);
+        transform: translate(-80px, -40px) rotate(20deg) scale(0.2);
         box-shadow: 
             0 0 0px rgba(255, 215, 0, 0),
             0 0 0px rgba(255, 215, 0, 0),
-            -15px -8px 0 -4px rgba(255, 255, 255, 0),
-            -15px -8px 0px -4px rgba(255, 215, 0, 0),
-            -25px -12px 0 -6px rgba(255, 255, 255, 0),
-            -25px -12px 0px -6px rgba(255, 215, 0, 0);
+            -25px -12px 0 -10px rgba(255, 255, 255, 0),
+            -30px -15px 0px -10px rgba(255, 215, 0, 0),
+            -35px -17px 0px -10px rgba(255, 215, 0, 0),
+            -15px -7px 0 -6px rgba(255, 255, 255, 0),
+            -18px -9px 0px -6px rgba(255, 215, 0, 0),
+            -22px -11px 0px -6px rgba(255, 215, 0, 0),
+            -40px -20px 0 -12px rgba(255, 255, 255, 0),
+            -43px -21px 0px -12px rgba(255, 215, 0, 0),
+            -47px -23px 0px -12px rgba(255, 215, 0, 0),
+            -8px -4px 0 -3px rgba(255, 255, 255, 0),
+            -10px -5px 0px -3px rgba(255, 215, 0, 0),
+            -13px -6px 0px -3px rgba(255, 215, 0, 0),
+            -32px -16px 0 -8px rgba(255, 255, 255, 0),
+            -35px -17px 0px -8px rgba(255, 215, 0, 0),
+            -38px -19px 0px -8px rgba(255, 215, 0, 0);
     }
-    4% { 
+    
+    8% { 
+        opacity: 1;
+        transform: translate(-40px, -20px) rotate(20deg) scale(1);
+        box-shadow: 
+            0 0 6px rgba(255, 215, 0, 0.8),
+            0 0 12px rgba(255, 215, 0, 0.5),
+            25px 12px 0 -10px rgba(255, 255, 255, 0.8),
+            30px 15px 4px -10px rgba(255, 215, 0, 0.8),
+            35px 17px 8px -10px rgba(255, 215, 0, 0.5),
+            15px 7px 0 -6px rgba(255, 255, 255, 0.7),
+            18px 9px 3px -6px rgba(255, 215, 0, 0.7),
+            22px 11px 6px -6px rgba(255, 215, 0, 0.4),
+            40px 20px 0 -12px rgba(255, 255, 255, 0.6),
+            43px 21px 3px -12px rgba(255, 215, 0, 0.6),
+            47px 23px 6px -12px rgba(255, 215, 0, 0.3),
+            8px 4px 0 -3px rgba(255, 255, 255, 0.8),
+            10px 5px 2px -3px rgba(255, 215, 0, 0.8),
+            13px 6px 4px -3px rgba(255, 215, 0, 0.5),
+            32px 16px 0 -8px rgba(255, 255, 255, 0.5),
+            35px 17px 2px -8px rgba(255, 215, 0, 0.5),
+            38px 19px 4px -8px rgba(255, 215, 0, 0.2);
+    }
+    
+    20% { 
         opacity: 0.8;
-        transform: translate(-30px, -12px) rotate(20deg) scale(1);
+        transform: translate(-10px, -5px) rotate(20deg) scale(0.9);
         box-shadow: 
-            0 0 4px rgba(255, 215, 0, 0.6),
-            0 0 8px rgba(255, 215, 0, 0.3),
-            15px 8px 0 -4px rgba(255, 255, 255, 0.6),
-            15px 8px 3px -4px rgba(255, 215, 0, 0.5),
-            25px 12px 0 -6px rgba(255, 255, 255, 0.4),
-            25px 12px 2px -6px rgba(255, 215, 0, 0.3);
+            0 0 5px rgba(255, 215, 0, 0.6),
+            0 0 10px rgba(255, 215, 0, 0.4),
+            55px 27px 0 -10px rgba(255, 255, 255, 0.6),
+            60px 30px 3px -10px rgba(255, 215, 0, 0.6),
+            65px 32px 6px -10px rgba(255, 215, 0, 0.3),
+            45px 22px 0 -6px rgba(255, 255, 255, 0.5),
+            48px 24px 2px -6px rgba(255, 215, 0, 0.5),
+            52px 26px 4px -6px rgba(255, 215, 0, 0.2),
+            70px 35px 0 -12px rgba(255, 255, 255, 0.4),
+            73px 36px 2px -12px rgba(255, 215, 0, 0.4),
+            77px 38px 4px -12px rgba(255, 215, 0, 0.2),
+            38px 19px 0 -3px rgba(255, 255, 255, 0.6),
+            40px 20px 1px -3px rgba(255, 215, 0, 0.6),
+            43px 21px 3px -3px rgba(255, 215, 0, 0.3),
+            62px 31px 0 -8px rgba(255, 255, 255, 0.3),
+            65px 32px 1px -8px rgba(255, 215, 0, 0.3),
+            68px 34px 3px -8px rgba(255, 215, 0, 0.1);
     }
-    12% { 
-        opacity: 0.5;
-        transform: translate(0px, 0px) rotate(20deg) scale(0.7);
+    
+    40% { 
+        opacity: 0.4;
+        transform: translate(30px, 15px) rotate(20deg) scale(0.6);
         box-shadow: 
-            0 0 3px rgba(255, 215, 0, 0.4),
+            0 0 3px rgba(255, 215, 0, 0.3),
             0 0 6px rgba(255, 215, 0, 0.2),
-            30px 15px 0 -4px rgba(255, 255, 255, 0.4),
-            30px 15px 2px -4px rgba(255, 215, 0, 0.3),
-            45px 23px 0 -6px rgba(255, 255, 255, 0.2),
-            45px 23px 1px -6px rgba(255, 215, 0, 0.2);
+            95px 47px 0 -10px rgba(255, 255, 255, 0.3),
+            100px 50px 2px -10px rgba(255, 215, 0, 0.3),
+            105px 52px 4px -10px rgba(255, 215, 0, 0.1),
+            85px 42px 0 -6px rgba(255, 255, 255, 0.2),
+            88px 44px 1px -6px rgba(255, 215, 0, 0.2),
+            92px 46px 2px -6px rgba(255, 215, 0, 0.1),
+            110px 55px 0 -12px rgba(255, 255, 255, 0.2),
+            113px 56px 1px -12px rgba(255, 215, 0, 0.2),
+            117px 58px 2px -12px rgba(255, 215, 0, 0.1),
+            78px 39px 0 -3px rgba(255, 255, 255, 0.3),
+            80px 40px 1px -3px rgba(255, 215, 0, 0.3),
+            83px 41px 2px -3px rgba(255, 215, 0, 0.1),
+            102px 51px 0 -8px rgba(255, 255, 255, 0.1),
+            105px 52px 0px -8px rgba(255, 215, 0, 0.1),
+            108px 54px 0px -8px rgba(255, 215, 0, 0.05);
     }
-    25% { 
-        opacity: 0.2;
-        transform: translate(50px, 25px) rotate(20deg) scale(0.3);
+    
+    65% { 
+        opacity: 0.1;
+        transform: translate(70px, 35px) rotate(20deg) scale(0.3);
         box-shadow: 
-            0 0 1px rgba(255, 215, 0, 0.2),
+            0 0 1px rgba(255, 215, 0, 0.1),
             0 0 3px rgba(255, 215, 0, 0.1),
-            65px 32px 0 -4px rgba(255, 255, 255, 0.1),
-            65px 32px 1px -4px rgba(255, 215, 0, 0.1),
-            80px 40px 0 -6px rgba(255, 255, 255, 0.05),
-            80px 40px 0px -6px rgba(255, 215, 0, 0.05);
+            135px 67px 0 -10px rgba(255, 255, 255, 0.1),
+            140px 70px 0px -10px rgba(255, 215, 0, 0.1),
+            145px 72px 0px -10px rgba(255, 215, 0, 0.05),
+            125px 62px 0 -6px rgba(255, 255, 255, 0.1),
+            128px 64px 0px -6px rgba(255, 215, 0, 0.1),
+            132px 66px 0px -6px rgba(255, 215, 0, 0.05),
+            150px 75px 0 -12px rgba(255, 255, 255, 0.05),
+            153px 76px 0px -12px rgba(255, 215, 0, 0.05),
+            157px 78px 0px -12px rgba(255, 215, 0, 0.02),
+            118px 59px 0 -3px rgba(255, 255, 255, 0.1),
+            120px 60px 0px -3px rgba(255, 215, 0, 0.1),
+            123px 61px 0px -3px rgba(255, 215, 0, 0.05),
+            142px 71px 0 -8px rgba(255, 255, 255, 0.05),
+            145px 72px 0px -8px rgba(255, 215, 0, 0.05),
+            148px 74px 0px -8px rgba(255, 215, 0, 0.02);
     }
-    35% { 
+    
+    85% { 
         opacity: 0;
-        transform: translate(100px, 50px) rotate(20deg) scale(0.1);
+        transform: translate(120px, 60px) rotate(20deg) scale(0.1);
         box-shadow: 
             0 0 0px rgba(255, 215, 0, 0),
             0 0 0px rgba(255, 215, 0, 0),
-            100px 50px 0 -4px rgba(255, 255, 255, 0),
-            100px 50px 0px -4px rgba(255, 215, 0, 0),
-            120px 60px 0 -6px rgba(255, 255, 255, 0),
-            120px 60px 0px -6px rgba(255, 215, 0, 0);
+            185px 92px 0 -10px rgba(255, 255, 255, 0),
+            190px 95px 0px -10px rgba(255, 215, 0, 0),
+            195px 97px 0px -10px rgba(255, 215, 0, 0),
+            175px 87px 0 -6px rgba(255, 255, 255, 0),
+            178px 89px 0px -6px rgba(255, 215, 0, 0),
+            182px 91px 0px -6px rgba(255, 215, 0, 0),
+            200px 100px 0 -12px rgba(255, 255, 255, 0),
+            203px 101px 0px -12px rgba(255, 215, 0, 0),
+            207px 103px 0px -12px rgba(255, 215, 0, 0),
+            168px 84px 0 -3px rgba(255, 255, 255, 0),
+            170px 85px 0px -3px rgba(255, 215, 0, 0),
+            173px 86px 0px -3px rgba(255, 215, 0, 0),
+            192px 96px 0 -8px rgba(255, 255, 255, 0),
+            195px 97px 0px -8px rgba(255, 215, 0, 0),
+            198px 99px 0px -8px rgba(255, 215, 0, 0);
+    }
+    
+    100% { 
+        opacity: 0;
+        transform: translate(150px, 75px) rotate(20deg) scale(0.05);
+        box-shadow: 
+            0 0 0px rgba(255, 215, 0, 0),
+            0 0 0px rgba(255, 215, 0, 0),
+            225px 112px 0 -10px rgba(255, 255, 255, 0),
+            230px 115px 0px -10px rgba(255, 215, 0, 0),
+            235px 117px 0px -10px rgba(255, 215, 0, 0),
+            215px 107px 0 -6px rgba(255, 255, 255, 0),
+            218px 109px 0px -6px rgba(255, 215, 0, 0),
+            222px 111px 0px -6px rgba(255, 215, 0, 0),
+            240px 120px 0 -12px rgba(255, 255, 255, 0),
+            243px 121px 0px -12px rgba(255, 215, 0, 0),
+            247px 123px 0px -12px rgba(255, 215, 0, 0),
+            208px 104px 0 -3px rgba(255, 255, 255, 0),
+            210px 105px 0px -3px rgba(255, 215, 0, 0),
+            213px 106px 0px -3px rgba(255, 215, 0, 0),
+            232px 116px 0 -8px rgba(255, 255, 255, 0),
+            235px 117px 0px -8px rgba(255, 215, 0, 0),
+            238px 119px 0px -8px rgba(255, 215, 0, 0);
     }
 }
 
