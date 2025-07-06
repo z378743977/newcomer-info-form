@@ -148,7 +148,7 @@ body::before {
     margin-top: 30px;
 }
 
-/* 语言选择按钮 - 流光+流星特效 */
+/* 语言选择按钮 - 增强流星特效 */
 .language-btn {
     background: rgba(255, 255, 255, 0.12);
     color: white;
@@ -187,41 +187,38 @@ body::before {
     opacity: 0;
 }
 
-/* 流星效果 */
+/* 多重流星效果 - 大流星 */
 .language-btn::after {
     content: '';
     position: absolute;
-    top: -20px;
-    left: -50px;
-    width: 30px;
+    top: -15px;
+    left: -60px;
+    width: 40px;
     height: 4px;
     background: linear-gradient(45deg, 
-        transparent 0%,
-        rgba(255, 255, 255, 0.8) 20%,
+        rgba(255, 255, 255, 0.9) 0%,
         rgba(255, 215, 0, 1) 50%,
-        rgba(255, 255, 255, 0.8) 80%,
         transparent 100%
     );
     border-radius: 2px;
-    transform: rotate(15deg);
+    transform: rotate(25deg);
     opacity: 0;
-    animation: meteor 4s ease-in-out infinite;
-    animation-delay: 2s;
+    box-shadow: 
+        0 0 8px rgba(255, 215, 0, 0.8),
+        0 0 15px rgba(255, 215, 0, 0.4);
+    animation: meteorShower1 5s ease-in-out infinite;
+    animation-delay: calc(var(--random-delay, 0) * 1s);
 }
 
-@keyframes meteor {
-    0%, 90%, 100% { 
-        opacity: 0;
-        transform: translateX(-100px) translateY(-50px) rotate(15deg) scale(0.5);
-    }
-    5% { 
-        opacity: 1;
-        transform: translateX(-50px) translateY(-30px) rotate(15deg) scale(1);
-    }
-    15% { 
-        opacity: 0.8;
-        transform: translateX(150px) translateY(80px) rotate(15deg) scale(0.8);
-    }
+/* 为每个按钮添加随机延迟 */
+.language-btn:nth-child(1) { --random-delay: 0.5; }
+.language-btn:nth-child(2) { --random-delay: 1.2; }
+.language-btn:nth-child(3) { --random-delay: 2.1; }
+.language-btn:nth-child(4) { --random-delay: 0.8; }
+
+/* 中等流星 */
+.language-btn {
+    /* 添加多个伪元素效果的容器 */
 }
 
 .language-btn:hover::before {
@@ -245,6 +242,166 @@ body::before {
         0 0 60px rgba(255, 215, 0, 0.3),
         inset 0 1px 0 rgba(255, 215, 0, 0.4);
     animation: streamingGlow 2s ease-in-out infinite;
+}
+
+/* 流星雨动画组 - 大流星 */
+@keyframes meteorShower1 {
+    0%, 85%, 100% { 
+        opacity: 0;
+        transform: translate(-80px, -30px) rotate(25deg) scale(0.5);
+    }
+    5% { 
+        opacity: 1;
+        transform: translate(-40px, -15px) rotate(25deg) scale(1);
+    }
+    25% { 
+        opacity: 0.6;
+        transform: translate(120px, 80px) rotate(25deg) scale(0.3);
+    }
+}
+
+/* 中等流星 */
+@keyframes meteorShower2 {
+    0%, 88%, 100% { 
+        opacity: 0;
+        transform: translate(-60px, -25px) rotate(30deg) scale(0.3);
+    }
+    8% { 
+        opacity: 0.8;
+        transform: translate(-30px, -10px) rotate(30deg) scale(0.8);
+    }
+    20% { 
+        opacity: 0.4;
+        transform: translate(100px, 70px) rotate(30deg) scale(0.2);
+    }
+}
+
+/* 小流星 */
+@keyframes meteorShower3 {
+    0%, 90%, 100% { 
+        opacity: 0;
+        transform: translate(-40px, -20px) rotate(35deg) scale(0.2);
+    }
+    3% { 
+        opacity: 0.6;
+        transform: translate(-20px, -8px) rotate(35deg) scale(0.6);
+    }
+    15% { 
+        opacity: 0.3;
+        transform: translate(80px, 60px) rotate(35deg) scale(0.1);
+    }
+}
+
+/* 超小流星 */
+@keyframes meteorShower4 {
+    0%, 92%, 100% { 
+        opacity: 0;
+        transform: translate(-30px, -15px) rotate(20deg) scale(0.1);
+    }
+    6% { 
+        opacity: 0.4;
+        transform: translate(-15px, -5px) rotate(20deg) scale(0.4);
+    }
+    12% { 
+        opacity: 0.2;
+        transform: translate(60px, 45px) rotate(20deg) scale(0.05);
+    }
+}
+
+/* 使用CSS自定义属性为每个按钮创建多个流星 */
+.language-btn {
+    --meteor1-delay: calc(var(--random-delay, 0) * 1s);
+    --meteor2-delay: calc((var(--random-delay, 0) + 1.5) * 1s);
+    --meteor3-delay: calc((var(--random-delay, 0) + 3) * 1s);
+    --meteor4-delay: calc((var(--random-delay, 0) + 0.7) * 1s);
+}
+
+/* 通过box-shadow创建多重流星效果 */
+.language-btn::after {
+    box-shadow: 
+        /* 主流星 */
+        0 0 8px rgba(255, 215, 0, 0.8),
+        0 0 15px rgba(255, 215, 0, 0.4),
+        /* 中等流星 */
+        -20px -10px 0 -8px rgba(255, 255, 255, 0.7),
+        -20px -10px 6px -8px rgba(255, 215, 0, 0.6),
+        /* 小流星 */
+        -35px -18px 0 -12px rgba(255, 255, 255, 0.5),
+        -35px -18px 4px -12px rgba(255, 215, 0, 0.4),
+        /* 微小流星 */
+        -45px -23px 0 -14px rgba(255, 255, 255, 0.3),
+        -45px -23px 2px -14px rgba(255, 215, 0, 0.3);
+    animation: meteorShowerMultiple 6s ease-in-out infinite;
+    animation-delay: var(--meteor1-delay);
+}
+
+/* 多重流星动画 */
+@keyframes meteorShowerMultiple {
+    0%, 85%, 100% { 
+        opacity: 0;
+        transform: translate(-80px, -30px) rotate(25deg) scale(0.5);
+        box-shadow: 
+            0 0 8px rgba(255, 215, 0, 0),
+            0 0 15px rgba(255, 215, 0, 0),
+            -20px -10px 0 -8px rgba(255, 255, 255, 0),
+            -20px -10px 6px -8px rgba(255, 215, 0, 0),
+            -35px -18px 0 -12px rgba(255, 255, 255, 0),
+            -35px -18px 4px -12px rgba(255, 215, 0, 0),
+            -45px -23px 0 -14px rgba(255, 255, 255, 0),
+            -45px -23px 2px -14px rgba(255, 215, 0, 0);
+    }
+    5% { 
+        opacity: 1;
+        transform: translate(-40px, -15px) rotate(25deg) scale(1);
+        box-shadow: 
+            0 0 8px rgba(255, 215, 0, 0.8),
+            0 0 15px rgba(255, 215, 0, 0.4),
+            20px 10px 0 -8px rgba(255, 255, 255, 0.7),
+            20px 10px 6px -8px rgba(255, 215, 0, 0.6),
+            35px 18px 0 -12px rgba(255, 255, 255, 0.5),
+            35px 18px 4px -12px rgba(255, 215, 0, 0.4),
+            45px 23px 0 -14px rgba(255, 255, 255, 0.3),
+            45px 23px 2px -14px rgba(255, 215, 0, 0.3);
+    }
+    15% { 
+        opacity: 0.6;
+        transform: translate(0px, 0px) rotate(25deg) scale(0.8);
+        box-shadow: 
+            0 0 6px rgba(255, 215, 0, 0.6),
+            0 0 12px rgba(255, 215, 0, 0.3),
+            40px 20px 0 -8px rgba(255, 255, 255, 0.5),
+            40px 20px 4px -8px rgba(255, 215, 0, 0.4),
+            60px 30px 0 -12px rgba(255, 255, 255, 0.3),
+            60px 30px 3px -12px rgba(255, 215, 0, 0.3),
+            75px 38px 0 -14px rgba(255, 255, 255, 0.2),
+            75px 38px 2px -14px rgba(255, 215, 0, 0.2);
+    }
+    30% { 
+        opacity: 0.3;
+        transform: translate(60px, 30px) rotate(25deg) scale(0.4);
+        box-shadow: 
+            0 0 4px rgba(255, 215, 0, 0.3),
+            0 0 8px rgba(255, 215, 0, 0.2),
+            80px 40px 0 -8px rgba(255, 255, 255, 0.2),
+            80px 40px 2px -8px rgba(255, 215, 0, 0.2),
+            100px 50px 0 -12px rgba(255, 255, 255, 0.1),
+            100px 50px 1px -12px rgba(255, 215, 0, 0.1),
+            120px 60px 0 -14px rgba(255, 255, 255, 0.05),
+            120px 60px 1px -14px rgba(255, 215, 0, 0.05);
+    }
+    45% { 
+        opacity: 0;
+        transform: translate(120px, 60px) rotate(25deg) scale(0.1);
+        box-shadow: 
+            0 0 0px rgba(255, 215, 0, 0),
+            0 0 0px rgba(255, 215, 0, 0),
+            120px 60px 0 -8px rgba(255, 255, 255, 0),
+            120px 60px 0px -8px rgba(255, 215, 0, 0),
+            140px 70px 0 -12px rgba(255, 255, 255, 0),
+            140px 70px 0px -12px rgba(255, 215, 0, 0),
+            160px 80px 0 -14px rgba(255, 255, 255, 0),
+            160px 80px 0px -14px rgba(255, 215, 0, 0);
+    }
 }
 
 @keyframes streamingGlow {
@@ -362,7 +519,7 @@ body::before {
     flex-wrap: wrap;
 }
 
-/* Q弹果冻按钮样式 - 流光+流星特效 */
+/* Q弹果冻按钮样式 - 增强流星特效 */
 .btn {
     background: rgba(255, 255, 255, 0.08);
     color: white;
@@ -401,40 +558,98 @@ body::before {
     opacity: 0;
 }
 
-/* 小流星效果 */
+/* 增强的小流星效果 */
 .btn::after {
     content: '';
     position: absolute;
-    top: -15px;
-    left: -40px;
-    width: 20px;
+    top: -12px;
+    left: -35px;
+    width: 25px;
     height: 2px;
     background: linear-gradient(45deg, 
-        transparent 0%,
-        rgba(255, 255, 255, 0.6) 30%,
-        rgba(255, 215, 0, 0.8) 50%,
-        rgba(255, 255, 255, 0.6) 70%,
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 215, 0, 1) 50%,
         transparent 100%
     );
     border-radius: 1px;
     transform: rotate(20deg);
     opacity: 0;
-    animation: smallMeteor 5s ease-in-out infinite;
-    animation-delay: 3s;
+    box-shadow: 
+        0 0 4px rgba(255, 215, 0, 0.6),
+        0 0 8px rgba(255, 215, 0, 0.3),
+        /* 小拖尾流星 */
+        -15px -8px 0 -4px rgba(255, 255, 255, 0.6),
+        -15px -8px 3px -4px rgba(255, 215, 0, 0.5),
+        /* 微小流星 */
+        -25px -12px 0 -6px rgba(255, 255, 255, 0.4),
+        -25px -12px 2px -6px rgba(255, 215, 0, 0.3);
+    animation: btnMeteorShower 7s ease-in-out infinite;
+    animation-delay: calc(var(--btn-random-delay, 0) * 1s);
 }
 
-@keyframes smallMeteor {
-    0%, 95%, 100% { 
+/* 为按钮添加随机延迟 */
+.btn:nth-of-type(1) { --btn-random-delay: 0.3; }
+.btn:nth-of-type(2) { --btn-random-delay: 1.8; }
+.btn:nth-of-type(3) { --btn-random-delay: 2.5; }
+.btn:nth-of-type(4) { --btn-random-delay: 0.9; }
+.btn:nth-of-type(5) { --btn-random-delay: 1.4; }
+
+/* 按钮流星动画 */
+@keyframes btnMeteorShower {
+    0%, 88%, 100% { 
         opacity: 0;
-        transform: translateX(-80px) translateY(-40px) rotate(20deg) scale(0.3);
+        transform: translate(-60px, -25px) rotate(20deg) scale(0.3);
+        box-shadow: 
+            0 0 0px rgba(255, 215, 0, 0),
+            0 0 0px rgba(255, 215, 0, 0),
+            -15px -8px 0 -4px rgba(255, 255, 255, 0),
+            -15px -8px 0px -4px rgba(255, 215, 0, 0),
+            -25px -12px 0 -6px rgba(255, 255, 255, 0),
+            -25px -12px 0px -6px rgba(255, 215, 0, 0);
     }
-    3% { 
+    4% { 
         opacity: 0.8;
-        transform: translateX(-40px) translateY(-20px) rotate(20deg) scale(1);
+        transform: translate(-30px, -12px) rotate(20deg) scale(1);
+        box-shadow: 
+            0 0 4px rgba(255, 215, 0, 0.6),
+            0 0 8px rgba(255, 215, 0, 0.3),
+            15px 8px 0 -4px rgba(255, 255, 255, 0.6),
+            15px 8px 3px -4px rgba(255, 215, 0, 0.5),
+            25px 12px 0 -6px rgba(255, 255, 255, 0.4),
+            25px 12px 2px -6px rgba(255, 215, 0, 0.3);
     }
-    10% { 
-        opacity: 0.6;
-        transform: translateX(100px) translateY(60px) rotate(20deg) scale(0.5);
+    12% { 
+        opacity: 0.5;
+        transform: translate(0px, 0px) rotate(20deg) scale(0.7);
+        box-shadow: 
+            0 0 3px rgba(255, 215, 0, 0.4),
+            0 0 6px rgba(255, 215, 0, 0.2),
+            30px 15px 0 -4px rgba(255, 255, 255, 0.4),
+            30px 15px 2px -4px rgba(255, 215, 0, 0.3),
+            45px 23px 0 -6px rgba(255, 255, 255, 0.2),
+            45px 23px 1px -6px rgba(255, 215, 0, 0.2);
+    }
+    25% { 
+        opacity: 0.2;
+        transform: translate(50px, 25px) rotate(20deg) scale(0.3);
+        box-shadow: 
+            0 0 1px rgba(255, 215, 0, 0.2),
+            0 0 3px rgba(255, 215, 0, 0.1),
+            65px 32px 0 -4px rgba(255, 255, 255, 0.1),
+            65px 32px 1px -4px rgba(255, 215, 0, 0.1),
+            80px 40px 0 -6px rgba(255, 255, 255, 0.05),
+            80px 40px 0px -6px rgba(255, 215, 0, 0.05);
+    }
+    35% { 
+        opacity: 0;
+        transform: translate(100px, 50px) rotate(20deg) scale(0.1);
+        box-shadow: 
+            0 0 0px rgba(255, 215, 0, 0),
+            0 0 0px rgba(255, 215, 0, 0),
+            100px 50px 0 -4px rgba(255, 255, 255, 0),
+            100px 50px 0px -4px rgba(255, 215, 0, 0),
+            120px 60px 0 -6px rgba(255, 255, 255, 0),
+            120px 60px 0px -6px rgba(255, 215, 0, 0);
     }
 }
 
