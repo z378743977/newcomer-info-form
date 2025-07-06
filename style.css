@@ -963,15 +963,69 @@ body::before {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+    body {
+        padding: 10px;
+        font-size: 16px; /* 增大基础字体 */
+    }
+    
     .container {
-        padding: 25px;
-        margin: 15px;
-        border-radius: 20px;
+        padding: 20px;
+        margin: 5px;
+        border-radius: 16px;
+        max-height: none; /* 移除高度限制 */
+        overflow-y: visible;
     }
     
     .language-grid {
         grid-template-columns: 1fr;
         gap: 15px;
+    }
+    
+    .language-btn {
+        padding: 18px 20px;
+        font-size: 18px; /* 增大按钮文字 */
+        font-weight: 600;
+    }
+    
+    .privacy-consent h2 {
+        font-size: 24px; /* 增大标题 */
+        margin-bottom: 25px;
+    }
+    
+    .privacy-text {
+        font-size: 16px; /* 增大正文 */
+        line-height: 1.8;
+    }
+    
+    .privacy-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .btn {
+        padding: 16px 24px;
+        font-size: 17px; /* 增大按钮文字 */
+        font-weight: 600;
+    }
+    
+    .form-title {
+        font-size: 26px; /* 增大表单标题 */
+        margin-bottom: 30px;
+    }
+    
+    .form-group label {
+        font-size: 16px; /* 增大标签文字 */
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 16px 16px;
+        font-size: 17px; /* 增大输入框文字 */
+        border-radius: 8px;
+        min-height: 50px; /* 确保足够的触摸区域 */
     }
     
     .blood-type-container {
@@ -982,87 +1036,211 @@ body::before {
     
     .blood-type-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .blood-type-btn {
+        padding: 18px 12px;
+        font-size: 18px; /* 增大血型按钮文字 */
+        font-weight: 700;
+        min-height: 55px;
+    }
+    
+    .rh-factor-btn {
+        padding: 18px 12px;
+        font-size: 18px;
+        font-weight: 700;
+        min-height: 55px;
     }
     
     .photo-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
     
-    .form-title {
-        font-size: 28px;
+    .photo-item {
+        padding: 24px;
+        border-radius: 12px;
     }
     
-    .privacy-buttons {
-        flex-direction: column;
-        gap: 15px;
+    .photo-label {
+        font-size: 18px; /* 增大照片标签 */
+        font-weight: 600;
+    }
+    
+    .photo-status {
+        font-size: 16px;
     }
     
     .work-info-row {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 20px;
     }
     
     .download-buttons {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 15px;
     }
     
     .download-btn,
     .contract-btn,
-    .template-btn {
-        padding: 16px;
-        font-size: 15px;
-        min-height: 55px;
+    .template-btn,
+    .placeholder-btn {
+        padding: 18px;
+        font-size: 17px;
+        min-height: 60px;
+        font-weight: 600;
     }
     
     .rh-factor-section {
         flex: none;
     }
+    
+    .signature-canvas {
+        height: 150px; /* 调整手机端签名区域高度 */
+    }
+    
+    .category-title {
+        font-size: 18px;
+        padding: 15px 20px;
+    }
+    
+    .payment-option {
+        padding: 20px;
+        border-radius: 12px;
+    }
+    
+    .option-header label {
+        font-size: 16px;
+        font-weight: 600;
+    }
+    
+    .option-description {
+        font-size: 15px;
+        line-height: 1.6;
+    }
+    
+    .success-message h3 {
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
+    
+    .success-message p {
+        font-size: 16px;
+        margin-bottom: 25px;
+    }
 }
 
 @media (max-width: 480px) {
+    body {
+        padding: 8px;
+        font-size: 16px;
+    }
+    
     .container {
-        padding: 20px;
-        margin: 10px;
+        padding: 16px;
+        margin: 4px;
+        border-radius: 12px;
     }
     
     .language-btn {
-        padding: 16px 20px;
+        padding: 20px;
+        font-size: 17px;
+        font-weight: 600;
+    }
+    
+    .privacy-consent h2 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+    
+    .privacy-text {
         font-size: 15px;
+        line-height: 1.7;
     }
     
     .btn {
-        padding: 14px 24px;
-        font-size: 15px;
+        padding: 16px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        min-height: 52px;
     }
     
     .form-group input,
     .form-group select,
     .form-group textarea {
-        padding: 14px 16px;
-        font-size: 15px;
+        padding: 15px 14px;
+        font-size: 16px;
+        min-height: 48px;
     }
     
     .form-title {
         font-size: 24px;
+        margin-bottom: 25px;
     }
     
     .language-selector h2 {
         font-size: 20px;
         min-height: 50px;
+        line-height: 1.4;
     }
     
     .photo-item {
         padding: 20px;
     }
     
-    .success-message .download-buttons .btn {
-        padding: 14px 12px;
-        font-size: 14px;
+    .blood-type-btn,
+    .rh-factor-btn {
+        padding: 16px 10px;
+        font-size: 17px;
         min-height: 50px;
     }
     
+    .signature-canvas {
+        height: 120px;
+    }
+    
+    .success-message .download-buttons .btn {
+        padding: 16px 12px;
+        font-size: 15px;
+        min-height: 52px;
+    }
+    
     .success-message .download-buttons .btn span {
-        font-size: 13px;
+        font-size: 15px;
+    }
+    
+    /* 确保按钮文字换行显示正常 */
+    .download-buttons .btn {
+        white-space: normal;
+        word-wrap: break-word;
+        line-height: 1.4;
+    }
+}
+
+/* 专门针对手机端的触摸优化 */
+@media (max-width: 768px) {
+    /* 增大所有可点击区域 */
+    .btn, .language-btn, .blood-type-btn, .rh-factor-btn, .photo-item {
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+        touch-action: manipulation;
+    }
+    
+    /* 防止缩放 */
+    input, select, textarea {
+        font-size: 16px !important; /* 防止iOS缩放 */
+    }
+    
+    /* 优化表单元素的可见性 */
+    .form-group label {
+        color: rgba(255, 255, 255, 0.95);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* 增强对比度 */
+    .privacy-text {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 20px;
     }
 }
