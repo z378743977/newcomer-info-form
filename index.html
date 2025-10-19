@@ -2,326 +2,1599 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>新人资料收集系统</title>
-    
-    <!-- 引入CSS文件 -->
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新人入职资料编辑</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'STKaiti', 'KaiTi', '楷体', 'Serif', serif;
+            background: linear-gradient(135deg, #5B9A8B 0%, #4A7C7E 50%, #2E5C8A 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        body.lang-ru,
+        body.lang-ru * {
+            letter-spacing: 0.5px !important;
+        }
+        
+        body.lang-ru h1 {
+            letter-spacing: 2px !important;
+        }
+        
+        body.lang-ru .choice-card h2,
+        body.lang-ru .language-card h2,
+        body.lang-ru .modal-content h2 {
+            letter-spacing: 1px !important;
+        }
+        
+        body.lang-vi,
+        body.lang-vi * {
+            letter-spacing: 0.5px !important;
+        }
+        
+        body.lang-vi h1 {
+            letter-spacing: 2px !important;
+        }
+        
+        body.lang-vi .choice-card h2,
+        body.lang-vi .language-card h2,
+        body.lang-vi .modal-content h2 {
+            letter-spacing: 1px !important;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0,0,0,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .container {
+            background: #F5F5DC;
+            border: 3px solid #789262;
+            border-radius: 3px;
+            padding: 40px;
+            box-shadow: 
+                0 8px 16px rgba(0,0,0,0.3),
+                inset 0 0 0 1px rgba(120,146,98,0.3);
+            max-width: 900px;
+            width: 100%;
+            position: relative;
+        }
+        
+        .container::before,
+        .container::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #789262;
+        }
+        
+        .container::before {
+            top: -2px;
+            left: -2px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .container::after {
+            top: -2px;
+            right: -2px;
+            border-left: none;
+            border-bottom: none;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2C2C2C;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: normal;
+            letter-spacing: 8px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #789262, transparent);
+        }
+
+        /* 语言选择界面 */
+        .language-selector {
+            text-align: center;
+        }
+
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .language-card {
+            padding: 40px 20px;
+            border: 2px solid #789262;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #FFFEF0;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .language-card:hover {
+            border-color: #4A7C7E;
+            transform: translateY(-3px);
+            box-shadow: 3px 3px 12px rgba(74,124,126,0.3);
+            background: #FFF;
+        }
+
+        .language-card .flag {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .language-card h2 {
+            font-size: 24px;
+            color: #2C2C2C;
+            font-weight: normal;
+            letter-spacing: 2px;
+        }
+
+        /* 主选择界面 */
+        .main-choice {
+            display: flex;
+            gap: 30px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .choice-card {
+            flex: 1;
+            min-width: 250px;
+            padding: 40px 30px;
+            border: 2px solid #789262;
+            border-radius: 3px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #FFFEF0;
+            position: relative;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .choice-card:hover {
+            border-color: #4A7C7E;
+            transform: translateY(-3px);
+            box-shadow: 3px 3px 12px rgba(74,124,126,0.3);
+            background: #FFF;
+        }
+
+        .choice-card .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .choice-card h2 {
+            font-size: 22px;
+            color: #2C2C2C;
+            margin-bottom: 15px;
+            font-weight: normal;
+            letter-spacing: 2px;
+        }
+
+        .choice-card p {
+            color: #4A4A4A;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2C2C2C;
+            font-weight: normal;
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #789262;
+            border-radius: 2px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #FFFEF0;
+            font-family: inherit;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4A7C7E;
+            background: #FFF;
+            box-shadow: 0 0 0 3px rgba(74,124,126,0.1);
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 30px;
+            border: 2px dashed #789262;
+            border-radius: 2px;
+            cursor: pointer;
+            background: #FFFEF0;
+            font-size: 16px;
+            text-align: center;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        
+        input[type="file"]:hover {
+            border-color: #4A7C7E;
+            background: #FFF;
+        }
+        
+        input[type="file"]::file-selector-button {
+            padding: 10px 20px;
+            background: #4A7C7E;
+            color: #F5F5DC;
+            border: 2px solid #2E5C8A;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 15px;
+            font-family: inherit;
+            letter-spacing: 1px;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        
+        input[type="file"]::file-selector-button:hover {
+            background: #2E5C8A;
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: #4A7C7E;
+            color: #F5F5DC;
+            border: 3px solid #2E5C8A;
+            border-radius: 2px;
+            font-size: 16px;
+            font-weight: normal;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+            font-family: inherit;
+            letter-spacing: 3px;
+            box-shadow: 
+                3px 3px 0 rgba(0,0,0,0.2),
+                inset 0 0 0 1px rgba(255,255,255,0.2);
+            position: relative;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 1px;
+            pointer-events: none;
+        }
+        
+        .btn:hover {
+            background: #2E5C8A;
+            transform: translate(2px, 2px);
+            box-shadow: 
+                1px 1px 0 rgba(0,0,0,0.2),
+                inset 0 0 0 1px rgba(255,255,255,0.2);
+        }
+        
+        .btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: none;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn.back {
+            background: #789262;
+            border-color: #5C7350;
+            margin-bottom: 20px;
+        }
+        
+        .btn.back:hover {
+            background: #5C7350;
+        }
+        
+        .error {
+            color: #8B3A3A;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .file-info {
+            font-size: 14px;
+            color: #4A4A4A;
+            margin-top: 8px;
+        }
+        
+        .editor-area {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .image-editor {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #FFFEF0;
+            border: 2px solid #789262;
+            border-radius: 2px;
+        }
+        
+        .editor-title {
+            font-size: 18px;
+            font-weight: normal;
+            color: #2C2C2C;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+        
+        .canvas-container {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+        }
+        
+        .edit-canvas {
+            border: 2px solid #4A7C7E;
+            border-radius: 2px;
+            cursor: crosshair;
+            max-width: 100%;
+            display: block;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        .instruction {
+            margin-top: 10px;
+            padding: 10px;
+            background: #FFF;
+            border: 1px solid #789262;
+            border-radius: 2px;
+            font-size: 14px;
+            color: #4A4A4A;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .point-info {
+            color: #4A7C7E;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .small-btn {
+            padding: 6px 12px;
+            background: #8B3A3A;
+            color: #F5F5DC;
+            border: 2px solid #5C3317;
+            border-radius: 2px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            letter-spacing: 1px;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        }
+        
+        .small-btn:hover {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+        
+        .small-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        .small-btn.undo {
+            background: #C9A063;
+            border-color: #8C7853;
+        }
+
+        .small-btn.rotate {
+            background: #4A7C7E;
+            border-color: #2E5C8A;
+        }
+        
+        .preview {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        #result {
+            max-width: 100%;
+            border: 3px solid #789262;
+            border-radius: 2px;
+            box-shadow: 3px 3px 12px rgba(0,0,0,0.3);
+            margin-top: 20px;
+        }
+
+        .step-indicator {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #4A7C7E;
+            font-weight: normal;
+            letter-spacing: 2px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44,44,44,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #F5F5DC;
+            padding: 40px;
+            border: 3px solid #789262;
+            border-radius: 3px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 
+                0 8px 24px rgba(0,0,0,0.4),
+                inset 0 0 0 1px rgba(120,146,98,0.3);
+            position: relative;
+        }
+        
+        .modal-content::before,
+        .modal-content::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #789262;
+        }
+        
+        .modal-content::before {
+            bottom: -2px;
+            left: -2px;
+            border-right: none;
+            border-top: none;
+        }
+        
+        .modal-content::after {
+            bottom: -2px;
+            right: -2px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #2C2C2C;
+            font-weight: normal;
+            letter-spacing: 3px;
+        }
+
+        .modal-content p {
+            margin-bottom: 25px;
+            color: #4A4A4A;
+            line-height: 1.8;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 30px;
+            border: 2px solid #2E5C8A;
+            border-radius: 2px;
+            font-size: 16px;
+            font-weight: normal;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            letter-spacing: 2px;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        }
+
+        .modal-btn:hover {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+
+        .modal-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        .modal-btn.yes {
+            background: #789262;
+            color: #F5F5DC;
+        }
+
+        .modal-btn.no {
+            background: #4A7C7E;
+            color: #F5F5DC;
+        }
+
+        .contact-info {
+            background: #FFFEF0;
+            padding: 20px;
+            border: 1px solid #789262;
+            border-radius: 2px;
+            margin-top: 20px;
+        }
+
+        .contact-info p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #2C2C2C;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .lang-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 15px;
+            background: #789262;
+            color: #F5F5DC;
+            border: 2px solid #5C7350;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        }
+
+        .lang-switch:hover {
+            background: #5C7350;
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
+        <button class="lang-switch hidden" onclick="backToLanguageSelect()">🌐 <span id="langSwitchText">语言</span></button>
+        
         <!-- 语言选择界面 -->
-        <div id="languageSelector" class="language-selector">
-            <h2 id="selectLanguageTitle">언어를 선택해 주세요 / Please Select Language</h2>
+        <div id="languageSelect">
+            <h1>选择语言 / Select Language</h1>
             <div class="language-grid">
-                <button class="language-btn" onclick="selectLanguage('zh')">中文 (简体)</button>
-                <button class="language-btn" onclick="selectLanguage('ko')">한국어</button>
-                <button class="language-btn" onclick="selectLanguage('vi')">Tiếng Việt</button>
-                <button class="language-btn" onclick="selectLanguage('ru')">Русский</button>
-            </div>
-        </div>
-
-        <!-- 隐私同意界面 -->
-        <div id="privacyConsent" class="privacy-consent hidden">
-            <button class="btn back-btn" onclick="showLanguageSelector()">← <span id="backToLanguageText">返回语言选择</span></button>
-            
-            <h2 id="privacyTitle">个人信息收集同意书</h2>
-            <div class="privacy-content">
-                <div class="privacy-text" id="privacyText">
-                    <p>为了完成入职手续，我们需要收集您的个人信息，包括：</p>
-                    <ul>
-                        <li>基本信息（姓名、生日、电话、住址、血型）</li>
-                        <li>证件信息（护照、签证、居民登录证等）</li>
-                        <li>证件照片</li>
-                        <li>电子签名</li>
-                    </ul>
-                    <p>您的个人信息将仅用于入职登记，我们承诺严格保护您的隐私安全。</p>
+                <div class="language-card" onclick="selectLanguage('zh')">
+                    <div class="flag">🇨🇳</div>
+                    <h2>简体中文</h2>
                 </div>
-                <div class="privacy-buttons">
-                    <button class="btn btn-agree" onclick="agreeToPrivacy()" id="agreeBtn">同意并继续</button>
-                    <button class="btn btn-decline" onclick="declinePrivacy()" id="declineBtn">不同意</button>
+                <div class="language-card" onclick="selectLanguage('vi')">
+                    <div class="flag">🇻🇳</div>
+                    <h2>Tiếng Việt</h2>
+                </div>
+                <div class="language-card" onclick="selectLanguage('ru')">
+                    <div class="flag">🇷🇺</div>
+                    <h2>Русский</h2>
+                </div>
+                <div class="language-card" onclick="selectLanguage('ko')">
+                    <div class="flag">🇰🇷</div>
+                    <h2>한국어</h2>
                 </div>
             </div>
         </div>
 
-        <!-- 表单界面 -->
-        <div id="formContainer" class="form-container hidden">
-            <button class="btn back-btn" onclick="showPrivacyConsent()">← <span id="backText">返回</span></button>
+        <h1 id="mainTitle" class="hidden">新人入职资料编辑</h1>
+        
+        <!-- 主选择界面 -->
+        <div id="mainChoice" class="hidden">
+            <p style="text-align: center; color: #4A4A4A; margin-bottom: 20px;" id="chooseTypeText">请选择您的照片类型</p>
+            <div class="main-choice">
+                <div class="choice-card" onclick="selectMode('edited')">
+                    <div class="icon">✅</div>
+                    <h2 id="editedCardTitle">已编辑好的照片</h2>
+                    <p id="editedCardDesc">已经合成好的照片<br>可能需要添加或修改手机号</p>
+                </div>
+                <div class="choice-card" onclick="selectMode('original')">
+                    <div class="icon">📷</div>
+                    <h2 id="originalCardTitle">照片原件</h2>
+                    <p id="originalCardDesc">需要合成的原始照片<br>2-3张照片合成一张</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 已编辑照片流程 -->
+        <div id="editedFlow" class="hidden">
+            <button class="btn back" onclick="backToMain()">← <span id="backToMainText">返回主界面</span></button>
             
-            <h1 class="form-title" id="formTitle">新人资料收集</h1>
+            <div class="step-indicator" id="editedStepText">已编辑照片处理</div>
             
-            <form id="employeeForm">
-                <!-- 姓名 -->
-                <div class="form-group">
-                    <label for="name" id="nameLabel"></label>
-                    <input type="text" id="name" name="name" required>
-                </div>
+            <div class="input-group">
+                <label for="editedPhoto" id="editedPhotoLabel">选择已编辑好的照片 (1张)</label>
+                <input type="file" id="editedPhoto" accept="image/*">
+                <div class="file-info" id="editedFileInfo">未选择文件</div>
+            </div>
+            
+            <button class="btn" onclick="checkEditedPhoto()" id="editedNextBtn">下一步</button>
+        </div>
 
-                <!-- 韩文名字段（非韩文语言显示） -->
-                <div class="form-group" id="koreanNameGroup">
-                    <label for="koreanName" id="koreanNameLabel"></label>
-                    <input type="text" id="koreanName" name="koreanName">
-                </div>
+        <!-- 原件照片流程 -->
+        <div id="originalFlow" class="hidden">
+            <button class="btn back" onclick="backToMain()">← <span id="backToMainText2">返回主界面</span></button>
+            
+            <div class="step-indicator" id="originalStepText">步骤 1/3: 输入信息</div>
+            
+            <div class="input-group">
+                <label for="phone" id="phoneLabel">手机号码</label>
+                <input type="text" id="phone" placeholder="138-8888-8888" maxlength="13">
+                <div class="error" id="phoneError">请输入正确格式的手机号 (xxx-xxxx-xxxx)</div>
+            </div>
+            
+            <div class="input-group">
+                <label for="photos" id="photosLabel">选择照片 (2-3张)</label>
+                <input type="file" id="photos" accept="image/*" multiple>
+                <div class="file-info" id="fileInfo">未选择文件</div>
+                <div class="error" id="fileError">请选择2-3张照片</div>
+            </div>
+            
+            <button class="btn" onclick="startEditing()" id="originalNextBtn">下一步：编辑照片区域</button>
+        </div>
 
-                <!-- 生日 -->
-                <div class="form-group">
-                    <label for="birthday" id="birthdayLabel"></label>
-                    <input type="date" id="birthday" name="birthday" required>
-                </div>
+        <!-- 编辑区域 -->
+        <div class="editor-area" id="editorArea"></div>
+        
+        <div style="display:none;" id="backButton">
+            <button class="btn back" onclick="goBackToStep1()">← <span id="backToStep1Text">返回上一步</span></button>
+        </div>
+        
+        <div style="display:none;" id="mergeButton">
+            <button class="btn" onclick="mergePhotos()">🎨 <span id="mergeButtonText">合成照片</span></button>
+        </div>
+        
+        <div class="preview">
+            <canvas id="result" style="display:none;"></canvas>
+        </div>
+    </div>
 
-                <!-- 电话 -->
-                <div class="form-group">
-                    <label for="phone" id="phoneLabel"></label>
-                    <input type="tel" id="phone" name="phone" required>
-                </div>
-
-                <!-- 护照号（非韩文语言显示） -->
-                <div class="form-group" id="passportGroup">
-                    <label for="passport" id="passportLabel"></label>
-                    <input type="text" id="passport" name="passport" required>
-                </div>
-
-                <!-- 居民登录证号（韩文语言显示） -->
-                <div class="form-group hidden" id="residentGroup">
-                    <label for="residentNumber" id="residentLabel"></label>
-                    <input type="text" id="residentNumber" name="residentNumber" placeholder="예: 123456-1234567">
-                </div>
-
-                <!-- 签证类型（非韩文语言显示） -->
-                <div class="form-group" id="visaTypeGroup">
-                    <label for="visaType" id="visaTypeLabel"></label>
-                    <select id="visaType" name="visaType">
-                        <option value="" id="visaTypeNone">无</option>
-                        <option value="A-1" id="visaA1">A-1 (外交)</option>
-                        <option value="A-2" id="visaA2">A-2 (公务)</option>
-                        <option value="A-3" id="visaA3">A-3 (协定)</option>
-                        <option value="B-1" id="visaB1">B-1 (免签)</option>
-                        <option value="B-2" id="visaB2">B-2 (观光过境)</option>
-                        <option value="C-1" id="visaC1">C-1 (临时采访)</option>
-                        <option value="C-2" id="visaC2">C-2 (短期商务)</option>
-                        <option value="C-3" id="visaC3">C-3 (短期访问)</option>
-                        <option value="C-4" id="visaC4">C-4 (短期就业)</option>
-                        <option value="D-1" id="visaD1">D-1 (文化艺术)</option>
-                        <option value="D-2" id="visaD2">D-2 (留学)</option>
-                        <option value="D-3" id="visaD3">D-3 (技术研修)</option>
-                        <option value="D-4" id="visaD4">D-4 (一般研修)</option>
-                        <option value="D-5" id="visaD5">D-5 (采访)</option>
-                        <option value="D-6" id="visaD6">D-6 (宗教)</option>
-                        <option value="D-7" id="visaD7">D-7 (驻在)</option>
-                        <option value="D-8" id="visaD8">D-8 (企业投资)</option>
-                        <option value="D-9" id="visaD9">D-9 (贸易经营)</option>
-                        <option value="D-10" id="visaD10">D-10 (求职)</option>
-                        <option value="E-1" id="visaE1">E-1 (教授)</option>
-                        <option value="E-2" id="visaE2">E-2 (会话指导)</option>
-                        <option value="E-3" id="visaE3">E-3 (研究)</option>
-                        <option value="E-4" id="visaE4">E-4 (技术指导)</option>
-                        <option value="E-5" id="visaE5">E-5 (专门职业)</option>
-                        <option value="E-6" id="visaE6">E-6 (艺术演出)</option>
-                        <option value="E-7" id="visaE7">E-7 (特定活动)</option>
-                        <option value="E-8" id="visaE8">E-8 (非专业就业)</option>
-                        <option value="E-9" id="visaE9">E-9 (非专业就业)</option>
-                        <option value="E-10" id="visaE10">E-10 (船员就业)</option>
-                        <option value="F-1" id="visaF1">F-1 (访问同居)</option>
-                        <option value="F-2" id="visaF2">F-2 (居住)</option>
-                        <option value="F-3" id="visaF3">F-3 (同伴)</option>
-                        <option value="F-4" id="visaF4">F-4 (在外同胞)</option>
-                        <option value="F-5" id="visaF5">F-5 (永久居住)</option>
-                        <option value="F-6" id="visaF6">F-6 (结婚移民)</option>
-                        <option value="G-1" id="visaG1">G-1 (其他)</option>
-                        <option value="H-1" id="visaH1">H-1 (观光就业)</option>
-                        <option value="H-2" id="visaH2">H-2 (访问就业)</option>
-                    </select>
-                </div>
-
-                <!-- 外国人登录号（非韩文语言显示） -->
-                <div class="form-group" id="foreignerNumberGroup">
-                    <label for="foreignerNumber" id="foreignerNumberLabel"></label>
-                    <input type="text" id="foreignerNumber" name="foreignerNumber" placeholder="">
-                </div>
-
-                <!-- 住址 -->
-                <div class="form-group">
-                    <label for="address" id="addressLabel"></label>
-                    <textarea id="address" name="address" rows="3" required></textarea>
-                </div>
-
-                <!-- 工种和工作经历 -->
-                <div class="form-group work-info-group">
-                    <div class="work-info-row">
-                        <div class="work-field">
-                            <label for="jobType" id="jobTypeLabel"></label>
-                            <select id="jobType" name="jobType" required>
-                                <option value="" id="jobTypeSelect">请选择工种</option>
-                                <option value="정리" id="jobType1">정리</option>
-                                <option value="형틀목공" id="jobType2">형틀목공</option>
-                                <option value="해체" id="jobType3">해체</option>
-                                <option value="철근" id="jobType4">철근</option>
-                                <option value="타설" id="jobType5">타설</option>
-                                <option value="비계" id="jobType6">비계</option>
-                                <option value="신호수" id="jobType7">신호수</option>
-                                <option value="알폼" id="jobType8">알폼</option>
-                                <option value="갱폼" id="jobType9">갱폼</option>
-                                <option value="안전" id="jobType10">안전</option>
-                                <option value="미장" id="jobType11">미장</option>
-                                <option value="할석" id="jobType12">할석</option>
-                            </select>
-                        </div>
-                        <div class="work-field">
-                            <label for="workExperience" id="workExperienceLabel"></label>
-                            <input type="number" id="workExperience" name="workExperience" min="0" max="50" step="0.5" required>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 血型选择 -->
-                <div class="form-group">
-                    <label id="bloodTypeLabel"></label>
-                    <div class="blood-type-container">
-                        <!-- 主要血型 -->
-                        <div class="blood-type-section">
-                            <div class="blood-type-grid">
-                                <div class="blood-type-btn" onclick="selectMainBloodType('A')">A</div>
-                                <div class="blood-type-btn" onclick="selectMainBloodType('B')">B</div>
-                                <div class="blood-type-btn" onclick="selectMainBloodType('AB')">AB</div>
-                                <div class="blood-type-btn" onclick="selectMainBloodType('O')">O</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Rh因子 (可选) -->
-                        <div class="rh-factor-section">
-                            <label class="rh-label" id="rhFactorLabel">Rh因子 <span class="optional">(可选)</span></label>
-                            <div class="rh-factor-grid">
-                                <div class="rh-factor-btn" onclick="selectRhFactor('+')">+</div>
-                                <div class="rh-factor-btn" onclick="selectRhFactor('-')">-</div>
-                            </div>
-                        </div>
-                    </div>
-                    <input type="hidden" id="bloodType" name="bloodType" required>
-                    <input type="hidden" id="rhFactor" name="rhFactor">
-                </div>
-
-                <!-- 多照片上传区域 -->
-                <div class="form-group photo-section">
-                    <label id="photoSectionLabel"></label>
-                    <div class="photo-categories">
-                        <!-- 必需照片区域 -->
-                        <div class="photo-category" id="requiredPhotos">
-                            <h4 class="category-title" id="requiredPhotosTitle"></h4>
-                            <div class="photo-grid" id="requiredPhotoGrid">
-                                <!-- 必需照片将通过JavaScript动态生成 -->
-                            </div>
-                        </div>
-                        
-                        <!-- 可选照片区域 -->
-                        <div class="photo-category" id="optionalPhotos">
-                            <h4 class="category-title" id="optionalPhotosTitle"></h4>
-                            <div class="photo-grid" id="optionalPhotoGrid">
-                                <!-- 可选照片将通过JavaScript动态生成（不包含存折照片） -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 工资支付方式 -->
-                <div class="form-group" id="paymentMethodGroup">
-                    <label for="paymentMethod" id="paymentMethodLabel"></label>
-                    <select id="paymentMethod" name="paymentMethod" required onchange="handlePaymentMethodChange()">
-                        <option value="" id="paymentMethodSelect">请选择支付方式</option>
-                        <option value="team_leader" id="paymentMethodTeamLeader">组长收款</option>
-                        <option value="individual" id="paymentMethodIndividual">个人收款</option>
-                    </select>
-                </div>
-
-                <!-- 组长姓名（组长收款时显示） -->
-                <div class="form-group hidden" id="teamLeaderNameGroup">
-                    <label for="teamLeaderName" id="teamLeaderNameLabel"></label>
-                    <input type="text" id="teamLeaderName" name="teamLeaderName">
-                </div>
-
-                <!-- 个人收款方式选择（个人收款时显示） -->
-                <div class="form-group hidden" id="individualPaymentGroup">
-                    <label id="individualPaymentLabel"></label>
-                    <div class="payment-method-options">
-                        <div class="payment-option recommended" onclick="selectIndividualMethod('photo')">
-                            <div class="option-header">
-                                <input type="radio" name="individualMethod" value="photo" id="individualMethodPhoto">
-                                <label for="individualMethodPhoto" id="individualMethodPhotoLabel"></label>
-                                <span class="recommended-badge" id="recommendedBadge"></span>
-                            </div>
-                            <div class="option-description" id="photoMethodDescription">
-                            </div>
-                        </div>
-                        <div class="payment-option" onclick="selectIndividualMethod('manual')">
-                            <div class="option-header">
-                                <input type="radio" name="individualMethod" value="manual" id="individualMethodManual">
-                                <label for="individualMethodManual" id="individualMethodManualLabel"></label>
-                            </div>
-                            <div class="option-description" id="manualMethodDescription">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 存折照片上传（选择照片上传时显示） -->
-                <div class="form-group hidden" id="bankbookPhotoGroup">
-                    <label id="bankbookPhotoLabel"></label>
-                    <div class="photo-grid">
-                        <div class="photo-item bankbook-photo-item" onclick="selectPhoto('bankbook')">
-                            <input type="file" id="photo_bankbook" accept="image/*" style="display: none;" onchange="handlePhotoUpload('bankbook', this)">
-                            <div class="photo-label" id="bankbookPhotoItemLabel">
-                            </div>
-                            <div class="photo-placeholder" id="placeholder_bankbook">
-                                <div style="font-size: 24px; color: #ccc; margin-bottom: 5px;">📷</div>
-                                <div class="photo-status" id="bankbookUploadText"></div>
-                            </div>
-                            <img id="preview_bankbook" class="photo-preview" style="display: none;">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 手动输入账户信息（选择手动输入时显示） -->
-                <div class="form-group hidden" id="manualAccountGroup">
-                    <label for="bankName" id="bankNameLabel"></label>
-                    <input type="text" id="bankName" name="bankName" placeholder="">
-                    
-                    <label for="accountNumber" id="accountNumberLabel" style="margin-top: 15px;"></label>
-                    <input type="text" id="accountNumber" name="accountNumber" placeholder="">
-                    
-                    <label for="accountHolder" id="accountHolderLabel" style="margin-top: 15px;"></label>
-                    <input type="text" id="accountHolder" name="accountHolder" placeholder="">
-                </div>
-
-                <!-- 电子签名 -->
-                <div class="form-group signature-container">
-                    <label id="signatureLabel"></label>
-                    <canvas id="signatureCanvas" class="signature-canvas"></canvas>
-                    <div class="signature-controls">
-                        <button type="button" class="btn btn-secondary" onclick="clearSignature()" id="clearSignBtn"></button>
-                    </div>
-                </div>
-
-                <!-- 提交按钮 -->
-                <button type="submit" class="btn btn-submit" id="submitBtn"></button>
-            </form>
-
-            <!-- 成功消息 -->
-            <div id="successMessage" class="success-message">
-                <h3 id="successTitle"></h3>
-                <p id="successText"></p>
-                <div class="download-buttons">
-                    <!-- 保留填写合同模板按钮 -->
-                    <button class="btn template-btn" onclick="fillContractTemplate()">📄 <span id="templateBtnText">근로계약서 양식 작성</span></button>
-                    <!-- 新增占位按钮，方便后续添加功能 -->
-                    <button class="btn placeholder-btn" onclick="fillSecondTemplate()">📋 <span id="secondTemplateBtnText">추가 서류 양식 작성</span></button>
-                </div>
+    <!-- 弹窗：询问是否有手机号 -->
+    <div class="modal" id="phoneCheckModal">
+        <div class="modal-content">
+            <h2 id="phoneCheckTitle">📱 照片确认</h2>
+            <p id="phoneCheckDesc">您导入的照片上是否已经有手机号？</p>
+            <div class="modal-buttons">
+                <button class="modal-btn yes" onclick="hasPhoneNumber()" id="hasPhoneBtn">有手机号</button>
+                <button class="modal-btn no" onclick="noPhoneNumber()" id="noPhoneBtn">没有手机号</button>
             </div>
         </div>
     </div>
 
-    <!-- 隐藏的画布用于处理表格模板 -->
-    <canvas id="templateCanvas" style="display: none;"></canvas>
+    <!-- 弹窗：联系管理员 -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <h2 id="contactTitle">✅ 照片已完成</h2>
+            <p id="contactDesc1">您的照片已经包含手机号，无需再次编辑。</p>
+            <p id="contactDesc2">如需修改，请联系管理员：</p>
+            <div class="contact-info">
+                <p><strong id="contactAdmin">📞 需要修改请联系管理员</strong></p>
+                <p id="contactNote">请通过您的联系方式与管理员沟通</p>
+            </div>
+            <button class="modal-btn no" onclick="closeModal()" id="closeModalBtn">关闭</button>
+        </div>
+    </div>
 
-    <!-- 引入JavaScript文件 -->
-    <script src="script.js"></script>
+    <!-- 弹窗：输入手机号 -->
+    <div class="modal" id="phoneInputModal">
+        <div class="modal-content">
+            <h2 id="phoneInputTitle">📱 输入手机号</h2>
+            <p id="phoneInputDesc">请输入要添加到照片上的手机号</p>
+            <div class="input-group">
+                <input type="text" id="editedPhone" placeholder="138-8888-8888" maxlength="13" style="margin-bottom: 10px;">
+                <div class="error" id="editedPhoneError">请输入正确格式的手机号 (xxx-xxxx-xxxx)</div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn no" onclick="confirmEditedPhone()" id="confirmPhoneBtn">确认</button>
+                <button class="modal-btn" style="background: #789262; border-color: #5C7350;" onclick="closePhoneInputModal()" id="cancelPhoneBtn">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 多语言配置
+        const translations = {
+            zh: {
+                langSwitch: '语言',
+                mainTitle: '新人入职资料编辑',
+                chooseType: '请选择您的照片类型',
+                editedCardTitle: '已编辑好的照片',
+                editedCardDesc: '已经合成好的照片<br>可能需要添加或修改手机号',
+                originalCardTitle: '照片原件',
+                originalCardDesc: '需要合成的原始照片<br>2-3张照片合成一张',
+                backToMain: '返回主界面',
+                editedStep: '已编辑照片处理',
+                editedPhotoLabel: '选择已编辑好的照片 (1张)',
+                noFileSelected: '未选择文件',
+                nextStep: '下一步',
+                originalStep: '步骤 1/3: 输入信息',
+                phoneLabel: '手机号码',
+                phonePlaceholder: '例如: 138-8888-8888',
+                phoneError: '请输入正确格式的手机号 (xxx-xxxx-xxxx)',
+                photosLabel: '选择照片 (2-3张)',
+                fileError: '请选择2-3张照片',
+                nextEditArea: '下一步：编辑照片区域',
+                backToStep1: '返回上一步',
+                mergePhotos: '合成照片',
+                phoneCheckTitle: '📱 照片确认',
+                phoneCheckDesc: '您导入的照片上是否已经有手机号？',
+                hasPhone: '有手机号',
+                noPhone: '没有手机号',
+                contactTitle: '✅ 照片已完成',
+                contactDesc1: '您的照片已经包含手机号，无需再次编辑。',
+                contactDesc2: '如需修改，请联系管理员：',
+                contactAdmin: '📞 需要修改请联系管理员',
+                contactNote: '请通过您的联系方式与管理员沟通',
+                close: '关闭',
+                phoneInputTitle: '📱 输入手机号',
+                phoneInputDesc: '请输入要添加到照片上的手机号',
+                confirm: '确认',
+                cancel: '取消',
+                filesSelected: '已选择 {count} 张照片',
+                photoNumber: '照片 {number}',
+                clickCorners: '请点击4个角点（按顺序：左上、右上、右下、左下）',
+                pointsSelected: '已选择 {count} 个点，请继续点击{corner}角',
+                completed: '✓ 已完成选择',
+                rotate: '🔄 旋转90°',
+                undo: '↶ 撤销上一点',
+                reset: '✕ 重新选择',
+                corners: ['左上', '右上', '右下', '左下'],
+                step2: '步骤 2/3: 选择照片区域（每张图点击4个角）',
+                alertSelectOne: '请选择1张照片',
+                alertSelect23: '请选择2-3张照片'
+            },
+            vi: {
+                langSwitch: 'Ngôn ngữ',
+                mainTitle: 'Chỉnh sửa ảnh nhân viên mới',
+                chooseType: 'Vui lòng chọn loại ảnh của bạn',
+                editedCardTitle: 'Ảnh đã chỉnh sửa',
+                editedCardDesc: 'Ảnh đã được ghép<br>Có thể cần thêm hoặc sửa số điện thoại',
+                originalCardTitle: 'Ảnh gốc',
+                originalCardDesc: 'Ảnh gốc cần ghép<br>Ghép 2-3 ảnh thành 1',
+                backToMain: 'Quay lại trang chính',
+                editedStep: 'Xử lý ảnh đã chỉnh sửa',
+                editedPhotoLabel: 'Chọn ảnh đã chỉnh sửa (1 ảnh)',
+                noFileSelected: 'Chưa chọn tệp',
+                nextStep: 'Tiếp theo',
+                originalStep: 'Bước 1/3: Nhập thông tin',
+                phoneLabel: 'Số điện thoại',
+                phonePlaceholder: 'Ví dụ: 138-8888-8888',
+                phoneError: 'Vui lòng nhập đúng định dạng số điện thoại (xxx-xxxx-xxxx)',
+                photosLabel: 'Chọn ảnh (2-3 ảnh)',
+                fileError: 'Vui lòng chọn 2-3 ảnh',
+                nextEditArea: 'Tiếp theo: Chỉnh sửa vùng ảnh',
+                backToStep1: 'Quay lại',
+                mergePhotos: 'Ghép ảnh',
+                phoneCheckTitle: '📱 Xác nhận ảnh',
+                phoneCheckDesc: 'Ảnh bạn nhập đã có số điện thoại chưa?',
+                hasPhone: 'Có số điện thoại',
+                noPhone: 'Chưa có số điện thoại',
+                contactTitle: '✅ Ảnh đã hoàn thành',
+                contactDesc1: 'Ảnh của bạn đã có số điện thoại, không cần chỉnh sửa lại.',
+                contactDesc2: 'Nếu cần sửa đổi, vui lòng liên hệ quản trị viên:',
+                contactAdmin: '📞 Cần sửa đổi vui lòng liên hệ quản trị viên',
+                contactNote: 'Vui lòng liên lạc với quản trị viên qua phương thức liên hệ của bạn',
+                close: 'Đóng',
+                phoneInputTitle: '📱 Nhập số điện thoại',
+                phoneInputDesc: 'Vui lòng nhập số điện thoại để thêm vào ảnh',
+                confirm: 'Xác nhận',
+                cancel: 'Hủy',
+                filesSelected: 'Đã chọn {count} ảnh',
+                photoNumber: 'Ảnh {number}',
+                clickCorners: 'Nhấp vào 4 góc (theo thứ tự: trên trái, trên phải, dưới phải, dưới trái)',
+                pointsSelected: 'Đã chọn {count} điểm, tiếp tục nhấp góc {corner}',
+                completed: '✓ Hoàn thành chọn',
+                rotate: '🔄 Xoay 90°',
+                undo: '↶ Hoàn tác',
+                reset: '✕ Đặt lại',
+                corners: ['trên trái', 'trên phải', 'dưới phải', 'dưới trái'],
+                step2: 'Bước 2/3: Chọn vùng ảnh (Nhấp 4 góc cho mỗi ảnh)',
+                alertSelectOne: 'Vui lòng chọn 1 ảnh',
+                alertSelect23: 'Vui lòng chọn 2-3 ảnh'
+            },
+            ru: {
+                langSwitch: 'Язык',
+                mainTitle: 'Редактор фото для новых сотрудников',
+                chooseType: 'Пожалуйста, выберите тип фото',
+                editedCardTitle: 'Отредактированное фото',
+                editedCardDesc: 'Уже готовое фото<br>Может потребоваться добавить или изменить номер телефона',
+                originalCardTitle: 'Оригинальные фото',
+                originalCardDesc: 'Исходные фото для объединения<br>Объединить 2-3 фото в одно',
+                backToMain: 'Назад в меню',
+                editedStep: 'Обработка отредактированного фото',
+                editedPhotoLabel: 'Выберите отредактированное фото (1 фото)',
+                noFileSelected: 'Файл не выбран',
+                nextStep: 'Далее',
+                originalStep: 'Шаг 1/3: Ввод информации',
+                phoneLabel: 'Номер телефона',
+                phonePlaceholder: 'Например: 138-8888-8888',
+                phoneError: 'Введите номер телефона в правильном формате (xxx-xxxx-xxxx)',
+                photosLabel: 'Выберите фото (2-3 фото)',
+                fileError: 'Выберите 2-3 фото',
+                nextEditArea: 'Далее: Редактировать область фото',
+                backToStep1: 'Назад',
+                mergePhotos: 'Объединить фото',
+                phoneCheckTitle: '📱 Подтверждение фото',
+                phoneCheckDesc: 'На импортированном фото уже есть номер телефона?',
+                hasPhone: 'Есть номер',
+                noPhone: 'Нет номера',
+                contactTitle: '✅ Фото готово',
+                contactDesc1: 'Ваше фото уже содержит номер телефона, редактирование не требуется.',
+                contactDesc2: 'Если нужно изменить, свяжитесь с администратором:',
+                contactAdmin: '📞 Для изменений свяжитесь с администратором',
+                contactNote: 'Пожалуйста, свяжитесь с администратором через ваш способ связи',
+                close: 'Закрыть',
+                phoneInputTitle: '📱 Введите номер телефона',
+                phoneInputDesc: 'Введите номер телефона для добавления на фото',
+                confirm: 'Подтвердить',
+                cancel: 'Отмена',
+                filesSelected: 'Выбрано фото: {count}',
+                photoNumber: 'Фото {number}',
+                clickCorners: 'Нажмите на 4 угла (по порядку: верхний левый, верхний правый, нижний правый, нижний левый)',
+                pointsSelected: 'Выбрано точек: {count}, продолжайте нажимать угол {corner}',
+                completed: '✓ Выбор завершен',
+                rotate: '🔄 Повернуть на 90°',
+                undo: '↶ Отменить',
+                reset: '✕ Сбросить',
+                corners: ['верхний левый', 'верхний правый', 'нижний правый', 'нижний левый'],
+                step2: 'Шаг 2/3: Выберите область фото (Нажмите 4 угла для каждого)',
+                alertSelectOne: 'Выберите 1 фото',
+                alertSelect23: 'Выберите 2-3 фото'
+            },
+            ko: {
+                langSwitch: '언어',
+                mainTitle: '신입 사원 온보딩 사진 편집기',
+                chooseType: '사진 유형을 선택하세요',
+                editedCardTitle: '편집된 사진',
+                editedCardDesc: '이미 합성된 사진<br>전화번호 추가 또는 수정이 필요할 수 있습니다',
+                originalCardTitle: '원본 사진',
+                originalCardDesc: '합성이 필요한 원본 사진<br>2-3장의 사진을 한 장으로 합성',
+                backToMain: '메인으로 돌아가기',
+                editedStep: '편집된 사진 처리',
+                editedPhotoLabel: '편집된 사진 선택 (1장)',
+                noFileSelected: '파일이 선택되지 않음',
+                nextStep: '다음',
+                originalStep: '단계 1/3: 정보 입력',
+                phoneLabel: '전화번호',
+                phonePlaceholder: '예: 138-8888-8888',
+                phoneError: '올바른 형식의 전화번호를 입력하세요 (xxx-xxxx-xxxx)',
+                photosLabel: '사진 선택 (2-3장)',
+                fileError: '2-3장의 사진을 선택하세요',
+                nextEditArea: '다음: 사진 영역 편집',
+                backToStep1: '이전으로',
+                mergePhotos: '사진 합성',
+                phoneCheckTitle: '📱 사진 확인',
+                phoneCheckDesc: '가져온 사진에 이미 전화번호가 있습니까?',
+                hasPhone: '전화번호 있음',
+                noPhone: '전화번호 없음',
+                contactTitle: '✅ 사진 완료',
+                contactDesc1: '사진에 이미 전화번호가 포함되어 있어 다시 편집할 필요가 없습니다.',
+                contactDesc2: '수정이 필요한 경우 관리자에게 문의하세요:',
+                contactAdmin: '📞 수정이 필요하면 관리자에게 문의하세요',
+                contactNote: '연락 방법을 통해 관리자와 소통하세요',
+                close: '닫기',
+                phoneInputTitle: '📱 전화번호 입력',
+                phoneInputDesc: '사진에 추가할 전화번호를 입력하세요',
+                confirm: '확인',
+                cancel: '취소',
+                filesSelected: '{count}장의 사진이 선택됨',
+                photoNumber: '사진 {number}',
+                clickCorners: '4개의 모서리를 클릭하세요 (순서: 왼쪽 위, 오른쪽 위, 오른쪽 아래, 왼쪽 아래)',
+                pointsSelected: '{count}개 포인트 선택됨, {corner} 모서리를 계속 클릭하세요',
+                completed: '✓ 선택 완료',
+                rotate: '🔄 90° 회전',
+                undo: '↶ 마지막 취소',
+                reset: '✕ 재설정',
+                corners: ['왼쪽 위', '오른쪽 위', '오른쪽 아래', '왼쪽 아래'],
+                step2: '단계 2/3: 사진 영역 선택 (각 사진의 4개 모서리 클릭)',
+                alertSelectOne: '1장의 사진을 선택하세요',
+                alertSelect23: '2-3장의 사진을 선택하세요'
+            }
+        };
+
+        let currentLang = 'zh';
+        const phoneInput = document.getElementById('phone');
+        const photosInput = document.getElementById('photos');
+        const editedPhotoInput = document.getElementById('editedPhoto');
+        const editedPhoneInput = document.getElementById('editedPhone');
+        const phoneError = document.getElementById('phoneError');
+        const fileError = document.getElementById('fileError');
+        const fileInfo = document.getElementById('fileInfo');
+        const editedFileInfo = document.getElementById('editedFileInfo');
+        const editorArea = document.getElementById('editorArea');
+        const resultCanvas = document.getElementById('result');
+        
+        let images = [];
+        let imagePoints = [];
+        let imageRotations = [];
+        let currentMode = '';
+        let editedImage = null;
+
+        // 语言选择
+        function selectLanguage(lang) {
+            currentLang = lang;
+            document.body.className = 'lang-' + lang;
+            updateLanguage();
+            document.getElementById('languageSelect').classList.add('hidden');
+            document.getElementById('mainTitle').classList.remove('hidden');
+            document.getElementById('mainChoice').classList.remove('hidden');
+            document.querySelector('.lang-switch').classList.remove('hidden');
+        }
+
+        function backToLanguageSelect() {
+            // 重置所有界面状态
+            document.getElementById('languageSelect').classList.remove('hidden');
+            document.getElementById('mainTitle').classList.add('hidden');
+            document.getElementById('mainChoice').classList.add('hidden');
+            document.getElementById('editedFlow').classList.add('hidden');
+            document.getElementById('originalFlow').classList.add('hidden');
+            document.getElementById('editorArea').style.display = 'none';
+            document.getElementById('backButton').style.display = 'none';
+            document.getElementById('mergeButton').style.display = 'none';
+            document.querySelector('.lang-switch').classList.add('hidden');
+            
+            // 关闭所有弹窗
+            document.getElementById('phoneCheckModal').style.display = 'none';
+            document.getElementById('contactModal').style.display = 'none';
+            document.getElementById('phoneInputModal').style.display = 'none';
+            
+            // 清空结果画布
+            resultCanvas.style.display = 'none';
+            
+            // 清空数据
+            images = [];
+            imagePoints = [];
+            imageRotations = [];
+            editedImage = null;
+            editorArea.innerHTML = '';
+            
+            // 清空文件选择
+            if (photosInput) photosInput.value = '';
+            if (editedPhotoInput) editedPhotoInput.value = '';
+            if (phoneInput) phoneInput.value = '';
+            if (editedPhoneInput) editedPhoneInput.value = '';
+            
+            // 重置body class
+            document.body.className = '';
+        }
+
+        function updateLanguage() {
+            const t = translations[currentLang];
+            
+            document.getElementById('langSwitchText').textContent = t.langSwitch;
+            document.getElementById('mainTitle').textContent = t.mainTitle;
+            document.getElementById('chooseTypeText').textContent = t.chooseType;
+            document.getElementById('editedCardTitle').textContent = t.editedCardTitle;
+            document.getElementById('editedCardDesc').innerHTML = t.editedCardDesc;
+            document.getElementById('originalCardTitle').textContent = t.originalCardTitle;
+            document.getElementById('originalCardDesc').innerHTML = t.originalCardDesc;
+            document.getElementById('backToMainText').textContent = t.backToMain;
+            document.getElementById('backToMainText2').textContent = t.backToMain;
+            document.getElementById('editedStepText').textContent = t.editedStep;
+            document.getElementById('editedPhotoLabel').textContent = t.editedPhotoLabel;
+            document.getElementById('editedFileInfo').textContent = t.noFileSelected;
+            document.getElementById('editedNextBtn').textContent = t.nextStep;
+            document.getElementById('originalStepText').textContent = t.originalStep;
+            document.getElementById('phoneLabel').textContent = t.phoneLabel;
+            document.getElementById('phone').placeholder = t.phonePlaceholder;
+            document.getElementById('phoneError').textContent = t.phoneError;
+            document.getElementById('photosLabel').textContent = t.photosLabel;
+            document.getElementById('fileInfo').textContent = t.noFileSelected;
+            document.getElementById('fileError').textContent = t.fileError;
+            document.getElementById('originalNextBtn').textContent = t.nextEditArea;
+            document.getElementById('backToStep1Text').textContent = t.backToStep1;
+            document.getElementById('mergeButtonText').textContent = t.mergePhotos;
+            document.getElementById('phoneCheckTitle').textContent = t.phoneCheckTitle;
+            document.getElementById('phoneCheckDesc').textContent = t.phoneCheckDesc;
+            document.getElementById('hasPhoneBtn').textContent = t.hasPhone;
+            document.getElementById('noPhoneBtn').textContent = t.noPhone;
+            document.getElementById('contactTitle').textContent = t.contactTitle;
+            document.getElementById('contactDesc1').textContent = t.contactDesc1;
+            document.getElementById('contactDesc2').textContent = t.contactDesc2;
+            document.getElementById('contactAdmin').textContent = t.contactAdmin;
+            document.getElementById('contactNote').textContent = t.contactNote;
+            document.getElementById('closeModalBtn').textContent = t.close;
+            document.getElementById('phoneInputTitle').textContent = t.phoneInputTitle;
+            document.getElementById('phoneInputDesc').textContent = t.phoneInputDesc;
+            document.getElementById('editedPhone').placeholder = t.phonePlaceholder;
+            document.getElementById('editedPhoneError').textContent = t.phoneError;
+            document.getElementById('confirmPhoneBtn').textContent = t.confirm;
+            document.getElementById('cancelPhoneBtn').textContent = t.cancel;
+        }
+
+        // 手机号输入格式化
+        function formatPhoneInput(input) {
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 3 && value.length <= 7) {
+                    value = value.slice(0, 3) + '-' + value.slice(3);
+                } else if (value.length > 7) {
+                    value = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+                }
+                e.target.value = value;
+            });
+        }
+
+        formatPhoneInput(phoneInput);
+        formatPhoneInput(editedPhoneInput);
+
+        photosInput.addEventListener('change', function(e) {
+            const t = translations[currentLang];
+            const files = e.target.files;
+            if (files.length > 0) {
+                fileInfo.textContent = t.filesSelected.replace('{count}', files.length);
+                fileInfo.style.color = '#789262';
+            } else {
+                fileInfo.textContent = t.noFileSelected;
+                fileInfo.style.color = '#4A4A4A';
+            }
+            fileError.style.display = 'none';
+        });
+
+        editedPhotoInput.addEventListener('change', function(e) {
+            const t = translations[currentLang];
+            const files = e.target.files;
+            if (files.length > 0) {
+                editedFileInfo.textContent = t.filesSelected.replace('{count}', files.length);
+                editedFileInfo.style.color = '#789262';
+            } else {
+                editedFileInfo.textContent = t.noFileSelected;
+                editedFileInfo.style.color = '#4A4A4A';
+            }
+        });
+
+        function selectMode(mode) {
+            currentMode = mode;
+            document.getElementById('mainChoice').classList.add('hidden');
+            
+            if (mode === 'edited') {
+                document.getElementById('editedFlow').classList.remove('hidden');
+            } else {
+                document.getElementById('originalFlow').classList.remove('hidden');
+            }
+        }
+
+        function backToMain() {
+            document.getElementById('mainChoice').classList.remove('hidden');
+            document.getElementById('editedFlow').classList.add('hidden');
+            document.getElementById('originalFlow').classList.add('hidden');
+            document.getElementById('editorArea').style.display = 'none';
+            document.getElementById('backButton').style.display = 'none';
+            document.getElementById('mergeButton').style.display = 'none';
+            resultCanvas.style.display = 'none';
+            
+            images = [];
+            imagePoints = [];
+            imageRotations = [];
+            editedImage = null;
+            editorArea.innerHTML = '';
+        }
+
+        function checkEditedPhoto() {
+            const t = translations[currentLang];
+            const files = editedPhotoInput.files;
+            if (files.length !== 1) {
+                alert(t.alertSelectOne);
+                return;
+            }
+
+            document.getElementById('phoneCheckModal').style.display = 'flex';
+        }
+
+        function hasPhoneNumber() {
+            document.getElementById('phoneCheckModal').style.display = 'none';
+            document.getElementById('contactModal').style.display = 'flex';
+        }
+
+        function noPhoneNumber() {
+            document.getElementById('phoneCheckModal').style.display = 'none';
+            document.getElementById('phoneInputModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('contactModal').style.display = 'none';
+            backToMain();
+        }
+
+        function closePhoneInputModal() {
+            document.getElementById('phoneInputModal').style.display = 'none';
+        }
+
+        function confirmEditedPhone() {
+            const phone = editedPhoneInput.value;
+            const phonePattern = /^\d{3}-\d{4}-\d{4}$/;
+            
+            if (!phonePattern.test(phone)) {
+                document.getElementById('editedPhoneError').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('editedPhoneError').style.display = 'none';
+            document.getElementById('phoneInputModal').style.display = 'none';
+
+            const file = editedPhotoInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    editedImage = img;
+                    mergeEditedPhoto(phone);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function mergeEditedPhoto(phone) {
+            document.getElementById('editedFlow').classList.add('hidden');
+            
+            const img = editedImage;
+            const canvas = resultCanvas;
+            const ctx = canvas.getContext('2d');
+
+            const headerHeight = 150;
+            const imgWidth = img.width;
+            const imgHeight = img.height;
+
+            canvas.width = imgWidth;
+            canvas.height = headerHeight + imgHeight;
+
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let fontSize = headerHeight * 0.85;
+            ctx.font = `bold ${fontSize}px Arial`;
+            
+            let textWidth = ctx.measureText(phone).width;
+            if (textWidth > canvas.width * 0.95) {
+                fontSize = (canvas.width * 0.95) / ctx.measureText(phone).width * fontSize;
+                ctx.font = `bold ${fontSize}px Arial`;
+            }
+            
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'black';
+            ctx.fillText(phone, canvas.width / 2, headerHeight / 2);
+
+            ctx.drawImage(img, 0, headerHeight, imgWidth, imgHeight);
+
+            canvas.style.display = 'block';
+
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `合成照片_${phone}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function startEditing() {
+            const t = translations[currentLang];
+            const phone = phoneInput.value;
+            const files = photosInput.files;
+
+            const phonePattern = /^\d{3}-\d{4}-\d{4}$/;
+            if (!phonePattern.test(phone)) {
+                phoneError.style.display = 'block';
+                return;
+            }
+
+            if (files.length < 2 || files.length > 3) {
+                fileError.style.display = 'block';
+                return;
+            }
+
+            document.getElementById('originalFlow').classList.add('hidden');
+            editorArea.style.display = 'block';
+            document.getElementById('backButton').style.display = 'block';
+            editorArea.innerHTML = `<div class="step-indicator">${t.step2}</div>`;
+
+            const imagePromises = Array.from(files).map(file => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            resolve(img);
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            Promise.all(imagePromises).then(loadedImages => {
+                images = loadedImages;
+                imagePoints = images.map(() => []);
+                imageRotations = images.map(() => 0);
+                createEditors();
+            });
+        }
+
+        function createEditors() {
+            const t = translations[currentLang];
+            images.forEach((img, index) => {
+                const editorDiv = document.createElement('div');
+                editorDiv.className = 'image-editor';
+                editorDiv.innerHTML = `
+                    <div class="editor-title">${t.photoNumber.replace('{number}', index + 1)}</div>
+                    <div class="canvas-container">
+                        <canvas class="edit-canvas" id="canvas${index}"></canvas>
+                    </div>
+                    <div class="instruction">
+                        <span class="point-info" id="info${index}">${t.clickCorners}</span>
+                        <div class="control-buttons">
+                            <button class="small-btn rotate" onclick="rotateImage(${index})">${t.rotate}</button>
+                            <button class="small-btn undo" onclick="undoPoint(${index})">${t.undo}</button>
+                            <button class="small-btn" onclick="resetPoints(${index})">${t.reset}</button>
+                        </div>
+                    </div>
+                `;
+                editorArea.appendChild(editorDiv);
+
+                const canvas = document.getElementById(`canvas${index}`);
+                const ctx = canvas.getContext('2d');
+                
+                const maxWidth = 800;
+                const scale = Math.min(1, maxWidth / img.width);
+                canvas.width = img.width * scale;
+                canvas.height = img.height * scale;
+                
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                canvas.addEventListener('click', (e) => handleCanvasClick(e, canvas, ctx, img, index, scale));
+            });
+        }
+
+        function handleCanvasClick(e, canvas, ctx, img, index, scale) {
+            if (imagePoints[index].length >= 4) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            imagePoints[index].push({ x, y });
+            redrawCanvas(index);
+            updatePointInfo(index);
+
+            if (imagePoints[index].length === 4) {
+                checkAllComplete();
+            }
+        }
+
+        function undoPoint(index) {
+            if (imagePoints[index].length > 0) {
+                imagePoints[index].pop();
+                redrawCanvas(index);
+                updatePointInfo(index);
+                document.getElementById('mergeButton').style.display = 'none';
+            }
+        }
+
+        function resetPoints(index) {
+            imagePoints[index] = [];
+            redrawCanvas(index);
+            updatePointInfo(index);
+            document.getElementById('mergeButton').style.display = 'none';
+        }
+
+        function rotateImage(index) {
+            imageRotations[index] = (imageRotations[index] + 90) % 360;
+            
+            const canvas = document.getElementById(`canvas${index}`);
+            const oldWidth = canvas.width;
+            const oldHeight = canvas.height;
+            
+            imagePoints[index] = imagePoints[index].map(point => {
+                let newX, newY;
+                switch(imageRotations[index]) {
+                    case 90:
+                        newX = oldHeight - point.y;
+                        newY = point.x;
+                        break;
+                    case 180:
+                        newX = oldWidth - point.x;
+                        newY = oldHeight - point.y;
+                        break;
+                    case 270:
+                        newX = point.y;
+                        newY = oldWidth - point.x;
+                        break;
+                    default:
+                        newX = point.x;
+                        newY = point.y;
+                }
+                return { x: newX, y: newY };
+            });
+            
+            redrawCanvas(index);
+        }
+
+        function redrawCanvas(index) {
+            const canvas = document.getElementById(`canvas${index}`);
+            const ctx = canvas.getContext('2d');
+            const img = images[index];
+            const rotation = imageRotations[index];
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (rotation === 90 || rotation === 270) {
+                const tempWidth = canvas.width;
+                canvas.width = canvas.height;
+                canvas.height = tempWidth;
+            }
+            
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate((rotation * Math.PI) / 180);
+            
+            if (rotation === 90 || rotation === 270) {
+                ctx.drawImage(img, -canvas.height / 2, -canvas.width / 2, canvas.height, canvas.width);
+            } else {
+                ctx.drawImage(img, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+            }
+            ctx.restore();
+
+            imagePoints[index].forEach((point, i) => {
+                ctx.fillStyle = '#8B3A3A';
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#F5F5DC';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, point.x, point.y);
+            });
+
+            if (imagePoints[index].length > 1) {
+                ctx.strokeStyle = '#789262';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(imagePoints[index][0].x, imagePoints[index][0].y);
+                for (let i = 1; i < imagePoints[index].length; i++) {
+                    ctx.lineTo(imagePoints[index][i].x, imagePoints[index][i].y);
+                }
+                if (imagePoints[index].length === 4) {
+                    ctx.closePath();
+                }
+                ctx.stroke();
+            }
+        }
+
+        function updatePointInfo(index) {
+            const t = translations[currentLang];
+            const info = document.getElementById(`info${index}`);
+            if (imagePoints[index].length < 4) {
+                info.textContent = t.pointsSelected
+                    .replace('{count}', imagePoints[index].length)
+                    .replace('{corner}', t.corners[imagePoints[index].length]);
+                info.style.color = '#4A7C7E';
+            } else {
+                info.textContent = t.completed;
+                info.style.color = '#789262';
+            }
+        }
+
+        function checkAllComplete() {
+            if (imagePoints.every(points => points.length === 4)) {
+                document.getElementById('mergeButton').style.display = 'block';
+            }
+        }
+
+        function goBackToStep1() {
+            document.getElementById('originalFlow').classList.remove('hidden');
+            editorArea.style.display = 'none';
+            document.getElementById('backButton').style.display = 'none';
+            document.getElementById('mergeButton').style.display = 'none';
+            resultCanvas.style.display = 'none';
+            
+            images = [];
+            imagePoints = [];
+            imageRotations = [];
+            editorArea.innerHTML = '';
+        }
+
+        function perspectiveTransform(srcPoints, img, rotation) {
+            const rotatedCanvas = document.createElement('canvas');
+            
+            if (rotation === 90 || rotation === 270) {
+                rotatedCanvas.width = img.height;
+                rotatedCanvas.height = img.width;
+            } else {
+                rotatedCanvas.width = img.width;
+                rotatedCanvas.height = img.height;
+            }
+            
+            const rotCtx = rotatedCanvas.getContext('2d');
+            rotCtx.save();
+            rotCtx.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
+            rotCtx.rotate((rotation * Math.PI) / 180);
+            
+            if (rotation === 90 || rotation === 270) {
+                rotCtx.drawImage(img, -img.height / 2, -img.width / 2, img.height, img.width);
+            } else {
+                rotCtx.drawImage(img, -img.width / 2, -img.height / 2, img.width, img.height);
+            }
+            rotCtx.restore();
+            
+            const minX = Math.min(srcPoints[0].x, srcPoints[1].x, srcPoints[2].x, srcPoints[3].x);
+            const maxX = Math.max(srcPoints[0].x, srcPoints[1].x, srcPoints[2].x, srcPoints[3].x);
+            const minY = Math.min(srcPoints[0].y, srcPoints[1].y, srcPoints[2].y, srcPoints[3].y);
+            const maxY = Math.max(srcPoints[0].y, srcPoints[1].y, srcPoints[2].y, srcPoints[3].y);
+            
+            const width = maxX - minX;
+            const height = maxY - minY;
+
+            const destCanvas = document.createElement('canvas');
+            destCanvas.width = Math.round(width);
+            destCanvas.height = Math.round(height);
+            const destCtx = destCanvas.getContext('2d');
+
+            destCtx.drawImage(
+                rotatedCanvas,
+                minX, minY, width, height,
+                0, 0, width, height
+            );
+
+            return destCanvas;
+        }
+
+        function mergePhotos() {
+            editorArea.style.display = 'none';
+            document.getElementById('backButton').style.display = 'none';
+            document.getElementById('mergeButton').style.display = 'none';
+            
+            const transformedImages = images.map((img, index) => {
+                const canvas = document.getElementById(`canvas${index}`);
+                const scale = canvas.width / img.width;
+                const scaledPoints = imagePoints[index].map(p => ({
+                    x: p.x / scale,
+                    y: p.y / scale
+                }));
+                return perspectiveTransform(scaledPoints, img, imageRotations[index]);
+            });
+
+            createMergedImage(phoneInput.value, transformedImages);
+        }
+
+        function createMergedImage(phone, images) {
+            const canvas = resultCanvas;
+            const ctx = canvas.getContext('2d');
+
+            const maxWidth = Math.max(...images.map(img => img.width));
+            const headerHeight = 150;
+            const totalHeight = headerHeight + images.reduce((sum, img) => {
+                const scaledHeight = (maxWidth / img.width) * img.height;
+                return sum + scaledHeight;
+            }, 0);
+
+            canvas.width = maxWidth;
+            canvas.height = totalHeight;
+
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, headerHeight);
+            
+            let fontSize = headerHeight * 0.85;
+            ctx.font = `bold ${fontSize}px Arial`;
+            
+            let textWidth = ctx.measureText(phone).width;
+            if (textWidth > canvas.width * 0.95) {
+                fontSize = (canvas.width * 0.95) / ctx.measureText(phone).width * fontSize;
+                ctx.font = `bold ${fontSize}px Arial`;
+            }
+            
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'black';
+            ctx.fillText(phone, canvas.width / 2, headerHeight / 2);
+
+            let currentY = headerHeight;
+            images.forEach(img => {
+                const scaledHeight = (maxWidth / img.width) * img.height;
+                ctx.drawImage(img, 0, currentY, maxWidth, scaledHeight);
+                currentY += scaledHeight;
+            });
+
+            canvas.style.display = 'block';
+
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `合成照片_${phone}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        window.selectLanguage = selectLanguage;
+        window.backToLanguageSelect = backToLanguageSelect;
+        window.selectMode = selectMode;
+        window.backToMain = backToMain;
+        window.checkEditedPhoto = checkEditedPhoto;
+        window.hasPhoneNumber = hasPhoneNumber;
+        window.noPhoneNumber = noPhoneNumber;
+        window.closeModal = closeModal;
+        window.closePhoneInputModal = closePhoneInputModal;
+        window.confirmEditedPhone = confirmEditedPhone;
+        window.startEditing = startEditing;
+        window.undoPoint = undoPoint;
+        window.resetPoints = resetPoints;
+        window.rotateImage = rotateImage;
+        window.goBackToStep1 = goBackToStep1;
+        window.mergePhotos = mergePhotos;
+    </script>
 </body>
 </html>
