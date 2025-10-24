@@ -1,1635 +1,1006 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>照片编辑</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #F5F5F0 0%, #D4E4E7 50%, #B8D4D6 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
-        }
-        
-        body.lang-ru,
-        body.lang-ru * {
-            letter-spacing: 0.5px !important;
-        }
-        
-        body.lang-ru h1 {
-            letter-spacing: 2px !important;
-        }
-        
-        body.lang-ru .choice-card h2,
-        body.lang-ru .language-card h2,
-        body.lang-ru .modal-content h2 {
-            letter-spacing: 1px !important;
-        }
-        
-        body.lang-vi,
-        body.lang-vi * {
-            letter-spacing: 0.5px !important;
-        }
-        
-        body.lang-vi h1 {
-            letter-spacing: 2px !important;
-        }
-        
-        body.lang-vi .choice-card h2,
-        body.lang-vi .language-card h2,
-        body.lang-vi .modal-content h2 {
-            letter-spacing: 1px !important;
-        }
-        
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(62, 95, 138, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-        }
-        
-        .container {
-            background: #FAFAF8;
-            border: 3px solid #A8DADC;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 
-                0 8px 16px rgba(62, 95, 138, 0.2),
-                inset 0 0 0 1px rgba(168, 218, 220, 0.3);
-            max-width: 900px;
-            width: 100%;
-            position: relative;
-        }
-        
-        .container::before,
-        .container::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #4A90A4;
-        }
-        
-        .container::before {
-            top: -2px;
-            left: -2px;
-            border-right: none;
-            border-bottom: none;
-        }
-        
-        .container::after {
-            top: -2px;
-            right: -2px;
-            border-left: none;
-            border-bottom: none;
-        }
-        
-        h1 {
-            text-align: center;
-            color: #2E4F7A;
-            margin-bottom: 20px;
-            font-size: 32px;
-            font-weight: normal;
-            letter-spacing: 8px;
-            position: relative;
-            padding-bottom: 15px;
-        }
-        
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #4A90A4, transparent);
-        }
-
-        /* 语言切换按钮 - 放在标题下方 */
-        .lang-switch {
-            display: block;
-            margin: 0 auto 30px;
-            padding: 12px 24px;
-            background: #4A90A4;
-            color: #FAFAF8;
-            border: 2px solid #3E7A8D;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-            max-width: 180px;
-            font-weight: 600;
-            letter-spacing: 2px;
-        }
-
-        .lang-switch:hover {
-            background: #3E7A8D;
-            transform: translate(1px, 1px);
-            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-        }
-
-        /* 语言选择界面 */
-        .language-selector {
-            text-align: center;
-        }
-
-        .language-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-top: 30px;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .language-card {
-            padding: 30px 20px;
-            border: 2px solid #A8DADC;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: #F5F8F9;
-            box-shadow: 2px 2px 8px rgba(62, 95, 138, 0.15);
-        }
-
-        .language-card:hover {
-            border-color: #4A90A4;
-            transform: translateY(-3px);
-            box-shadow: 3px 3px 12px rgba(74, 144, 164, 0.3);
-            background: #FFF;
-        }
-
-        .language-card .flag {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        .language-card h2 {
-            font-size: 22px;
-            color: #2E4F7A;
-            font-weight: normal;
-            letter-spacing: 2px;
-        }
-
-        /* 主选择界面 */
-        .main-choice {
-            display: flex;
-            gap: 30px;
-            margin-top: 40px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .choice-card {
-            flex: 1;
-            min-width: 250px;
-            padding: 40px 30px;
-            border: 2px solid #A8DADC;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: #F5F8F9;
-            position: relative;
-            box-shadow: 2px 2px 8px rgba(62, 95, 138, 0.15);
-        }
-
-        .choice-card:hover {
-            border-color: #4A90A4;
-            transform: translateY(-3px);
-            box-shadow: 3px 3px 12px rgba(74, 144, 164, 0.3);
-            background: #FFF;
-        }
-
-        .choice-card .icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-
-        .choice-card h2 {
-            font-size: 22px;
-            color: #2E4F7A;
-            margin-bottom: 15px;
-            font-weight: normal;
-            letter-spacing: 2px;
-        }
-
-        .choice-card p {
-            color: #5A7A8F;
-            font-size: 14px;
-            line-height: 1.8;
-        }
-        
-        .input-group {
-            margin-bottom: 25px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #2C3E50;
-            font-weight: normal;
-            font-size: 15px;
-            letter-spacing: 1px;
-        }
-        
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #D4E4E7;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s;
-            background: white;
-            font-family: inherit;
-        }
-        
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #3E5F8A;
-            background: #FFF;
-            box-shadow: 0 0 0 3px rgba(62, 95, 138, 0.1);
-        }
-        
-        input[type="file"] {
-            width: 100%;
-            padding: 30px;
-            border: 2px dashed #A8DADC;
-            border-radius: 8px;
-            cursor: pointer;
-            background: #F5F8F9;
-            font-size: 16px;
-            text-align: center;
-            font-family: inherit;
-            transition: all 0.3s;
-        }
-        
-        input[type="file"]:hover {
-            border-color: #4A90A4;
-            background: #FFF;
-        }
-        
-        input[type="file"]::file-selector-button {
-            padding: 10px 20px;
-            background: #3E5F8A;
-            color: #FAFAF8;
-            border: 2px solid #2E4F7A;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-right: 15px;
-            font-family: inherit;
-            letter-spacing: 1px;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-            transition: all 0.2s;
-        }
-        
-        input[type="file"]::file-selector-button:hover {
-            background: #2E4F7A;
-            transform: translate(1px, 1px);
-            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #3E5F8A 0%, #2E4F7A 100%);
-            color: #FAFAF8;
-            border: 3px solid #2E4F7A;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 10px;
-            font-family: inherit;
-            letter-spacing: 3px;
-            box-shadow: 0 4px 12px rgba(62, 95, 138, 0.2);
-            position: relative;
-        }
-        
-        .btn:hover {
-            background: linear-gradient(135deg, #2E4F7A 0%, #1E3A5F 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(62, 95, 138, 0.3);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn.back {
-            background: #5A7A8F;
-            border-color: #4A6A7F;
-            margin-bottom: 20px;
-        }
-        
-        .btn.back:hover {
-            background: #4A6A7F;
-        }
-        
-        .error {
-            color: #C73E1D;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-        
-        .file-info {
-            font-size: 14px;
-            color: #5A7A8F;
-            margin-top: 8px;
-        }
-        
-        .editor-area {
-            display: none;
-            margin-top: 30px;
-        }
-        
-        .image-editor {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #F5F8F9;
-            border: 2px solid #D4E4E7;
-            border-radius: 8px;
-        }
-        
-        .editor-title {
-            font-size: 18px;
-            font-weight: normal;
-            color: #2E4F7A;
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-        }
-        
-        .canvas-container {
-            position: relative;
-            display: inline-block;
-            max-width: 100%;
-        }
-        
-        .edit-canvas {
-            border: 2px solid #3E5F8A;
-            border-radius: 8px;
-            cursor: crosshair;
-            max-width: 100%;
-            display: block;
-            box-shadow: 2px 2px 8px rgba(62, 95, 138, 0.15);
-        }
-        
-        .instruction {
-            margin-top: 10px;
-            padding: 10px;
-            background: #FFF;
-            border: 1px solid #D4E4E7;
-            border-radius: 6px;
-            font-size: 14px;
-            color: #5A7A8F;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .point-info {
-            color: #3E5F8A;
-            font-weight: normal;
-            letter-spacing: 1px;
-        }
-        
-        .control-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .small-btn {
-            padding: 6px 12px;
-            background: #C73E1D;
-            color: #FAFAF8;
-            border: 2px solid #A32E15;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-            letter-spacing: 1px;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-        }
-        
-        .small-btn:hover {
-            transform: translate(1px, 1px);
-            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-        }
-        
-        .small-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: none;
-        }
-
-        .small-btn.undo {
-            background: #F7B500;
-            border-color: #D99C00;
-        }
-
-        .small-btn.rotate {
-            background: #3E5F8A;
-            border-color: #2E4F7A;
-        }
-        
-        .preview {
-            margin-top: 30px;
-            text-align: center;
-        }
-        
-        #result {
-            max-width: 100%;
-            border: 3px solid #A8DADC;
-            border-radius: 8px;
-            box-shadow: 3px 3px 12px rgba(62, 95, 138, 0.3);
-            margin-top: 20px;
-        }
-
-        .step-indicator {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 16px;
-            color: #3E5F8A;
-            font-weight: normal;
-            letter-spacing: 2px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(46, 79, 122, 0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #FAFAF8;
-            padding: 40px;
-            border: 3px solid #A8DADC;
-            border-radius: 12px;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 
-                0 8px 24px rgba(62, 95, 138, 0.4),
-                inset 0 0 0 1px rgba(168, 218, 220, 0.3);
-            position: relative;
-        }
-        
-        .modal-content::before,
-        .modal-content::after {
-            content: '';
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            border: 2px solid #4A90A4;
-        }
-        
-        .modal-content::before {
-            bottom: -2px;
-            left: -2px;
-            border-right: none;
-            border-top: none;
-        }
-        
-        .modal-content::after {
-            bottom: -2px;
-            right: -2px;
-            border-left: none;
-            border-top: none;
-        }
-
-        .modal-content h2 {
-            margin-bottom: 20px;
-            color: #2E4F7A;
-            font-weight: normal;
-            letter-spacing: 3px;
-        }
-
-        .modal-content p {
-            margin-bottom: 25px;
-            color: #5A7A8F;
-            line-height: 1.8;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
-
-        .modal-btn {
-            padding: 12px 30px;
-            border: 2px solid #2E4F7A;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: normal;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-            letter-spacing: 2px;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-        }
-
-        .modal-btn:hover {
-            transform: translate(1px, 1px) scale(1.02);
-            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-        }
-
-        .modal-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: none;
-        }
-
-        .modal-btn.yes {
-            background: #4A90A4;
-            color: #FAFAF8;
-        }
-
-        .modal-btn.no {
-            background: #3E5F8A;
-            color: #FAFAF8;
-        }
-
-        .contact-info {
-            background: #F5F8F9;
-            padding: 20px;
-            border: 1px solid #D4E4E7;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-
-        .contact-info p {
-            margin: 10px 0;
-            font-size: 16px;
-            color: #2C3E50;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* 手机端适配 */
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 24px;
-                letter-spacing: 4px;
-            }
-
-            .lang-switch {
-                font-size: 14px;
-                padding: 10px 18px;
-            }
-
-            .language-grid {
-                max-width: 100%;
-            }
-
-            .language-card .flag {
-                font-size: 36px;
-            }
-
-            .language-card h2 {
-                font-size: 20px;
-            }
-
-            .main-choice {
-                flex-direction: column;
-            }
-
-            .choice-card {
-                min-width: 100%;
-            }
-
-            .modal-content {
-                padding: 30px 20px;
-                margin: 20px;
-            }
-
-            .instruction {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-
-            .control-buttons {
-                width: 100%;
-                justify-content: space-between;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>多语言表单填写应用（移动端下载兼容版）</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { min-height:100vh; position:relative; }
+    body {
+      font-family: -apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif;
+      background: linear-gradient(135deg, #F5F5F0 0%, #D4E4E7 50%, #B8D4D6 100%);
+      min-height:100vh; padding:20px; position:relative; overflow-x:hidden;
+    }
+    body::before {
+      content:''; position:fixed; top:-50%; right:-50%; width:200%; height:200%;
+      background: radial-gradient(circle, rgba(74,144,164,.05) 0%, transparent 70%);
+      animation: rotate 30s linear infinite; pointer-events:none; z-index:0;
+    }
+    @keyframes rotate { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+    #app { position:relative; z-index:1; }
+    .container {
+      max-width:500px; margin:0 auto; background:#FAFAF8; border-radius:12px;
+      box-shadow:0 10px 40px rgba(46,79,122,.15); padding:30px;
+      border:1px solid rgba(62,95,138,.1);
+    }
+    .admin-container { max-width:1400px; }
+    h1 { text-align:center; color:#2E4F7A; font-size:24px; margin-bottom:30px; font-weight:bold; }
+    .admin-title { color:#1E3A5F; font-size:28px; }
+    label { display:block; font-weight:600; font-size:14px; margin-bottom:8px; color:#2C3E50; transition:all .3s; }
+    .form-group:hover label { color:#3E5F8A; transform:translateX(3px); }
+    input[type='text'], input[type='date'], input[type='number'], select {
+      width:100%; padding:10px 15px; border:2px solid #D4E4E7; border-radius:8px; font-size:14px; transition:all .3s; background:#fff;
+    }
+    input:focus, select:focus {
+      outline:none; border-color:#3E5F8A; box-shadow:0 0 0 3px rgba(62,95,138,.1); transform:translateY(-2px); background:#FEFEFE;
+    }
+    .form-group{ margin-bottom:20px; }
+    .language-buttons{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:30px; }
+    .lang-btn, .tab-btn, .field-btn, .toggle-btn, .action-btn {
+      padding:10px; border:none; border-radius:8px; background:#E8F0F2; color:#2C3E50; font-weight:500; cursor:pointer;
+      transition:all .3s; border:1px solid rgba(62,95,138,.2);
+    }
+    .lang-btn:hover, .tab-btn:hover, .field-btn:hover, .toggle-btn:hover, .action-btn:hover { background:#D4E4E7; transform:translateY(-2px); box-shadow:0 4px 12px rgba(62,95,138,.15); }
+    .lang-btn.active, .tab-btn.active { background:#3E5F8A; color:#fff; }
+    .signature-container{ border:2px solid #B8D4D6; border-radius:8px; overflow:hidden; margin-top:10px; transition:all .3s; }
+    .signature-container:hover{ border-color:#4A90A4; box-shadow:0 4px 16px rgba(74,144,164,.2); transform:scale(1.01); }
+    canvas{ display:block; width:100%; background:#fff; cursor:crosshair; touch-action:none; }
+    .clear-btn{ margin-top:10px; background:none; border:none; color:#C73E1D; font-size:14px; cursor:pointer; text-decoration:underline; }
+    .clear-btn:hover{ color:#A32E15; }
+    .generate-btn{
+      width:100%; padding:15px; background:linear-gradient(135deg,#3E5F8A 0%, #2E4F7A 100%); color:#fff; border:none; border-radius:8px;
+      font-size:16px; font-weight:600; cursor:pointer; margin-top:30px; transition:all .3s; display:flex; align-items:center; justify-content:center; gap:10px;
+      box-shadow:0 4px 12px rgba(62,95,138,.2);
+    }
+    .generate-btn:hover{ background:linear-gradient(135deg,#2E4F7A 0%,#1E3A5F 100%); transform:translateY(-2px); box-shadow:0 6px 16px rgba(62,95,138,.3); }
+    .note{ text-align:center; font-size:12px; color:#5A7A8F; margin-top:20px; }
+    .admin-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; }
+    .admin-layout{ display:grid; grid-template-columns:2fr 1fr; gap:30px; }
+    .left-panel,.right-panel{
+      background:#FAFAF8; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(62,95,138,.1); border:1px solid rgba(62,95,138,.1);
+    }
+    .section-title{ font-size:18px; font-weight:700; color:#2E4F7A; margin-bottom:15px; padding-bottom:10px; border-bottom:2px solid #B8D4D6; }
+    .template-tabs,.language-tabs{ display:flex; gap:10px; margin-bottom:20px; }
+    .field-buttons{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+    .preview-box{ border:2px solid #A8DADC; background:#F0F8F9; padding:15px; border-radius:8px; margin-bottom:20px; }
+    .image-wrapper{ position:relative; display:inline-block; max-width:100%; }
+    .preview-box img{ max-width:100%; cursor:crosshair; border:2px dashed #A8DADC; display:block; }
+    #markersContainer{ position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+    .field-marker{
+      position:absolute; width:28px; height:28px; background:rgba(74,144,164,.9); color:#fff; border-radius:50%;
+      display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; transform:translate(-50%,-150%);
+      box-shadow:0 2px 8px rgba(62,95,138,.3); border:3px solid #fff; z-index:10;
+    }
+    .field-label{ position:absolute; background:rgba(74,144,164,.95); color:#fff; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:600; transform:translate(-50%,-250%); white-space:nowrap; z-index:10; }
+    .field-preview-text{ position:absolute; pointer-events:none; z-index:8; white-space:nowrap; opacity:.9; }
+    .field-list{ margin-top:20px; }
+    .field-item{ background:#F5F8F9; border:1px solid #D4E4E7; border-radius:8px; padding:12px; margin-bottom:10px; }
+    .field-item-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .field-name{ font-weight:600; color:#2E4F7A; }
+    .field-actions{ display:flex; gap:8px; }
+    .edit-btn{ padding:4px 12px; border:none; border-radius:4px; cursor:pointer; font-size:12px; background:#3E5F8A; color:#fff; }
+    .delete-btn{ padding:4px 12px; border:none; border-radius:4px; cursor:pointer; font-size:12px; background:#C73E1D; color:#fff; }
+    .reposition-btn{ padding:4px 12px; border:none; border-radius:4px; cursor:pointer; font-size:12px; background:#F7B500; color:#fff; }
+    .param-editor{ background:#fff; border:2px solid #3E5F8A; border-radius:8px; padding:15px; margin-top:10px; }
+    .param-row{ display:grid; grid-template-columns:100px 1fr; gap:10px; margin-bottom:12px; align-items:center; }
+    .param-label{ font-size:13px; font-weight:600; color:#2C3E50; }
+    .save-param-btn{ width:100%; padding:8px; background:#4A90A4; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
+    .upload-section{ margin-bottom:20px; padding:15px; background:#F5F8F9; border-radius:8px; border:1px solid #D4E4E7; }
+    .mode-switch{ margin-top:15px; padding:12px; background:#F0F8F9; border:2px solid #A8DADC; border-radius:8px; display:flex; align-items:center; gap:10px; }
+    .password-container{ max-width:400px; text-align:center; }
+    .password-title{ font-size:24px; font-weight:700; color:#2E4F7A; margin-bottom:10px; }
+    .password-subtitle{ color:#5A7A8F; margin-bottom:20px; font-size:14px; }
+    .password-input{ width:100%; padding:15px; border:2px solid #D4E4E7; border-radius:8px; font-size:16px; margin-bottom:12px; text-align:center; letter-spacing:2px; background:#fff; }
+    .password-btn{ width:100%; padding:15px; background:linear-gradient(135deg,#3E5F8A 0%, #2E4F7A 100%); color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:600; cursor:pointer; }
+    .password-error{ color:#C73E1D; font-size:14px; margin-top:10px; display:none; }
+    .password-error.show{ display:block; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 语言选择界面 -->
-        <div id="languageSelect">
-            <h1>选择语言 / Select Language</h1>
-            <div class="language-grid">
-                <div class="language-card" onclick="selectLanguage('zh')">
-                    <div class="flag">🇨🇳</div>
-                    <h2>简体中文</h2>
-                </div>
-                <div class="language-card" onclick="selectLanguage('vi')">
-                    <div class="flag">🇻🇳</div>
-                    <h2>Tiếng Việt</h2>
-                </div>
-                <div class="language-card" onclick="selectLanguage('ru')">
-                    <div class="flag">🇷🇺</div>
-                    <h2>Русский</h2>
-                </div>
-                <div class="language-card" onclick="selectLanguage('ko')">
-                    <div class="flag">🇰🇷</div>
-                    <h2>한국어</h2>
-                </div>
-            </div>
-        </div>
+  <div id="app"></div>
 
-        <h1 id="mainTitle" class="hidden">照片编辑</h1>
-        
-        <button class="lang-switch hidden" onclick="backToLanguageSelect()">🌐 <span id="langSwitchText">切换语言</span></button>
-        
-        <!-- 主选择界面 -->
-        <div id="mainChoice" class="hidden">
-            <p style="text-align: center; color: #5A7A8F; margin-bottom: 20px;" id="chooseTypeText">请选择您的照片类型</p>
-            <div class="main-choice">
-                <div class="choice-card" onclick="selectMode('edited')">
-                    <div class="icon">✅</div>
-                    <h2 id="editedCardTitle">已编辑好的照片</h2>
-                    <p id="editedCardDesc">已经合成好的照片<br>可能需要添加或修改手机号</p>
-                </div>
-                <div class="choice-card" onclick="selectMode('original')">
-                    <div class="icon">📷</div>
-                    <h2 id="originalCardTitle">照片原件</h2>
-                    <p id="originalCardDesc">需要合成的原始照片<br>2-3张照片合成一张</p>
-                </div>
-            </div>
-        </div>
+  <script>
+    // ===================== 多语言与工种 =====================
+    const translations = {
+      zh:{ title:'员工信息表单', selectLanguage:'选择语言', name:'姓名', translateName:'翻译', birthday:'生日', address:'地址', addressSearch:'搜索地址', position:'职位', positionCustom:'自填', positionSelect:'选择工种', passport:'护照号', phone:'手机号', experience:'工作经历', experienceYears:'年', signature:'签名', clearSignature:'清除签名', generate:'生成表单', sendToAdmin:'📱 发送至管理员', adminMode:'管理员模式', userMode:'用户模式', addressHint:'💡 在Naver地图中搜索地址,然后复制粘贴到输入框' },
+      ko:{ title:'직원 정보 양식', selectLanguage:'언어 선택', name:'성명', translateName:'번역', birthday:'생년월일', address:'주소', addressSearch:'주소 검색', position:'직종', positionCustom:'직접 입력', positionSelect:'선택', residentNum:'주민등록번호', phone:'전화번호', experience:'경력', experienceYears:'년', signature:'서명', clearSignature:'서명 지우기', generate:'양식 생성', sendToAdmin:'📱 관리자에게 전송', adminMode:'관리자 모드', userMode:'사용자 모드', addressHint:'💡 Naver 지도에서 주소를 검색한 후 입력란에 붙여넣기 하세요' },
+      vi:{ title:'Mẫu thông tin nhân viên', selectLanguage:'Chọn ngôn ngữ', name:'Họ và tên', translateName:'Dịch', birthday:'Ngày sinh', address:'Địa chỉ', addressSearch:'Tìm địa chỉ', position:'Vị trí', positionCustom:'Tự nhập', positionSelect:'Chọn', passport:'Số hộ chiếu', phone:'Số điện thoại', experience:'Kinh nghiệm', experienceYears:'năm', signature:'Chữ ký', clearSignature:'Xóa chữ ký', generate:'Tạo mẫu', sendToAdmin:'📱 Gửi cho quản trị viên', adminMode:'Chế độ quản trị', userMode:'Chế độ người dùng', addressHint:'💡 Tìm kiếm địa chỉ trên bản đồ Naver, sau đó sao chép và dán vào ô nhập' },
+      ru:{ title:'Форма информации о сотруднике', selectLanguage:'Выберите язык', name:'ФИО', translateName:'Перевод', birthday:'Дата рождения', address:'Адрес', addressSearch:'Поиск адреса', position:'Должность', positionCustom:'Ввести', positionSelect:'Выбрать', passport:'Номер паспорта', phone:'Телефон', experience:'Опыт работы', experienceYears:'лет', signature:'Подпись', clearSignature:'Очистить подпись', generate:'Создать форму', sendToAdmin:'📱 Отправить администратору', adminMode:'Режим администратора', userMode:'Режим пользователя', addressHint:'💡 Найдите адрес на карте Naver, затем скопируйте и вставьте в поле ввода' }
+    };
 
-        <!-- 已编辑照片流程 -->
-        <div id="editedFlow" class="hidden">
-            <button class="btn back" onclick="backToMain()">← <span id="backToMainText">返回主界面</span></button>
-            
-            <div class="step-indicator" id="editedStepText">已编辑照片处理</div>
-            
-            <div class="input-group">
-                <label for="editedPhoto" id="editedPhotoLabel">选择已编辑好的照片 (1张)</label>
-                <input type="file" id="editedPhoto" accept="image/*">
-                <div class="file-info" id="editedFileInfo">未选择文件</div>
-            </div>
-            
-            <button class="btn" onclick="checkEditedPhoto()" id="editedNextBtn">下一步</button>
-        </div>
+    const positionOptions = {
+      zh:['整理','老炮','拆除','钢筋','浇筑','架子工','信号员','二炮','钢炮','碎石抹灰','安全'],
+      ko:['정리','형틀','해체','철근','타설','비계','신호수','알퍼','갱퍼','할석미장','안전'],
+      vi:['정리','형틀','해체','철근','타설','비계','신호수','알퍼','갱퍼','할석미장','안전'],
+      ru:['정리','형틀','해체','철근','타설','비계','신호수','알퍼','갱퍼','할석미장','안전']
+    };
 
-        <!-- 原件照片流程 -->
-        <div id="originalFlow" class="hidden">
-            <button class="btn back" onclick="backToMain()">← <span id="backToMainText2">返回主界面</span></button>
-            
-            <div class="step-indicator" id="originalStepText">步骤 1/3: 输入信息</div>
-            
-            <div class="input-group">
-                <label for="phone" id="phoneLabel">手机号码</label>
-                <input type="text" id="phone" placeholder="" maxlength="13">
-                <div class="error" id="phoneError">请输入正确格式的手机号 (xxx-xxxx-xxxx)</div>
-            </div>
-            
-            <div class="input-group">
-                <label for="photos" id="photosLabel">选择照片 (2-3张)</label>
-                <input type="file" id="photos" accept="image/*" multiple>
-                <div class="file-info" id="fileInfo">未选择文件</div>
-                <div class="error" id="fileError">请选择2-3张照片</div>
-            </div>
-            
-            <button class="btn" onclick="startEditing()" id="originalNextBtn">下一步:编辑照片区域</button>
-        </div>
+    const positionMapping = {
+      '整理':'정리','老炮':'형틀','拆除':'해체','钢筋':'철근','浇筑':'타설','架子工':'비계','信号员':'신호수','二炮':'알퍼','钢炮':'갱퍼','碎石抹灰':'할석미장','安全':'안전'
+    };
+    function convertPositionToKorean(p){ return positionMapping[p] || p; }
 
-        <!-- 编辑区域 -->
-        <div class="editor-area" id="editorArea"></div>
-        
-        <div style="display:none;" id="backButton">
-            <button class="btn back" onclick="goBackToStep1()">← <span id="backToStep1Text">返回上一步</span></button>
-        </div>
-        
-        <div style="display:none;" id="mergeButton">
-            <button class="btn" onclick="mergePhotos()">🎨 <span id="mergeButtonText">合成照片</span></button>
-        </div>
-        
-        <div class="preview">
-            <canvas id="result" style="display:none;"></canvas>
-        </div>
-    </div>
+    // ===================== 名字翻译功能 =====================
+    // 中文常见字到韩语的映射
+    const chineseToKorean = {
+      '李':'이','王':'왕','张':'장','刘':'유','陈':'진','杨':'양','黄':'황','赵':'조','吴':'오','周':'주',
+      '徐':'서','孙':'손','马':'마','朱':'주','胡':'호','郭':'곽','何':'하','高':'고','林':'림','郑':'정',
+      '小':'소','大':'대','明':'명','华':'화','东':'동','文':'문','建':'건','国':'국','军':'군','强':'강',
+      '伟':'위','勇':'용','磊':'뢰','涛':'도','鹏':'붕','杰':'걸','峰':'봉','超':'초','波':'파','辉':'휘',
+      '刚':'강','平':'평','飞':'비','宇':'우','浩':'호','志':'지','亮':'양','凯':'개','龙':'용','春':'춘',
+      '海':'해','斌':'빈','新':'신','晨':'신','雷':'뢰','健':'건','成':'성','鑫':'신','宁':'닝','静':'정',
+      '丽':'려','芳':'방','燕':'연','娟':'연','红':'홍','霞':'하','秀':'수','玲':'령','梅':'매','兰':'란',
+      '美':'미','婷':'정','倩':'천','敏':'민','莉':'리','英':'영','云':'운','慧':'혜','颖':'영','萍':'평',
+      '洁':'결','佳':'가','琳':'림','雪':'설','菊':'국','艳':'염','月':'월','凤':'봉','晶':'정','丹':'단',
+      '京':'경','安':'안','福':'복','祥':'상','武':'무','清':'청','正':'정','仁':'인','义':'의','德':'덕',
+      '松':'송','江':'강','山':'산','青':'청','友':'우','贵':'귀','兴':'흥','振':'진','晓':'효','亚':'아',
+      '永':'영','元':'원','长':'장','世':'세','中':'중','天':'천','宝':'보','生':'생','忠':'충','胜':'승',
+      '时':'시','思':'사','光':'광','南':'남','北':'북','方':'방','子':'자','民':'민','玉':'옥','树':'수',
+      '才':'재','有':'유','家':'가','业':'업','学':'학','利':'리','和':'화','立':'립','达':'달','金':'김',
+      '力':'력','贤':'현','显':'현','雅':'아','乐':'락','富':'부','豪':'호','泽':'택','锋':'봉','涵':'함',
+      '俊':'준','翔':'상','博':'박','远':'원','书':'서','启':'계','维':'유','道':'도','锦':'금','荣':'영',
+      '星':'성','银':'은','铁':'철','铜':'동','钢':'강','石':'석','水':'수','火':'화','风':'풍','雨':'우',
+      '花':'화','草':'초','林':'림','森':'삼','茂':'무','荣':'영','华':'화','富':'부','贵':'귀','康':'강',
+      '泰':'태','安':'안','乐':'락','寿':'수','吉':'길','祥':'상','福':'복','禄':'녹','喜':'희','庆':'경',
+      '发':'발','财':'재','进':'진','升':'승','登':'등','高':'고','远':'원','大':'대','广':'광','宏':'홍',
+      '俐':'리','娜':'나','婉':'완','柔':'유','温':'온','淑':'숙','端':'단','贞':'정','洪':'홍','汉':'한',
+      '爱':'애','仙':'선','凡':'범','冰':'빙','心':'심','怡':'이','惠':'혜','珍':'진','琪':'기','瑞':'서',
+      '璇':'선','瑶':'요','环':'환','畅':'창','真':'진','祺':'기','竹':'죽','笑':'소','筱':'소','纯':'순',
+      '绮':'기','翠':'취','聪':'총','艺':'예','芬':'분','芸':'운','若':'약','莹':'영','菁':'정','萌':'맹',
+      '虹':'홍','蝶':'접','诗':'시','语':'어','贺':'하','越':'월','迎':'영','连':'련','邦':'방','邑':'읍',
+      '采':'채','银':'은','锐':'예','陵':'릉','霖':'림','靖':'정','静':'정','韵':'운','颂':'송','鸿':'홍',
+      '宽':'관','厚':'후','善':'선','仪':'의','容':'용','宜':'의','寒':'한','廷':'정','延':'연','开':'개',
+      '恩':'은','慈':'자','懿':'의','戈':'과','才':'재','承':'승','拓':'탁','敬':'경','敦':'돈','斯':'사',
+      '旭':'욱','昊':'호','昌':'창','昭':'소','智':'지','暖':'난','曙':'서','朗':'랑','木':'목','本':'본',
+      '权':'권','柏':'백','栋':'동','梁':'양','楠':'남','欣':'흔','欢':'환','歌':'가','毅':'의','汝':'여',
+      '沛':'패','河':'하','泉':'천','洋':'양','浚':'준','淳':'순','深':'심','渊':'연','源':'원','溪':'계',
+      '滨':'빈','澄':'징','瀚':'한','炎':'염','烨':'엽','煊':'훤','熙':'희','燊':'신','牧':'목','理':'리',
+      '琛':'침','瑜':'유','璋':'장','璐':'로','甫':'보','田':'전','畅':'창','百':'백','盛':'성','睿':'예',
+      '知':'지','礼':'례','禹':'우','科':'과','秋':'추','程':'정','穆':'목','端':'단','策':'책','筠':'균',
+      '简':'간','米':'미','精':'정','绍':'소','继':'계','维':'유','绵':'면','缘':'연','翰':'한','翼':'익',
+      '腾':'등','良':'양','芝':'지','苗':'묘','茹':'여','茵':'인','荃':'전','荷':'하','荻':'적','菲':'비',
+      '萱':'훤','葵':'규','蓉':'용','蔚':'위','蕊':'예','蕾':'뢰','薇':'미','藤':'등','融':'융','行':'행',
+      '衡':'형','裕':'유','西':'서','要':'요','见':'견','言':'언','计':'계','记':'기','训':'훈','诚':'성',
+      '谊':'의','谦':'겸','豫':'예','贞':'정','跃':'약','轩':'헌','辰':'신','迪':'적','逸':'일','遥':'요',
+      '邵':'소','邻':'린','郁':'욱','都':'도','鉴':'감','锡':'석','锦':'금','镇':'진','镭':'뢰','闻':'문',
+      '阔':'활','阳':'양','际':'제','隆':'륭','雁':'안','集':'집','霄':'소','霁':'제','青':'청','韬':'도',
+      '顺':'순','颂':'송','风':'풍','飒':'살','馨':'형','骏':'준','魁':'괴','鸣':'명','鹤':'학','鹏':'붕',
+      '麒':'기','麟':'린','黎':'려','齐':'제'
+    };
 
-    <!-- 弹窗：询问是否有手机号 -->
-    <div class="modal" id="phoneCheckModal">
-        <div class="modal-content">
-            <h2 id="phoneCheckTitle">📱 照片确认</h2>
-            <p id="phoneCheckDesc">您导入的照片上是否已经有手机号?</p>
-            <div class="modal-buttons">
-                <button class="modal-btn yes" onclick="hasPhoneNumber()" id="hasPhoneBtn">有手机号</button>
-                <button class="modal-btn no" onclick="noPhoneNumber()" id="noPhoneBtn">没有手机号</button>
-            </div>
-        </div>
-    </div>
+    // 越南语音节到韩语的映射
+    const vietnameseToKorean = {
+      // 声母
+      'Ph':'프','Th':'트','Kh':'크','Tr':'쯔','Ng':'응','Nh':'느','Ch':'쯔','Gi':'지','Qu':'꾸',
+      // 常见音节
+      'Phạm':'팜','Nguyễn':'응우옌','Trần':'쩐','Lê':'레','Hoàng':'호앙','Phan':'판','Vũ':'부','Đặng':'당',
+      'Bùi':'부이','Đỗ':'도','Hồ':'호','Ngô':'응오','Dương':'즈엉','Lý':'리',
+      // 名字常见音节
+      'Anh':'안','Tuấn':'두안','Hùng':'훙','Dũng':'중','Minh':'민','Quang':'꽝','Thành':'타인',
+      'Văn':'반','Hải':'하이','Đức':'득','Huy':'휘','Nam':'남','Long':'롱','Hoàng':'호앙',
+      'Thị':'티','Thúy':'투이','Linh':'린','Mai':'마이','Lan':'란','Hoa':'호아','Nga':'응아',
+      'Thi':'티','Van':'반','Tuan':'두안','Hung':'훙','Dung':'중','Thanh':'타인','Hai':'하이',
+      // 单音节
+      'a':'아','e':'에','i':'이','o':'오','u':'우','ô':'어','ơ':'어','ư':'으',
+      'An':'안','Ba':'바','Ca':'까','Da':'다','Ga':'가','Ha':'하','La':'라','Ma':'마',
+      'Na':'나','Pa':'빠','Ta':'따','Va':'바','Xa':'싸','Ya':'야'
+    };
 
-    <!-- 弹窗：联系管理员 -->
-    <div class="modal" id="contactModal">
-        <div class="modal-content">
-            <h2 id="contactTitle">✅ 照片已完成</h2>
-            <p id="contactDesc1">您的照片已经包含手机号,无需再次编辑。</p>
-            <p id="contactDesc2">如需修改,请联系管理员:</p>
-            <div class="contact-info">
-                <p><strong id="contactAdmin">📞 需要修改请联系管理员</strong></p>
-                <p id="contactNote">请通过您的联系方式与管理员沟通</p>
-            </div>
-            <button class="modal-btn no" onclick="closeModal()" id="closeModalBtn">关闭</button>
-        </div>
-    </div>
+    // 俄语字母到韩语的映射
+    const russianToKorean = {
+      'А':'아','Б':'브','В':'브','Г':'그','Д':'드','Е':'예','Ё':'요','Ж':'즈','З':'즈',
+      'И':'이','Й':'이','К':'크','Л':'ль','М':'므','Н':'느','О':'오','П':'프','Р':'르',
+      'С':'스','Т':'트','У':'우','Ф':'프','Х':'흐','Ц':'츠','Ч':'츠','Ш':'쉬','Щ':'시',
+      'Ъ':'','Ы':'으이','Ь':'','Э':'에','Ю':'유','Я':'야',
+      'а':'아','б':'브','в':'브','г':'그','д':'드','е':'예','ё':'요','ж':'즈','з':'즈',
+      'и':'이','й':'이','к':'크','л':'ль','м':'므','н':'느','о':'오','п':'프','р':'르',
+      'с':'스','т':'트','у':'우','ф':'프','х':'흐','ц':'츠','ч':'츠','ш':'쉬','щ':'시',
+      'ъ':'','ы':'으이','ь':'','э':'에','ю':'유','я':'야'
+    };
 
-    <!-- 弹窗：输入手机号 -->
-    <div class="modal" id="phoneInputModal">
-        <div class="modal-content">
-            <h2 id="phoneInputTitle">📱 输入手机号</h2>
-            <p id="phoneInputDesc">请输入要添加到照片上的手机号</p>
-            <div class="input-group">
-                <input type="text" id="editedPhone" placeholder="" maxlength="13" style="margin-bottom: 10px;">
-                <div class="error" id="editedPhoneError">请输入正确格式的手机号 (xxx-xxxx-xxxx)</div>
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-btn no" onclick="confirmEditedPhone()" id="confirmPhoneBtn">确认</button>
-                <button class="modal-btn" style="background: #5A7A8F; border-color: #4A6A7F;" onclick="closePhoneInputModal()" id="cancelPhoneBtn">取消</button>
-            </div>
-        </div>
-    </div>
+    function translateName(){
+      const name = state.formData['name'];
+      if(!name || !name.trim()){
+        alert('请先输入姓名 / 이름을 먼저 입력하세요');
+        return;
+      }
 
-    <script>
-        // 多语言配置
-        const translations = {
-            zh: {
-                langSwitch: '切换语言',
-                mainTitle: '照片编辑',
-                chooseType: '请选择您的照片类型',
-                editedCardTitle: '已编辑好的照片',
-                editedCardDesc: '已经合成好的照片<br>可能需要添加或修改手机号',
-                originalCardTitle: '照片原件',
-                originalCardDesc: '需要合成的原始照片<br>2-3张照片合成一张',
-                backToMain: '返回主界面',
-                editedStep: '已编辑照片处理',
-                editedPhotoLabel: '选择已编辑好的照片 (1张)',
-                noFileSelected: '未选择文件',
-                nextStep: '下一步',
-                originalStep: '步骤 1/3: 输入信息',
-                phoneLabel: '手机号码',
-                phonePlaceholder: '',
-                phoneError: '请输入正确格式的手机号 (xxx-xxxx-xxxx)',
-                photosLabel: '选择照片 (2-3张)',
-                fileError: '请选择2-3张照片',
-                nextEditArea: '下一步:编辑照片区域',
-                backToStep1: '返回上一步',
-                mergePhotos: '合成照片',
-                phoneCheckTitle: '📱 照片确认',
-                phoneCheckDesc: '您导入的照片上是否已经有手机号?',
-                hasPhone: '有手机号',
-                noPhone: '没有手机号',
-                contactTitle: '✅ 照片已完成',
-                contactDesc1: '您的照片已经包含手机号,无需再次编辑。',
-                contactDesc2: '如需修改,请联系管理员:',
-                contactAdmin: '📞 需要修改请联系管理员',
-                contactNote: '请通过您的联系方式与管理员沟通',
-                close: '关闭',
-                phoneInputTitle: '📱 输入手机号',
-                phoneInputDesc: '请输入要添加到照片上的手机号',
-                confirm: '确认',
-                cancel: '取消',
-                filesSelected: '已选择 {count} 张照片',
-                photoNumber: '照片 {number}',
-                clickCorners: '请点击4个角点(按顺序:左上、右上、右下、左下)',
-                pointsSelected: '已选择 {count} 个点,请继续点击{corner}角',
-                completed: '✓ 已完成选择',
-                rotate: '🔄 旋转90°',
-                undo: '↶ 撤销上一点',
-                reset: '✕ 重新选择',
-                corners: ['左上', '右上', '右下', '左下'],
-                step2: '步骤 2/3: 选择照片区域(每张图点击4个角)',
-                alertSelectOne: '请选择1张照片',
-                alertSelect23: '请选择2-3张照片'
-            },
-            vi: {
-                langSwitch: 'Đổi ngôn ngữ',
-                mainTitle: 'Chỉnh sửa ảnh',
-                chooseType: 'Vui lòng chọn loại ảnh của bạn',
-                editedCardTitle: 'Ảnh đã chỉnh sửa',
-                editedCardDesc: 'Ảnh đã được ghép<br>Có thể cần thêm hoặc sửa số điện thoại',
-                originalCardTitle: 'Ảnh gốc',
-                originalCardDesc: 'Ảnh gốc cần ghép<br>Ghép 2-3 ảnh thành 1',
-                backToMain: 'Quay lại trang chính',
-                editedStep: 'Xử lý ảnh đã chỉnh sửa',
-                editedPhotoLabel: 'Chọn ảnh đã chỉnh sửa (1 ảnh)',
-                noFileSelected: 'Chưa chọn tệp',
-                nextStep: 'Tiếp theo',
-                originalStep: 'Bước 1/3: Nhập thông tin',
-                phoneLabel: 'Số điện thoại',
-                phonePlaceholder: '',
-                phoneError: 'Vui lòng nhập đúng định dạng số điện thoại (xxx-xxxx-xxxx)',
-                photosLabel: 'Chọn ảnh (2-3 ảnh)',
-                fileError: 'Vui lòng chọn 2-3 ảnh',
-                nextEditArea: 'Tiếp theo: Chỉnh sửa vùng ảnh',
-                backToStep1: 'Quay lại',
-                mergePhotos: 'Ghép ảnh',
-                phoneCheckTitle: '📱 Xác nhận ảnh',
-                phoneCheckDesc: 'Ảnh bạn nhập đã có số điện thoại chưa?',
-                hasPhone: 'Có số điện thoại',
-                noPhone: 'Chưa có số điện thoại',
-                contactTitle: '✅ Ảnh đã hoàn thành',
-                contactDesc1: 'Ảnh của bạn đã có số điện thoại, không cần chỉnh sửa lại.',
-                contactDesc2: 'Nếu cần sửa đổi, vui lòng liên hệ quản trị viên:',
-                contactAdmin: '📞 Cần sửa đổi vui lòng liên hệ quản trị viên',
-                contactNote: 'Vui lòng liên lạc với quản trị viên qua phương thức liên hệ của bạn',
-                close: 'Đóng',
-                phoneInputTitle: '📱 Nhập số điện thoại',
-                phoneInputDesc: 'Vui lòng nhập số điện thoại để thêm vào ảnh',
-                confirm: 'Xác nhận',
-                cancel: 'Hủy',
-                filesSelected: 'Đã chọn {count} ảnh',
-                photoNumber: 'Ảnh {number}',
-                clickCorners: 'Nhấp vào 4 góc (theo thứ tự: trên trái, trên phải, dưới phải, dưới trái)',
-                pointsSelected: 'Đã chọn {count} điểm, tiếp tục nhấp góc {corner}',
-                completed: '✓ Hoàn thành chọn',
-                rotate: '🔄 Xoay 90°',
-                undo: '↶ Hoàn tác',
-                reset: '✕ Đặt lại',
-                corners: ['trên trái', 'trên phải', 'dưới phải', 'dưới trái'],
-                step2: 'Bước 2/3: Chọn vùng ảnh (Nhấp 4 góc cho mỗi ảnh)',
-                alertSelectOne: 'Vui lòng chọn 1 ảnh',
-                alertSelect23: 'Vui lòng chọn 2-3 ảnh'
-            },
-            ru: {
-                langSwitch: 'Сменить язык',
-                mainTitle: 'Редактор фото',
-                chooseType: 'Пожалуйста, выберите тип фото',
-                editedCardTitle: 'Отредактированное фото',
-                editedCardDesc: 'Уже готовое фото<br>Может потребоваться добавить или изменить номер телефона',
-                originalCardTitle: 'Оригинальные фото',
-                originalCardDesc: 'Исходные фото для объединения<br>Объединить 2-3 фото в одно',
-                backToMain: 'Назад в меню',
-                editedStep: 'Обработка отредактированного фото',
-                editedPhotoLabel: 'Выберите отредактированное фото (1 фото)',
-                noFileSelected: 'Файл не выбран',
-                nextStep: 'Далее',
-                originalStep: 'Шаг 1/3: Ввод информации',
-                phoneLabel: 'Номер телефона',
-                phonePlaceholder: '',
-                phoneError: 'Введите номер телефона в правильном формате (xxx-xxxx-xxxx)',
-                photosLabel: 'Выберите фото (2-3 фото)',
-                fileError: 'Выберите 2-3 фото',
-                nextEditArea: 'Далее: Редактировать область фото',
-                backToStep1: 'Назад',
-                mergePhotos: 'Объединить фото',
-                phoneCheckTitle: '📱 Подтверждение фото',
-                phoneCheckDesc: 'На импортированном фото уже есть номер телефона?',
-                hasPhone: 'Есть номер',
-                noPhone: 'Нет номера',
-                contactTitle: '✅ Фото готово',
-                contactDesc1: 'Ваше фото уже содержит номер телефона, редактирование не требуется.',
-                contactDesc2: 'Если нужно изменить, свяжитесь с администратором:',
-                contactAdmin: '📞 Для изменений свяжитесь с администратором',
-                contactNote: 'Пожалуйста, свяжитесь с администратором через ваш способ связи',
-                close: 'Закрыть',
-                phoneInputTitle: '📱 Введите номер телефона',
-                phoneInputDesc: 'Введите номер телефона для добавления на фото',
-                confirm: 'Подтвердить',
-                cancel: 'Отмена',
-                filesSelected: 'Выбрано фото: {count}',
-                photoNumber: 'Фото {number}',
-                clickCorners: 'Нажмите на 4 угла (по порядку: верхний левый, верхний правый, нижний правый, нижний левый)',
-                pointsSelected: 'Выбрано точек: {count}, продолжайте нажимать угол {corner}',
-                completed: '✓ Выбор завершен',
-                rotate: '🔄 Повернуть на 90°',
-                undo: '↶ Отменить',
-                reset: '✕ Сбросить',
-                corners: ['верхний левый', 'верхний правый', 'нижний правый', 'нижний левый'],
-                step2: 'Шаг 2/3: Выберите область фото (Нажмите 4 угла для каждого)',
-                alertSelectOne: 'Выберите 1 фото',
-                alertSelect23: 'Выберите 2-3 фото'
-            },
-            ko: {
-                langSwitch: '언어 변경',
-                mainTitle: '사진 편집기',
-                chooseType: '사진 유형을 선택하세요',
-                editedCardTitle: '편집된 사진',
-                editedCardDesc: '이미 합성된 사진<br>전화번호 추가 또는 수정이 필요할 수 있습니다',
-                originalCardTitle: '원본 사진',
-                originalCardDesc: '합성이 필요한 원본 사진<br>2-3장의 사진을 한 장으로 합성',
-                backToMain: '메인으로 돌아가기',
-                editedStep: '편집된 사진 처리',
-                editedPhotoLabel: '편집된 사진 선택 (1장)',
-                noFileSelected: '파일이 선택되지 않음',
-                nextStep: '다음',
-                originalStep: '단계 1/3: 정보 입력',
-                phoneLabel: '전화번호',
-                phonePlaceholder: '',
-                phoneError: '올바른 형식의 전화번호를 입력하세요 (xxx-xxxx-xxxx)',
-                photosLabel: '사진 선택 (2-3장)',
-                fileError: '2-3장의 사진을 선택하세요',
-                nextEditArea: '다음: 사진 영역 편집',
-                backToStep1: '이전으로',
-                mergePhotos: '사진 합성',
-                phoneCheckTitle: '📱 사진 확인',
-                phoneCheckDesc: '가져온 사진에 이미 전화번호가 있습니까?',
-                hasPhone: '전화번호 있음',
-                noPhone: '전화번호 없음',
-                contactTitle: '✅ 사진 완료',
-                contactDesc1: '사진에 이미 전화번호가 포함되어 있어 다시 편집할 필요가 없습니다.',
-                contactDesc2: '수정이 필요한 경우 관리자에게 문의하세요:',
-                contactAdmin: '📞 수정이 필요하면 관리자에게 문의하세요',
-                contactNote: '연락 방법을 통해 관리자와 소통하세요',
-                close: '닫기',
-                phoneInputTitle: '📱 전화번호 입력',
-                phoneInputDesc: '사진에 추가할 전화번호를 입력하세요',
-                confirm: '확인',
-                cancel: '취소',
-                filesSelected: '{count}장의 사진이 선택됨',
-                photoNumber: '사진 {number}',
-                clickCorners: '4개의 모서리를 클릭하세요 (순서: 왼쪽 위, 오른쪽 위, 오른쪽 아래, 왼쪽 아래)',
-                pointsSelected: '{count}개 포인트 선택됨, {corner} 모서리를 계속 클릭하세요',
-                completed: '✓ 선택 완료',
-                rotate: '🔄 90° 회전',
-                undo: '↶ 마지막 취소',
-                reset: '✕ 재설정',
-                corners: ['왼쪽 위', '오른쪽 위', '오른쪽 아래', '왼쪽 아래'],
-                step2: '단계 2/3: 사진 영역 선택 (각 사진의 4개 모서리 클릭)',
-                alertSelectOne: '1장의 사진을 선택하세요',
-                alertSelect23: '2-3장의 사진을 선택하세요'
+      let translated = '';
+      
+      // 检测是否为中文
+      if(/[\u4e00-\u9fa5]/.test(name)){
+        // 中文翻译
+        for(let char of name){
+          translated += chineseToKorean[char] || char;
+        }
+      }
+      // 检测是否为越南语（拉丁字母+声调符号）
+      else if(/[ẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼẾỀỂưăêôơƯĂÊÔƠ]/.test(name) || /^[A-Za-z\s]+$/.test(name)){
+        // 越南语翻译 - 按空格分割
+        const parts = name.split(/\s+/);
+        translated = parts.map(part => {
+          // 先尝试完整匹配
+          if(vietnameseToKorean[part]) return vietnameseToKorean[part];
+          
+          // 尝试匹配开头的辅音组合
+          for(let i = 2; i >= 1; i--){
+            const prefix = part.substring(0, i);
+            if(vietnameseToKorean[prefix]){
+              const rest = part.substring(i);
+              return vietnameseToKorean[prefix] + translateVietnamesePart(rest);
             }
+          }
+          
+          // 逐字符翻译
+          return translateVietnamesePart(part);
+        }).join('');
+      }
+      // 检测是否为俄语西里尔字母
+      else if(/[А-Яа-яЁё]/.test(name)){
+        // 俄语翻译
+        for(let char of name){
+          if(char === ' ') translated += '';
+          else translated += russianToKorean[char] || char;
+        }
+      }
+      else {
+        alert('无法识别的名字格式 / 이름 형식을 인식할 수 없습니다');
+        return;
+      }
+
+      // 更新状态并重新渲染
+      state.formData['name'] = translated;
+      render();
+    }
+
+    function translateVietnamesePart(str){
+      let result = '';
+      for(let char of str){
+        const lower = char.toLowerCase();
+        if(vietnameseToKorean[lower]){
+          result += vietnameseToKorean[lower];
+        } else if(/[aeiouôơư]/.test(lower)){
+          // 元音基本映射
+          const vowelMap = {'a':'아','e':'에','i':'이','o':'오','u':'우','ô':'어','ơ':'어','ư':'으'};
+          result += vowelMap[lower] || char;
+        } else if(/[bcdfghjklmnpqrstvwxyz]/.test(lower)){
+          // 辅音基本映射
+          const consonantMap = {
+            'b':'브','c':'끄','d':'드','f':'프','g':'그','h':'흐','j':'즈','k':'크',
+            'l':'ль','m':'므','n':'느','p':'프','q':'끄','r':'르','s':'스','t':'트',
+            'v':'브','w':'우','x':'스','y':'이','z':'즈'
+          };
+          result += consonantMap[lower] || char;
+        } else {
+          result += char;
+        }
+      }
+      return result;
+    }
+
+    // ===================== 应用状态 =====================
+    let state = {
+      language:'zh',
+      formData:{},
+      signature:null,
+      isDrawing:false,
+      isAdminMode:false,
+      showPasswordPage:false,
+      formsGenerated:false,
+      templates:{ contract:{ zh:null, ko:null }, safety:{ zh:null, ko:null } },
+      fieldPositions:{ contract:{ zh:{}, ko:{} }, safety:{ zh:{}, ko:{} } },
+      currentTemplate:'contract',
+      currentLang:'zh',
+      selectedField:null,
+      editingField:null,
+      multiInstanceMode:false,
+      repositionTarget:null,
+      positionMode:'custom'
+    };
+
+    // ===================== 本地存储/默认配置 =====================
+    function loadFromLocalStorage(){
+      try{
+        const saved = localStorage.getItem('formFillerConfig');
+        if(saved){
+          const config = JSON.parse(saved);
+          if(config.templates) state.templates = config.templates;
+          if(config.fieldPositions) state.fieldPositions = config.fieldPositions;
+          return true;
+        }
+      }catch(e){ console.error('加载配置失败:', e); }
+      return false;
+    }
+
+    async function loadDefaultConfig(){
+      try{
+        const res = await fetch('form-config.json');
+        if(res.ok){
+          const config = await res.json();
+          if(config.templates) state.templates = config.templates;
+          if(config.fieldPositions) state.fieldPositions = config.fieldPositions;
+          return true;
+        }
+      }catch(e){ /* ignore */ }
+      return false;
+    }
+
+    function saveToLocalStorage(){
+      try{
+        const config = { 
+          templates: state.templates, 
+          fieldPositions: state.fieldPositions
         };
+        localStorage.setItem('formFillerConfig', JSON.stringify(config));
+      }catch(e){ console.error('保存配置失败:', e); }
+    }
 
-        let currentLang = 'zh';
-        const phoneInput = document.getElementById('phone');
-        const photosInput = document.getElementById('photos');
-        const editedPhotoInput = document.getElementById('editedPhoto');
-        const editedPhoneInput = document.getElementById('editedPhone');
-        const phoneError = document.getElementById('phoneError');
-        const fileError = document.getElementById('fileError');
-        const fileInfo = document.getElementById('fileInfo');
-        const editedFileInfo = document.getElementById('editedFileInfo');
-        const editorArea = document.getElementById('editorArea');
-        const resultCanvas = document.getElementById('result');
-        
-        let images = [];
-        let imagePoints = [];
-        let imageRotations = [];
-        let currentMode = '';
-        let editedImage = null;
+    async function initConfig(){
+      const hasLocal = loadFromLocalStorage();
+      if(!hasLocal){ await loadDefaultConfig(); }
+      render();
+    }
 
-        // 语言选择
-        function selectLanguage(lang) {
-            currentLang = lang;
-            document.body.className = 'lang-' + lang;
-            updateLanguage();
-            document.getElementById('languageSelect').classList.add('hidden');
-            document.getElementById('mainTitle').classList.remove('hidden');
-            document.getElementById('mainChoice').classList.remove('hidden');
-            document.querySelector('.lang-switch').classList.remove('hidden');
-        }
+    // ===================== 工具函数 =====================
+    function getFieldsList(lang){
+      if(lang==='ko'){ return ['name','birthday','address','residentNum','phone','position','experience','month','day','checkmark','signature']; }
+      return ['name','birthday','address','position','passport','phone','experience','month','day','checkmark','signature'];
+    }
+    function getCurrentMonth(){ return String(new Date().getMonth()+1); }
+    function getCurrentDay(){ return String(new Date().getDate()); }
 
-        function backToLanguageSelect() {
-            document.getElementById('languageSelect').classList.remove('hidden');
-            document.getElementById('mainTitle').classList.add('hidden');
-            document.getElementById('mainChoice').classList.add('hidden');
-            document.getElementById('editedFlow').classList.add('hidden');
-            document.getElementById('originalFlow').classList.add('hidden');
-            document.getElementById('editorArea').style.display = 'none';
-            document.getElementById('backButton').style.display = 'none';
-            document.getElementById('mergeButton').style.display = 'none';
-            document.querySelector('.lang-switch').classList.add('hidden');
-            
-            document.getElementById('phoneCheckModal').style.display = 'none';
-            document.getElementById('contactModal').style.display = 'none';
-            document.getElementById('phoneInputModal').style.display = 'none';
-            
-            resultCanvas.style.display = 'none';
-            
-            images = [];
-            imagePoints = [];
-            imageRotations = [];
-            editedImage = null;
-            editorArea.innerHTML = '';
-            
-            if (photosInput) photosInput.value = '';
-            if (editedPhotoInput) editedPhotoInput.value = '';
-            if (phoneInput) phoneInput.value = '';
-            if (editedPhoneInput) editedPhoneInput.value = '';
-            
-            document.body.className = '';
-        }
-
-        function updateLanguage() {
-            const t = translations[currentLang];
-            
-            document.getElementById('langSwitchText').textContent = t.langSwitch;
-            document.getElementById('mainTitle').textContent = t.mainTitle;
-            document.getElementById('chooseTypeText').textContent = t.chooseType;
-            document.getElementById('editedCardTitle').textContent = t.editedCardTitle;
-            document.getElementById('editedCardDesc').innerHTML = t.editedCardDesc;
-            document.getElementById('originalCardTitle').textContent = t.originalCardTitle;
-            document.getElementById('originalCardDesc').innerHTML = t.originalCardDesc;
-            document.getElementById('backToMainText').textContent = t.backToMain;
-            document.getElementById('backToMainText2').textContent = t.backToMain;
-            document.getElementById('editedStepText').textContent = t.editedStep;
-            document.getElementById('editedPhotoLabel').textContent = t.editedPhotoLabel;
-            document.getElementById('editedFileInfo').textContent = t.noFileSelected;
-            document.getElementById('editedNextBtn').textContent = t.nextStep;
-            document.getElementById('originalStepText').textContent = t.originalStep;
-            document.getElementById('phoneLabel').textContent = t.phoneLabel;
-            document.getElementById('phone').placeholder = t.phonePlaceholder;
-            document.getElementById('phoneError').textContent = t.phoneError;
-            document.getElementById('photosLabel').textContent = t.photosLabel;
-            document.getElementById('fileInfo').textContent = t.noFileSelected;
-            document.getElementById('fileError').textContent = t.fileError;
-            document.getElementById('originalNextBtn').textContent = t.nextEditArea;
-            document.getElementById('backToStep1Text').textContent = t.backToStep1;
-            document.getElementById('mergeButtonText').textContent = t.mergePhotos;
-            document.getElementById('phoneCheckTitle').textContent = t.phoneCheckTitle;
-            document.getElementById('phoneCheckDesc').textContent = t.phoneCheckDesc;
-            document.getElementById('hasPhoneBtn').textContent = t.hasPhone;
-            document.getElementById('noPhoneBtn').textContent = t.noPhone;
-            document.getElementById('contactTitle').textContent = t.contactTitle;
-            document.getElementById('contactDesc1').textContent = t.contactDesc1;
-            document.getElementById('contactDesc2').textContent = t.contactDesc2;
-            document.getElementById('contactAdmin').textContent = t.contactAdmin;
-            document.getElementById('contactNote').textContent = t.contactNote;
-            document.getElementById('closeModalBtn').textContent = t.close;
-            document.getElementById('phoneInputTitle').textContent = t.phoneInputTitle;
-            document.getElementById('phoneInputDesc').textContent = t.phoneInputDesc;
-            document.getElementById('editedPhone').placeholder = t.phonePlaceholder;
-            document.getElementById('editedPhoneError').textContent = t.phoneError;
-            document.getElementById('confirmPhoneBtn').textContent = t.confirm;
-            document.getElementById('cancelPhoneBtn').textContent = t.cancel;
-        }
-
-        // 手机号输入格式化
-        function formatPhoneInput(input) {
-            input.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length > 3 && value.length <= 7) {
-                    value = value.slice(0, 3) + '-' + value.slice(3);
-                } else if (value.length > 7) {
-                    value = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
-                }
-                e.target.value = value;
-            });
-        }
-
-        formatPhoneInput(phoneInput);
-        formatPhoneInput(editedPhoneInput);
-
-        photosInput.addEventListener('change', function(e) {
-            const t = translations[currentLang];
-            const files = e.target.files;
-            if (files.length > 0) {
-                fileInfo.textContent = t.filesSelected.replace('{count}', files.length);
-                fileInfo.style.color = '#4A90A4';
-            } else {
-                fileInfo.textContent = t.noFileSelected;
-                fileInfo.style.color = '#5A7A8F';
-            }
-            fileError.style.display = 'none';
+    // 👉 移动端兼容下载（核心修复点）
+    function safeDownloadFromBlob(blob, filename){
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      
+      // 触发下载 - 移动端和桌面端统一处理
+      try {
+        a.click();
+      } catch(e) {
+        // 如果click()失败，尝试触发触摸事件
+        const evt = new MouseEvent('click', {
+          view: window,
+          bubbles: true,
+          cancelable: true
         });
+        a.dispatchEvent(evt);
+      }
+      
+      // 延迟移除元素和释放URL，给浏览器足够时间处理下载
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 2000);
+    }
 
-        editedPhotoInput.addEventListener('change', function(e) {
-            const t = translations[currentLang];
-            const files = e.target.files;
-            if (files.length > 0) {
-                editedFileInfo.textContent = t.filesSelected.replace('{count}', files.length);
-                editedFileInfo.style.color = '#4A90A4';
-            } else {
-                editedFileInfo.textContent = t.noFileSelected;
-                editedFileInfo.style.color = '#5A7A8F';
+    // ===================== 签名板 =====================
+    let signatureCanvas=null, sigCtx=null;
+    function startDrawing(e){
+      const rect = signatureCanvas.getBoundingClientRect();
+      // 计算显示尺寸和实际canvas尺寸的比例
+      const scaleX = signatureCanvas.width / rect.width;
+      const scaleY = signatureCanvas.height / rect.height;
+      // 获取触摸/鼠标位置并按比例缩放
+      const x = ((e.clientX || e.touches?.[0]?.clientX) - rect.left) * scaleX;
+      const y = ((e.clientY || e.touches?.[0]?.clientY) - rect.top) * scaleY;
+      sigCtx.beginPath(); sigCtx.moveTo(x,y); state.isDrawing=true;
+    }
+    function draw(e){
+      if(!state.isDrawing) return;
+      e.preventDefault();
+      const rect = signatureCanvas.getBoundingClientRect();
+      // 计算显示尺寸和实际canvas尺寸的比例
+      const scaleX = signatureCanvas.width / rect.width;
+      const scaleY = signatureCanvas.height / rect.height;
+      // 获取触摸/鼠标位置并按比例缩放
+      const x = ((e.clientX || e.touches?.[0]?.clientX) - rect.left) * scaleX;
+      const y = ((e.clientY || e.touches?.[0]?.clientY) - rect.top) * scaleY;
+      sigCtx.lineTo(x,y); sigCtx.stroke();
+    }
+    function stopDrawing(){
+      if(state.isDrawing){ state.isDrawing=false; state.signature = signatureCanvas.toDataURL(); }
+    }
+    function clearSignature(){ sigCtx.clearRect(0,0,signatureCanvas.width, signatureCanvas.height); state.signature=null; }
+
+    // ===================== 生成表单 =====================
+    async function generateForms(){
+      if(!state.signature){
+        const messages = { zh:'请先签名', ko:'서명을 해주세요', vi:'Vui lòng ký tên', ru:'Пожалуйста, подпишите' };
+        alert(messages[state.language] || '请先签名');
+        return;
+      }
+      const langKey = state.language === 'ko' ? 'ko' : 'zh';
+      
+      // 连续下载两张图片，中间添加延迟确保移动端兼容
+      await generateForm('contract', langKey);
+      await new Promise(resolve => setTimeout(resolve, 800)); // 延迟800ms
+      await generateForm('safety', langKey);
+      
+      // 下载完成，设置标记并弹窗提示
+      state.formsGenerated = true;
+      const successMessages = { 
+        zh:'✅ 已下载完成\n\n点击下方按钮发送给管理员', 
+        ko:'✅ 다운로드 완료\n\n아래 버튼을 클릭하여 관리자에게 전송', 
+        vi:'✅ Đã tải xuống hoàn tất\n\nNhấp vào nút bên dưới để gửi cho quản trị viên', 
+        ru:'✅ Загрузка завершена\n\nНажмите кнопку ниже, чтобы отправить администратору' 
+      };
+      setTimeout(() => {
+        alert(successMessages[state.language] || '✅ 已下载完成\n\n点击下方按钮发送给管理员');
+        render(); // 重新渲染以显示发送按钮
+      }, 500);
+    }
+
+    async function generateForm(templateType, langKey){
+      const template = state.templates[templateType][langKey];
+      const positions = state.fieldPositions[templateType][langKey];
+      if(!template || !positions || Object.keys(positions).length===0){ return; }
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      await new Promise((resolve)=>{
+        img.onload = ()=>{
+          canvas.width = img.width; canvas.height = img.height;
+          ctx.drawImage(img,0,0); ctx.textBaseline='top';
+
+          // 写入文本
+          Object.keys(positions).forEach(key=>{
+            const pos = positions[key]; if(!pos) return;
+            const baseField = pos.baseField || key;
+            let textValue = '';
+            if(baseField==='month'){ textValue=getCurrentMonth(); }
+            else if(baseField==='day'){ textValue=getCurrentDay(); }
+            else if(baseField==='checkmark'){ textValue='✓'; }
+            else if(state.formData[baseField]){
+              textValue = state.formData[baseField];
+              if(baseField==='experience' && textValue){ textValue = textValue + (langKey==='ko'?'년':'年'); }
+              else if(baseField==='position' && textValue){ textValue = convertPositionToKorean(textValue); }
             }
-        });
-
-        function selectMode(mode) {
-            currentMode = mode;
-            document.getElementById('mainChoice').classList.add('hidden');
-            
-            if (mode === 'edited') {
-                document.getElementById('editedFlow').classList.remove('hidden');
-            } else {
-                document.getElementById('originalFlow').classList.remove('hidden');
+            if(textValue){
+              ctx.font = `${pos.fontSize || 44}px Arial`;
+              ctx.fillStyle = pos.color || '#000';
+              ctx.fillText(textValue, pos.x, pos.y);
             }
-        }
+          });
 
-        function backToMain() {
-            document.getElementById('mainChoice').classList.remove('hidden');
-            document.getElementById('editedFlow').classList.add('hidden');
-            document.getElementById('originalFlow').classList.add('hidden');
-            document.getElementById('editorArea').style.display = 'none';
-            document.getElementById('backButton').style.display = 'none';
-            document.getElementById('mergeButton').style.display = 'none';
-            resultCanvas.style.display = 'none';
-            
-            images = [];
-            imagePoints = [];
-            imageRotations = [];
-            editedImage = null;
-            editorArea.innerHTML = '';
-        }
-
-        function checkEditedPhoto() {
-            const t = translations[currentLang];
-            const files = editedPhotoInput.files;
-            if (files.length !== 1) {
-                alert(t.alertSelectOne);
-                return;
+          // 贴签名 - 收集所有签名位置
+          const signaturePositions = [];
+          Object.keys(positions).forEach(key=>{
+            const pos = positions[key];
+            if(!pos) return;
+            const baseField = pos.baseField || key;
+            if(baseField==='signature' && state.signature){
+              signaturePositions.push({x: pos.x, y: pos.y, width: pos.width || 150, height: pos.height || 50});
             }
+          });
 
-            document.getElementById('phoneCheckModal').style.display = 'flex';
-        }
-
-        function hasPhoneNumber() {
-            document.getElementById('phoneCheckModal').style.display = 'none';
-            document.getElementById('contactModal').style.display = 'flex';
-        }
-
-        function noPhoneNumber() {
-            document.getElementById('phoneCheckModal').style.display = 'none';
-            document.getElementById('phoneInputModal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('contactModal').style.display = 'none';
-            backToMain();
-        }
-
-        function closePhoneInputModal() {
-            document.getElementById('phoneInputModal').style.display = 'none';
-        }
-
-        function confirmEditedPhone() {
-            const phone = editedPhoneInput.value;
-            const phonePattern = /^\d{3}-\d{4}-\d{4}$/;
-            
-            if (!phonePattern.test(phone)) {
-                document.getElementById('editedPhoneError').style.display = 'block';
-                return;
-            }
-
-            document.getElementById('editedPhoneError').style.display = 'none';
-            document.getElementById('phoneInputModal').style.display = 'none';
-
-            const file = editedPhotoInput.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    editedImage = img;
-                    mergeEditedPhoto(phone);
+          // 等待所有签名加载完成
+          if(signaturePositions.length > 0){
+            Promise.all(signaturePositions.map(sigPos => {
+              return new Promise((resolveSign) => {
+                const sigImg = new Image();
+                sigImg.onload = () => {
+                  ctx.drawImage(sigImg, sigPos.x, sigPos.y, sigPos.width, sigPos.height);
+                  resolveSign();
                 };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function mergeEditedPhoto(phone) {
-            document.getElementById('editedFlow').classList.add('hidden');
-            
-            const img = editedImage;
-            const canvas = resultCanvas;
-            const ctx = canvas.getContext('2d');
-
-            const headerHeight = 150;
-            const imgWidth = img.width;
-            const imgHeight = img.height;
-
-            canvas.width = imgWidth;
-            canvas.height = headerHeight + imgHeight;
-
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            let fontSize = headerHeight * 0.85;
-            ctx.font = `bold ${fontSize}px Arial`;
-            
-            let textWidth = ctx.measureText(phone).width;
-            if (textWidth > canvas.width * 0.95) {
-                fontSize = (canvas.width * 0.95) / ctx.measureText(phone).width * fontSize;
-                ctx.font = `bold ${fontSize}px Arial`;
-            }
-            
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = 'black';
-            ctx.fillText(phone, canvas.width / 2, headerHeight / 2);
-
-            ctx.drawImage(img, 0, headerHeight, imgWidth, imgHeight);
-
-            canvas.style.display = 'block';
-
-            canvas.toBlob(function(blob) {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `合成照片_${phone}.png`;
-                a.click();
-                URL.revokeObjectURL(url);
+                sigImg.onerror = () => resolveSign(); // 即使失败也继续
+                sigImg.src = state.signature;
+              });
+            })).then(() => {
+              // 所有签名绘制完成后再导出
+              canvas.toBlob(blob=>{
+                const filename = `${templateType==='contract'?'劳动合同':'安全协议'}_${langKey}.png`;
+                safeDownloadFromBlob(blob, filename);
+                resolve();
+              });
             });
-        }
-
-        function startEditing() {
-            const t = translations[currentLang];
-            const phone = phoneInput.value;
-            const files = photosInput.files;
-
-            const phonePattern = /^\d{3}-\d{4}-\d{4}$/;
-            if (!phonePattern.test(phone)) {
-                phoneError.style.display = 'block';
-                return;
-            }
-
-            if (files.length < 2 || files.length > 3) {
-                fileError.style.display = 'block';
-                return;
-            }
-
-            document.getElementById('originalFlow').classList.add('hidden');
-            editorArea.style.display = 'block';
-            document.getElementById('backButton').style.display = 'block';
-            editorArea.innerHTML = `<div class="step-indicator">${t.step2}</div>`;
-
-            const imagePromises = Array.from(files).map(file => {
-                return new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = new Image();
-                        img.onload = function() {
-                            resolve(img);
-                        };
-                        img.src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                });
+          } else {
+            // 没有签名直接导出
+            canvas.toBlob(blob=>{
+              const filename = `${templateType==='contract'?'劳动合同':'安全协议'}_${langKey}.png`;
+              safeDownloadFromBlob(blob, filename);
+              resolve();
             });
+          }
+        };
+        img.src = template;
+      });
+    }
 
-            Promise.all(imagePromises).then(loadedImages => {
-                images = loadedImages;
-                imagePoints = images.map(() => []);
-                imageRotations = images.map(() => 0);
-                createEditors();
-            });
+    // ===================== 上传/定位 =====================
+    function handleTemplateUpload(e, templateType, langKey){
+      const file = e.target.files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onload = (ev)=>{
+          state.templates[templateType][langKey] = ev.target.result;
+          saveToLocalStorage(); render(); setTimeout(renderFieldMarkers, 100);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function handleImageClick(e){
+      const img = e.target;
+      const rect = img.getBoundingClientRect();
+      const scaleX = img.naturalWidth / rect.width;
+      const scaleY = img.naturalHeight / rect.height;
+      const x = (e.clientX - rect.left) * scaleX;
+      const y = (e.clientY - rect.top) * scaleY;
+      const positions = state.fieldPositions[state.currentTemplate][state.currentLang];
+      let fieldKey;
+
+      if(state.repositionTarget){ fieldKey = state.repositionTarget; state.repositionTarget=null; }
+      else if(state.selectedField){
+        fieldKey = state.selectedField;
+        if(state.multiInstanceMode && positions[fieldKey]){
+          let i=2; while(positions[`${state.selectedField}_${i}`]) i++;
+          fieldKey = `${state.selectedField}_${i}`;
         }
+      } else { return; }
 
-        function createEditors() {
-            const t = translations[currentLang];
-            images.forEach((img, index) => {
-                const editorDiv = document.createElement('div');
-                editorDiv.className = 'image-editor';
-                editorDiv.innerHTML = `
-                    <div class="editor-title">${t.photoNumber.replace('{number}', index + 1)}</div>
-                    <div class="canvas-container">
-                        <canvas class="edit-canvas" id="canvas${index}"></canvas>
-                    </div>
-                    <div class="instruction">
-                        <span class="point-info" id="info${index}">${t.clickCorners}</span>
-                        <div class="control-buttons">
-                            <button class="small-btn rotate" onclick="rotateImage(${index})">${t.rotate}</button>
-                            <button class="small-btn undo" onclick="undoPoint(${index})">${t.undo}</button>
-                            <button class="small-btn" onclick="resetPoints(${index})">${t.reset}</button>
+      positions[fieldKey] = {
+        x:Math.round(x), y:Math.round(y),
+        fontSize: positions[fieldKey]?.fontSize || 44,
+        color: positions[fieldKey]?.color || '#000000',
+        baseField: positions[fieldKey]?.baseField || state.selectedField || fieldKey.replace(/_\\d+$/, ''),
+        width: (positions[fieldKey]?.baseField==='signature' || state.selectedField==='signature') ? (positions[fieldKey]?.width || 150) : undefined,
+        height:(positions[fieldKey]?.baseField==='signature' || state.selectedField==='signature') ? (positions[fieldKey]?.height|| 50) : undefined
+      };
+      saveToLocalStorage(); render(); setTimeout(renderFieldMarkers, 50);
+    }
+
+    function repositionField(key){ state.repositionTarget=key; state.selectedField=null; render(); }
+    function editField(name){ state.editingField=name; render(); }
+    function deleteField(name){
+      if(confirm('确定删除该字段配置吗?')){
+        delete state.fieldPositions[state.currentTemplate][state.currentLang][name];
+        saveToLocalStorage(); render(); setTimeout(renderFieldMarkers, 50);
+      }
+    }
+    function saveFieldParams(){
+      const fz = document.getElementById('editFontSize').value;
+      const color = document.getElementById('editColor').value;
+      const w = document.getElementById('editWidth')?.value;
+      const h = document.getElementById('editHeight')?.value;
+      const pos = state.fieldPositions[state.currentTemplate][state.currentLang][state.editingField];
+      pos.fontSize = parseInt(fz); pos.color = color;
+      if(w) pos.width = parseInt(w); if(h) pos.height = parseInt(h);
+      state.editingField=null; saveToLocalStorage(); render(); setTimeout(renderFieldMarkers, 50);
+    }
+
+    function downloadConfig(){
+      const conf = { templates: state.templates, fieldPositions: state.fieldPositions };
+      const blob = new Blob([JSON.stringify(conf,null,2)], {type:'application/json'});
+      safeDownloadFromBlob(blob, 'form-config.json');
+    }
+    function loadConfig(e){
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev)=>{
+        try{
+          const conf = JSON.parse(ev.target.result);
+          state.templates = conf.templates || { contract:{ zh:null, ko:null }, safety:{ zh:null, ko:null } };
+          state.fieldPositions = conf.fieldPositions || { contract:{ zh:{}, ko:{} }, safety:{ zh:{}, ko:{} } };
+          saveToLocalStorage(); render(); setTimeout(renderFieldMarkers, 100);
+          alert('✅ 配置导入成功!');
+        }catch{ alert('❌ 配置文件格式错误'); }
+      };
+      reader.readAsText(file);
+    }
+    function clearAllData(){
+      if(confirm('⚠️ 确定要清空所有配置吗?此操作不可恢复!')){
+        localStorage.removeItem('formFillerConfig');
+        state.templates = { contract:{ zh:null, ko:null }, safety:{ zh:null, ko:null } };
+        state.fieldPositions = { contract:{ zh:{}, ko:{} }, safety:{ zh:{}, ko:{} } };
+        render(); alert('✅ 所有配置已清空');
+      }
+    }
+
+    // ===================== 模式切换 & 密码页 =====================
+    function toggleMode(){
+      if(!state.isAdminMode){ state.showPasswordPage=true; render(); }
+      else { state.isAdminMode=false; render(); }
+    }
+    function checkPassword(){
+      const pwd = document.getElementById('passwordInput').value;
+      const error = document.getElementById('errorMsg');
+      if(pwd==='admin123'){ state.showPasswordPage=false; state.isAdminMode=true; render(); }
+      else { error.classList.add('show'); setTimeout(()=>error.classList.remove('show'), 2000); }
+    }
+    function cancelPassword(){ state.showPasswordPage=false; render(); }
+    function handlePasswordKeyPress(e){ if(e.key==='Enter') checkPassword(); }
+
+    // ===================== 渲染辅助 =====================
+    function getExampleText(fieldKey, lang){
+      const base = fieldKey.replace(/_\\d+$/, '');
+      const examples = {
+        name:{ zh:'张三', ko:'김철수', vi:'Nguyễn Văn A', ru:'Иванов' },
+        birthday:{ zh:'1990-01-01', ko:'1990-01-01', vi:'1990-01-01', ru:'1990-01-01' },
+        address:{ zh:'北京市朝阳区', ko:'서울시 강남구', vi:'Hà Nội', ru:'Москва' },
+        position:{ zh:'整理', ko:'정리', vi:'정리', ru:'정리' },
+        passport:{ zh:'E12345678', ko:'M12345678', vi:'B1234567', ru:'AB1234567' },
+        phone:{ zh:'138-0013-8000', ko:'010-1234-5678', vi:'091-2345-678', ru:'+7 900 123-45-67' },
+        residentNum:{ zh:'110101-1990011234', ko:'900101-1234567', vi:'001090-0001234', ru:'123456-7890123' },
+        experience:{ zh:'3年', ko:'3년', vi:'3 năm', ru:'3 лет' },
+        month:{ zh:getCurrentMonth(), ko:getCurrentMonth(), vi:getCurrentMonth(), ru:getCurrentMonth() },
+        day:{ zh:getCurrentDay(), ko:getCurrentDay(), vi:getCurrentDay(), ru:getCurrentDay() },
+        checkmark:{ zh:'✓', ko:'✓', vi:'✓', ru:'✓' },
+        signature:{ zh:'张三', ko:'김철수', vi:'Nguyễn Văn A', ru:'Иванов' }
+      };
+      const langKey = (lang==='ko'||lang==='vi'||lang==='ru')?lang:'zh';
+      return examples[base]?.[langKey] || '示例';
+    }
+
+    function renderFieldMarkers(){
+      const img = document.getElementById('templateImage');
+      const container = document.getElementById('markersContainer');
+      if(!img || !container) return;
+      const positions = state.fieldPositions[state.currentTemplate][state.currentLang] || {};
+      container.innerHTML='';
+
+      const displayWidth = img.clientWidth, displayHeight = img.clientHeight;
+      const naturalWidth = img.naturalWidth, naturalHeight = img.naturalHeight;
+      const scaleX = displayWidth / naturalWidth, scaleY = displayHeight / naturalHeight;
+
+      let idx=1;
+      Object.keys(positions).forEach(key=>{
+        const pos = positions[key]; if(!pos || pos.x==null || pos.y==null) return;
+        const dx = pos.x * scaleX, dy = pos.y * scaleY;
+        const baseField = pos.baseField || key;
+
+        const marker = document.createElement('div'); marker.className='field-marker'; marker.textContent=idx;
+        marker.style.left = dx+'px'; marker.style.top = dy+'px';
+        const label = document.createElement('div'); label.className='field-label'; label.textContent=key; label.style.left=dx+'px'; label.style.top=dy+'px';
+        container.appendChild(marker); container.appendChild(label);
+
+        if(baseField!=='signature'){
+          const previewText = document.createElement('div');
+          previewText.className='field-preview-text';
+          previewText.textContent = getExampleText(key, state.currentLang);
+          previewText.style.left = dx+'px'; previewText.style.top = dy+'px';
+          previewText.style.fontSize = ((pos.fontSize||44) * scaleX) + 'px';
+          previewText.style.color = pos.color || '#000';
+          previewText.style.fontFamily = 'Arial';
+          container.appendChild(previewText);
+        }else{
+          const sigBox = document.createElement('div');
+          sigBox.style.position='absolute'; sigBox.style.left=dx+'px'; sigBox.style.top=dy+'px';
+          sigBox.style.width=((pos.width||150)*scaleX)+'px'; sigBox.style.height=((pos.height||50)*scaleY)+'px';
+          sigBox.style.border='2px dashed rgba(74,144,164,.6)'; sigBox.style.backgroundColor='rgba(74,144,164,.1)'; sigBox.style.zIndex='8';
+          container.appendChild(sigBox);
+        }
+        idx++;
+      });
+    }
+
+    function getFieldDisplayName(key){
+      const m = key.match(/^(.+)_([0-9]+)$/); if(m) return `${m[1]} (${m[2]})`; return key;
+    }
+
+    // ===================== UI渲染 =====================
+    function renderPasswordPage(){
+      return `
+        <div class="container password-container">
+          <h2 class="password-title">管理员验证</h2>
+          <p class="password-subtitle">请输入管理员密码以继续</p>
+          <input type="password" id="passwordInput" class="password-input" placeholder="请输入密码" onkeypress="handlePasswordKeyPress(event)" autofocus>
+          <button onclick="checkPassword()" class="password-btn">确认登录</button>
+          <p id="errorMsg" class="password-error">❌ 密码错误,请重试</p>
+          <button onclick="cancelPassword()" class="clear-btn">返回</button>
+        </div>
+      `;
+    }
+
+    function renderAdminMode(){
+      const t = translations[state.language];
+      const positions = state.fieldPositions[state.currentTemplate][state.currentLang] || {};
+      const fieldsList = getFieldsList(state.currentLang);
+      return `
+        <div class="container admin-container">
+          <div class="admin-header">
+            <h1 class="admin-title">管理员配置模式</h1>
+            <button onclick="toggleMode()" class="toggle-btn">${t.userMode}</button>
+          </div>
+
+          <div class="admin-layout">
+            <div class="left-panel">
+              <h3 class="section-title">📋 模板配置</h3>
+              <div class="template-tabs">
+                <button onclick="state.currentTemplate='contract'; render(); setTimeout(renderFieldMarkers,100);" class="tab-btn ${state.currentTemplate==='contract'?'active':''}">劳动合同</button>
+                <button onclick="state.currentTemplate='safety'; render(); setTimeout(renderFieldMarkers,100);" class="tab-btn ${state.currentTemplate==='safety'?'active':''}">安全协议</button>
+              </div>
+              <div class="language-tabs">
+                <button onclick="state.currentLang='zh'; render(); setTimeout(renderFieldMarkers,100);" class="lang-btn ${state.currentLang==='zh'?'active':''}">中文/越南语/俄语</button>
+                <button onclick="state.currentLang='ko'; render(); setTimeout(renderFieldMarkers,100);" class="lang-btn ${state.currentLang==='ko'?'active':''}">한국어</button>
+              </div>
+
+              <div class="upload-section">
+                <label>📤 上传 ${state.currentTemplate==='contract'?'劳动合同':'安全协议'} 模板 (${state.currentLang==='zh'?'中文/越南语/俄语':'한국어'})</label>
+                <input type="file" accept="image/*" onchange="handleTemplateUpload(event,'${state.currentTemplate}','${state.currentLang}')" style="margin-top:10px;">
+              </div>
+
+              <div class="form-group">
+                <label>🎯 选择字段 (点击后再点击图片定位)</label>
+                <div class="field-buttons">
+                  ${fieldsList.map(f=>`<button onclick="state.selectedField='${f}'; render();" class="field-btn ${state.selectedField===f?'active':''}">${f==='checkmark'?'✓':f}</button>`).join('')}
+                </div>
+                <div class="mode-switch">
+                  <input type="checkbox" id="multiInstanceMode" ${state.multiInstanceMode?'checked':''} onchange="state.multiInstanceMode=this.checked; render();">
+                  <label for="multiInstanceMode">🔄 多实例模式(同一字段创建多个位置)</label>
+                </div>
+                <p class="note">${state.multiInstanceMode?'✅ 多实例模式: 点击图片会创建 name_2 / name_3...':'🔍 普通模式: 点击图片更新所选字段坐标'}</p>
+                <p class="note" style="color:#4A90A4;">💡 月份/日期/对号会自动填充当前值</p>
+              </div>
+
+              ${state.templates[state.currentTemplate][state.currentLang] ? `
+                <div class="preview-box">
+                  <p style="margin-bottom:10px; font-weight:600; color:#2E4F7A;">
+                    ${state.repositionTarget ? `🎯 点击图片重新定位: ${getFieldDisplayName(state.repositionTarget)}` : (state.selectedField ? `✅ 已选择: ${state.selectedField}` : '⚠️ 请先选择一个字段')}
+                  </p>
+                  <div class="image-wrapper">
+                    <img id="templateImage" src="${state.templates[state.currentTemplate][state.currentLang]}" alt="template" onclick="handleImageClick(event)" onload="renderFieldMarkers()">
+                    <div id="markersContainer"></div>
+                  </div>
+                </div>
+              ` : '<p class="note" style="text-align:center; padding:40px;">请先上传模板图片</p>'}
+
+              <div class="field-buttons" style="gap:15px; margin-top:10px;">
+                <button onclick="downloadConfig()" class="action-btn" style="background:#4A90A4; color:#fff;">📥 导出配置</button>
+                <label class="action-btn" style="background:#3E5F8A; color:#fff;">📤 导入配置
+                  <input type="file" accept=".json" onchange="loadConfig(event)" style="display:none">
+                </label>
+                <button onclick="clearAllData()" class="action-btn" style="background:#C73E1D; color:#fff;">🗑️ 清空配置</button>
+              </div>
+              <p class="note">💾 配置会自动保存到浏览器本地</p>
+            </div>
+
+            <div class="right-panel">
+              <h3 class="section-title">⚙️ 已配置字段</h3>
+              ${Object.keys(positions).length===0 ? '<p class="note" style="text-align:center; padding:20px;">暂无配置</p>' :
+                `<div class="field-list">
+                  ${Object.keys(positions).map(k=>{
+                    const pos = positions[k]; const base = pos.baseField || k;
+                    return `
+                      <div class="field-item">
+                        <div class="field-item-header">
+                          <span class="field-name">📌 ${getFieldDisplayName(k)}</span>
+                          <div class="field-actions">
+                            <button onclick="repositionField('${k}')" class="reposition-btn">重新定位</button>
+                            <button onclick="editField('${k}')" class="edit-btn">编辑</button>
+                            <button onclick="deleteField('${k}')" class="delete-btn">删除</button>
+                          </div>
                         </div>
-                    </div>
-                `;
-                editorArea.appendChild(editorDiv);
+                        ${state.editingField===k ? `
+                          <div class="param-editor">
+                            <div class="param-row"><span class="param-label">字体大小:</span><input type="number" id="editFontSize" value="${pos.fontSize||44}" min="8" max="120"></div>
+                            <div class="param-row"><span class="param-label">颜色:</span><input type="color" id="editColor" value="${pos.color||'#000000'}" style="height:40px;"></div>
+                            ${base==='signature' ? `
+                              <div class="param-row"><span class="param-label">宽度:</span><input type="number" id="editWidth" value="${pos.width||150}" min="50" max="500"></div>
+                              <div class="param-row"><span class="param-label">高度:</span><input type="number" id="editHeight" value="${pos.height||50}" min="20" max="200"></div>` : ''}
+                            <button onclick="saveFieldParams()" class="save-param-btn">✅ 保存参数</button>
+                          </div>` :
+                          `<div class="field-params" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px; color:#5A7A8F;">
+                            <div>X: ${pos.x}</div><div>Y: ${pos.y}</div>
+                            <div>字号: ${pos.fontSize||44}px</div>
+                            <div>颜色: <span style="display:inline-block; width:20px; height:20px; background:${pos.color||'#000'}; border:1px solid #ccc; vertical-align:middle;"></span></div>
+                            ${pos.width?`<div>宽: ${pos.width}px</div>`:''}
+                            ${pos.height?`<div>高: ${pos.height}px</div>`:''}
+                          </div>`}
+                      </div>`;
+                  }).join('')}
+                </div>`}
+            </div>
+          </div>
+        </div>
+      `;
+    }
 
-                const canvas = document.getElementById(`canvas${index}`);
-                const ctx = canvas.getContext('2d');
-                
-                const maxWidth = 800;
-                const scale = Math.min(1, maxWidth / img.width);
-                canvas.width = img.width * scale;
-                canvas.height = img.height * scale;
-                
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    function renderUserMode(){
+      const t = translations[state.language];
+      const fields = getFieldsList(state.language).filter(f=>!['signature','month','day','checkmark'].includes(f));
+      return `
+        <div class="container">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h1>${t.title}</h1>
+            <button onclick="toggleMode()" class="toggle-btn">${t.adminMode}</button>
+          </div>
 
-                canvas.addEventListener('click', (e) => handleCanvasClick(e, canvas, ctx, img, index, scale));
-            });
-        }
+          <div class="form-group">
+            <label>${t.selectLanguage}</label>
+            <div class="language-buttons">
+              ${[{code:'zh',label:'中文'},{code:'ko',label:'한국어'},{code:'vi',label:'Tiếng Việt'},{code:'ru',label:'Русский'}].map(l=>`
+                <button onclick=\"state.language='${l.code}'; render();\" class=\"lang-btn ${state.language===l.code?'active':''}\">${l.label}</button>`).join('')}
+            </div>
+          </div>
 
-        function handleCanvasClick(e, canvas, ctx, img, index, scale) {
-            if (imagePoints[index].length >= 4) return;
-
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-
-            imagePoints[index].push({ x, y });
-            redrawCanvas(index);
-            updatePointInfo(index);
-
-            if (imagePoints[index].length === 4) {
-                checkAllComplete();
+          ${fields.map(field=>{
+            if(field==='position'){
+              return `
+                <div class="form-group">
+                  <label>${t.position}</label>
+                  <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <button onclick="state.positionMode='custom'; render();" class="lang-btn ${state.positionMode==='custom'?'active':''}" style="flex:1;">${t.positionCustom}</button>
+                    <button onclick="state.positionMode='select'; render();" class="lang-btn ${state.positionMode==='select'?'active':''}" style="flex:1;">${t.positionSelect}</button>
+                  </div>
+                  ${state.positionMode==='custom'
+                    ? `<input type="text" value="${state.formData[field]||''}" oninput="state.formData['${field}']=this.value">`
+                    : `<select onchange="state.formData['${field}']=this.value"><option value="">-- ${t.positionSelect} --</option>${
+                        positionOptions[state.language].map(opt=>`<option value=\"${opt}\" ${state.formData[field]===opt?'selected':''}>${opt}</option>`).join('')
+                      }</select>`}
+                </div>`;
+            }else if(field==='phone'){
+              return `
+                <div class="form-group">
+                  <label>${t.phone}</label>
+                  <input type="text" value="${state.formData[field]||''}" oninput="
+                    (function(v){ const n=v.replace(/\\D/g,''); let out=n.length<=3?n:n.length<=7? n.slice(0,3)+'-'+n.slice(3) : n.slice(0,3)+'-'+n.slice(3,7)+'-'+n.slice(7,11); state.formData['${field}']=out; })(this.value);
+                    this.value = state.formData['${field}'];
+                  ">
+                </div>`;
+            }else if(field==='residentNum'){
+              return `
+                <div class="form-group">
+                  <label>居民/身份证号</label>
+                  <input type="text" value="${state.formData[field]||''}" oninput="
+                    (function(v){ const n=v.replace(/\\D/g,''); const out = n.length<=6 ? n : n.slice(0,6)+'-'+n.slice(6,13); state.formData['${field}']=out; })(this.value);
+                    this.value = state.formData['${field}'];
+                  ">
+                </div>`;
+            }else if(field==='experience'){
+              return `
+                <div class="form-group">
+                  <label>${t.experience}</label>
+                  <div style="position:relative;">
+                    <input type="text" value="${state.formData[field]||''}" oninput="(function(v){ const n=v.replace(/\\D/g,''); state.formData['${field}']=n; })(this.value); this.value = state.formData['${field}'];" style="padding-right:50px;">
+                    <span style="position:absolute; right:15px; top:50%; transform:translateY(-50%); color:#5A7A8F; font-size:14px; pointer-events:none;">${t.experienceYears}</span>
+                  </div>
+                </div>`;
+            }else if(field==='name'){
+              return `
+                <div class="form-group">
+                  <label>${t.name}</label>
+                  <div style="display:flex; gap:10px;">
+                    <input type="text" value="${state.formData[field]||''}" oninput="state.formData['${field}']=this.value" style="flex:1;">
+                    <button type="button" onclick="translateName()" class="lang-btn" style="background:#4A90A4; color:#fff;">🔄 ${t.translateName}</button>
+                  </div>
+                </div>`;
+            }else if(field==='address'){
+              return `
+                <div class="form-group">
+                  <label>${t.address}</label>
+                  <div style="display:flex; gap:10px;">
+                    <input type="text" value="${state.formData[field]||''}" oninput="state.formData['${field}']=this.value" style="flex:1;">
+                    <button type="button" onclick="openAddressSearch()" class="lang-btn" style="background:#3E5F8A; color:#fff;">🗺️ ${t.addressSearch}</button>
+                  </div>
+                  <p class="note">${t.addressHint}</p>
+                </div>`;
+            }else{
+              return `
+                <div class="form-group">
+                  <label>${t[field] || field}</label>
+                  <input type="${field==='birthday' ? 'date' : 'text'}" value="${state.formData[field]||''}" oninput="state.formData['${field}']=this.value">
+                </div>`;
             }
-        }
+          }).join('')}
 
-        function undoPoint(index) {
-            if (imagePoints[index].length > 0) {
-                imagePoints[index].pop();
-                redrawCanvas(index);
-                updatePointInfo(index);
-                document.getElementById('mergeButton').style.display = 'none';
-            }
-        }
+          <div class="form-group">
+            <label>${t.signature}</label>
+            <div class="signature-container">
+              <canvas id="signatureCanvas" width="600" height="180"></canvas>
+            </div>
+            <button onclick="clearSignature(); render();" class="clear-btn">${t.clearSignature}</button>
+          </div>
 
-        function resetPoints(index) {
-            imagePoints[index] = [];
-            redrawCanvas(index);
-            updatePointInfo(index);
-            document.getElementById('mergeButton').style.display = 'none';
-        }
+          <button class="generate-btn" onclick="generateForms()">🖼️ ${t.generate}</button>
 
-        function rotateImage(index) {
-            imageRotations[index] = (imageRotations[index] + 90) % 360;
-            
-            const canvas = document.getElementById(`canvas${index}`);
-            const oldWidth = canvas.width;
-            const oldHeight = canvas.height;
-            
-            imagePoints[index] = imagePoints[index].map(point => {
-                let newX, newY;
-                switch(imageRotations[index]) {
-                    case 90:
-                        newX = oldHeight - point.y;
-                        newY = point.x;
-                        break;
-                    case 180:
-                        newX = oldWidth - point.x;
-                        newY = oldHeight - point.y;
-                        break;
-                    case 270:
-                        newX = point.y;
-                        newY = oldWidth - point.x;
-                        break;
-                    default:
-                        newX = point.x;
-                        newY = point.y;
-                }
-                return { x: newX, y: newY };
-            });
-            
-            redrawCanvas(index);
-        }
+          ${state.formsGenerated ? `
+          <button class="generate-btn" onclick="openSmsApp()" style="margin-top:20px; background:linear-gradient(135deg,#4A90A4 0%, #3E5F8A 100%);">
+            ${t.sendToAdmin}
+          </button>
+          ` : ''}
+        </div>
+      `;
+    }
 
-        function redrawCanvas(index) {
-            const canvas = document.getElementById(`canvas${index}`);
-            const ctx = canvas.getContext('2d');
-            const img = images[index];
-            const rotation = imageRotations[index];
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            if (rotation === 90 || rotation === 270) {
-                const tempWidth = canvas.width;
-                canvas.width = canvas.height;
-                canvas.height = tempWidth;
-            }
-            
-            ctx.save();
-            ctx.translate(canvas.width / 2, canvas.height / 2);
-            ctx.rotate((rotation * Math.PI) / 180);
-            
-            if (rotation === 90 || rotation === 270) {
-                ctx.drawImage(img, -canvas.height / 2, -canvas.width / 2, canvas.height, canvas.width);
-            } else {
-                ctx.drawImage(img, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
-            }
-            ctx.restore();
+    function openAddressSearch(){
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:999999; display:flex; align-items:center; justify-content:center; padding:20px;';
 
-            imagePoints[index].forEach((point, i) => {
-                ctx.fillStyle = '#C73E1D';
-                ctx.beginPath();
-                ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.fillStyle = '#FAFAF8';
-                ctx.font = 'bold 14px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(i + 1, point.x, point.y);
-            });
+      const content = document.createElement('div');
+      content.style.cssText = 'background:#fff; border-radius:12px; width:95%; max-width:1100px; height:90vh; max-height:850px; display:flex; flex-direction:column; overflow:hidden;';
+      content.innerHTML = `
+        <div style="padding:16px 20px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center;">
+          <strong>🗺️ Naver 地图 - 地址搜索</strong>
+          <button class="lang-btn" style="background:#C73E1D; color:#fff;" onclick="document.getElementById('mapModal').remove(); document.body.style.overflow='';">✕ 关闭</button>
+        </div>
+        <div style="flex:1; padding:16px; display:flex; flex-direction:column; gap:12px; background:#f9fafb;">
+          <div style="background:#F0F8F9; border:2px solid #A8DADC; padding:12px; border-radius:8px; color:#2E4F7A;">
+            1) 在下方 Naver 地图中搜索你的地址 → 2) 复制完整地址 → 3) 返回表单粘贴
+          </div>
+          <iframe src="https://map.naver.com/" style="width:100%; flex:1; border:2px solid #e5e7eb; border-radius:8px; background:#fff;"></iframe>
+        </div>`;
 
-            if (imagePoints[index].length > 1) {
-                ctx.strokeStyle = '#4A90A4';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo(imagePoints[index][0].x, imagePoints[index][0].y);
-                for (let i = 1; i < imagePoints[index].length; i++) {
-                    ctx.lineTo(imagePoints[index][i].x, imagePoints[index][i].y);
-                }
-                if (imagePoints[index].length === 4) {
-                    ctx.closePath();
-                }
-                ctx.stroke();
-            }
-        }
+      const wrapper = document.createElement('div');
+      wrapper.id = 'mapModal'; wrapper.appendChild(content);
+      overlay.appendChild(content);
+      wrapper.appendChild(overlay);
+      document.body.appendChild(wrapper);
+      document.body.style.overflow = 'hidden';
+      overlay.addEventListener('click', (e)=>{ if(e.target===overlay){ wrapper.remove(); document.body.style.overflow=''; } });
+    }
 
-        function updatePointInfo(index) {
-            const t = translations[currentLang];
-            const info = document.getElementById(`info${index}`);
-            if (imagePoints[index].length < 4) {
-                info.textContent = t.pointsSelected
-                    .replace('{count}', imagePoints[index].length)
-                    .replace('{corner}', t.corners[imagePoints[index].length]);
-                info.style.color = '#3E5F8A';
-            } else {
-                info.textContent = t.completed;
-                info.style.color = '#4A90A4';
-            }
-        }
+    function openSmsApp(){
+      const phone = state.formData.receiverPhone;
+      if(!phone){
+        const messages = { 
+          zh:'请先输入接收者手机号', 
+          ko:'수신 전화번호를 입력하세요', 
+          vi:'Vui lòng nhập số điện thoại nhận', 
+          ru:'Введите номер телефона получателя' 
+        };
+        alert(messages[state.language] || '请先输入接收者手机号');
+        return;
+      }
+      
+      // 移除手机号中的所有非数字字符
+      const cleanPhone = phone.replace(/\D/g, '');
+      
+      // 使用 sms: URL scheme 打开短信应用
+      const smsUrl = `sms:${cleanPhone}`;
+      
+      try {
+        window.location.href = smsUrl;
+      } catch(e) {
+        // 如果失败，尝试用 window.open
+        window.open(smsUrl, '_self');
+      }
+    }
 
-        function checkAllComplete() {
-            if (imagePoints.every(points => points.length === 4)) {
-                document.getElementById('mergeButton').style.display = 'block';
-            }
-        }
+    // ===================== 打开短信应用 =====================
+    function openSmsApp(){
+      // 固定的管理员手机号
+      const phone = '010-3742-0131';
+      
+      // 移除所有非数字字符
+      const cleanPhone = phone.replace(/\D/g, '');
+      
+      // 构建SMS URL（不带预设消息）
+      const smsUrl = `sms:${cleanPhone}`;
+      
+      // 打开短信应用
+      try {
+        window.location.href = smsUrl;
+      } catch(e) {
+        window.open(smsUrl, '_self');
+      }
+    }
 
-        function goBackToStep1() {
-            document.getElementById('originalFlow').classList.remove('hidden');
-            editorArea.style.display = 'none';
-            document.getElementById('backButton').style.display = 'none';
-            document.getElementById('mergeButton').style.display = 'none';
-            resultCanvas.style.display = 'none';
-            
-            images = [];
-            imagePoints = [];
-            imageRotations = [];
-            editorArea.innerHTML = '';
-        }
+    // ===================== 主渲染入口 =====================
+    function render(){
+      const app = document.getElementById('app');
+      if(state.showPasswordPage){ app.innerHTML = renderPasswordPage(); return; }
+      app.innerHTML = state.isAdminMode ? renderAdminMode() : renderUserMode();
 
-        function perspectiveTransform(srcPoints, img, rotation) {
-            const rotatedCanvas = document.createElement('canvas');
-            
-            if (rotation === 90 || rotation === 270) {
-                rotatedCanvas.width = img.height;
-                rotatedCanvas.height = img.width;
-            } else {
-                rotatedCanvas.width = img.width;
-                rotatedCanvas.height = img.height;
-            }
-            
-            const rotCtx = rotatedCanvas.getContext('2d');
-            rotCtx.save();
-            rotCtx.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
-            rotCtx.rotate((rotation * Math.PI) / 180);
-            
-            if (rotation === 90 || rotation === 270) {
-                rotCtx.drawImage(img, -img.height / 2, -img.width / 2, img.height, img.width);
-            } else {
-                rotCtx.drawImage(img, -img.width / 2, -img.height / 2, img.width, img.height);
-            }
-            rotCtx.restore();
-            
-            const minX = Math.min(srcPoints[0].x, srcPoints[1].x, srcPoints[2].x, srcPoints[3].x);
-            const maxX = Math.max(srcPoints[0].x, srcPoints[1].x, srcPoints[2].x, srcPoints[3].x);
-            const minY = Math.min(srcPoints[0].y, srcPoints[1].y, srcPoints[2].y, srcPoints[3].y);
-            const maxY = Math.max(srcPoints[0].y, srcPoints[1].y, srcPoints[2].y, srcPoints[3].y);
-            
-            const width = maxX - minX;
-            const height = maxY - minY;
+      // 绑定签名板
+      const canvas = document.getElementById('signatureCanvas');
+      if(canvas){
+        signatureCanvas = canvas; sigCtx = canvas.getContext('2d'); sigCtx.lineWidth = 2; sigCtx.lineCap='round';
+        canvas.addEventListener('mousedown', startDrawing); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('touchstart', startDrawing, {passive:true}); canvas.addEventListener('touchmove', draw, {passive:false}); window.addEventListener('touchend', stopDrawing);
+      }
+    }
 
-            const destCanvas = document.createElement('canvas');
-            destCanvas.width = Math.round(width);
-            destCanvas.height = Math.round(height);
-            const destCtx = destCanvas.getContext('2d');
-
-            destCtx.drawImage(
-                rotatedCanvas,
-                minX, minY, width, height,
-                0, 0, width, height
-            );
-
-            return destCanvas;
-        }
-
-        function mergePhotos() {
-            editorArea.style.display = 'none';
-            document.getElementById('backButton').style.display = 'none';
-            document.getElementById('mergeButton').style.display = 'none';
-            
-            const transformedImages = images.map((img, index) => {
-                const canvas = document.getElementById(`canvas${index}`);
-                const scale = canvas.width / img.width;
-                const scaledPoints = imagePoints[index].map(p => ({
-                    x: p.x / scale,
-                    y: p.y / scale
-                }));
-                return perspectiveTransform(scaledPoints, img, imageRotations[index]);
-            });
-
-            createMergedImage(phoneInput.value, transformedImages);
-        }
-
-        function createMergedImage(phone, images) {
-            const canvas = resultCanvas;
-            const ctx = canvas.getContext('2d');
-
-            const maxWidth = Math.max(...images.map(img => img.width));
-            const headerHeight = 150;
-            const totalHeight = headerHeight + images.reduce((sum, img) => {
-                const scaledHeight = (maxWidth / img.width) * img.height;
-                return sum + scaledHeight;
-            }, 0);
-
-            canvas.width = maxWidth;
-            canvas.height = totalHeight;
-
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, headerHeight);
-            
-            let fontSize = headerHeight * 0.85;
-            ctx.font = `bold ${fontSize}px Arial`;
-            
-            let textWidth = ctx.measureText(phone).width;
-            if (textWidth > canvas.width * 0.95) {
-                fontSize = (canvas.width * 0.95) / ctx.measureText(phone).width * fontSize;
-                ctx.font = `bold ${fontSize}px Arial`;
-            }
-            
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = 'black';
-            ctx.fillText(phone, canvas.width / 2, headerHeight / 2);
-
-            let currentY = headerHeight;
-            images.forEach(img => {
-                const scaledHeight = (maxWidth / img.width) * img.height;
-                ctx.drawImage(img, 0, currentY, maxWidth, scaledHeight);
-                currentY += scaledHeight;
-            });
-
-            canvas.style.display = 'block';
-
-            canvas.toBlob(function(blob) {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `合成照片_${phone}.png`;
-                a.click();
-                URL.revokeObjectURL(url);
-            });
-        }
-
-        window.selectLanguage = selectLanguage;
-        window.backToLanguageSelect = backToLanguageSelect;
-        window.selectMode = selectMode;
-        window.backToMain = backToMain;
-        window.checkEditedPhoto = checkEditedPhoto;
-        window.hasPhoneNumber = hasPhoneNumber;
-        window.noPhoneNumber = noPhoneNumber;
-        window.closeModal = closeModal;
-        window.closePhoneInputModal = closePhoneInputModal;
-        window.confirmEditedPhone = confirmEditedPhone;
-        window.startEditing = startEditing;
-        window.undoPoint = undoPoint;
-        window.resetPoints = resetPoints;
-        window.rotateImage = rotateImage;
-        window.goBackToStep1 = goBackToStep1;
-        window.mergePhotos = mergePhotos;
-    </script>
+    // 初始化
+    initConfig();
+  </script>
 </body>
 </html>
