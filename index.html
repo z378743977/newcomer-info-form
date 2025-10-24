@@ -101,6 +101,9 @@
   <div id="app"></div>
 
   <script>
+    // ===================== 内置预设配置 =====================
+    const BUILT_IN_CONFIG = {"templates":{"contract":{"image":"contract_01.jpg","fields":{"name":{"x":245,"y":252,"lang":"zh","fontSize":16,"fontColor":"#000000"},"birthday":{"x":243,"y":290,"lang":"zh","fontSize":16,"fontColor":"#000000"},"address":{"x":244,"y":325,"lang":"zh","fontSize":16,"fontColor":"#000000"},"position":{"x":325,"y":358,"lang":"zh","fontSize":16,"fontColor":"#000000"},"passport":{"x":245,"y":387,"lang":"zh","fontSize":16,"fontColor":"#000000"},"phone":{"x":325,"y":420,"lang":"zh","fontSize":16,"fontColor":"#000000"},"experience":{"x":244,"y":454,"lang":"zh","fontSize":16,"fontColor":"#000000"},"checkmark":{"x":232,"y":539,"lang":"zh","fontSize":16,"fontColor":"#000000"},"month":{"x":432,"y":539,"lang":"zh","fontSize":16,"fontColor":"#000000"},"day":{"x":487,"y":539,"lang":"zh","fontSize":16,"fontColor":"#000000"},"signature":{"x":301,"y":549,"lang":"zh","fontSize":16,"fontColor":"#000000"}}},"form":{"image":"form_01.jpg","fields":{"name":{"x":127,"y":202,"lang":"ko","fontSize":14,"fontColor":"#000000"},"birthday":{"x":126,"y":234,"lang":"ko","fontSize":14,"fontColor":"#000000"},"address":{"x":126,"y":267,"lang":"ko","fontSize":14,"fontColor":"#000000"},"position":{"x":126,"y":299,"lang":"ko","fontSize":14,"fontColor":"#000000"},"residentNum":{"x":370,"y":202,"lang":"ko","fontSize":14,"fontColor":"#000000"},"phone":{"x":370,"y":234,"lang":"ko","fontSize":14,"fontColor":"#000000"},"experience":{"x":370,"y":267,"lang":"ko","fontSize":14,"fontColor":"#000000"},"checkmark":{"x":91,"y":385,"lang":"ko","fontSize":14,"fontColor":"#000000"},"month":{"x":281,"y":385,"lang":"ko","fontSize":14,"fontColor":"#000000"},"day":{"x":334,"y":385,"lang":"ko","fontSize":14,"fontColor":"#000000"},"signature":{"x":186,"y":400,"lang":"ko","fontSize":14,"fontColor":"#000000"}}}}};
+
     // ===================== 多语言与工种 =====================
     const translations = {
       zh:{ title:'员工信息表单', selectLanguage:'选择语言', name:'姓名', translateName:'翻译', birthday:'生日', address:'地址', addressSearch:'搜索地址', position:'职位', positionCustom:'自填', positionSelect:'选择工种', passport:'护照号', phone:'手机号', experience:'工作经历', experienceYears:'年', signature:'签名', clearSignature:'清除签名', generate:'生成表单', sendToAdmin:'📱 发送至管理员', adminMode:'管理员模式', userMode:'用户模式', addressHint:'💡 在Naver地图中搜索地址,然后复制粘贴到输入框' },
@@ -314,6 +317,15 @@
     }
 
     async function loadDefaultConfig(){
+      // 优先使用内置配置
+      if(typeof BUILT_IN_CONFIG !== 'undefined' && BUILT_IN_CONFIG.templates){
+        console.log('使用内置预设配置');
+        if(BUILT_IN_CONFIG.templates) state.templates = BUILT_IN_CONFIG.templates;
+        if(BUILT_IN_CONFIG.fieldPositions) state.fieldPositions = BUILT_IN_CONFIG.fieldPositions;
+        return true;
+      }
+      
+      // 如果没有内置配置，尝试从外部文件加载
       try{
         const res = await fetch('form-config.json');
         if(res.ok){
