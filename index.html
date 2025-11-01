@@ -95,32 +95,109 @@
     .password-btn{ width:100%; padding:15px; background:linear-gradient(135deg,#3E5F8A 0%, #2E4F7A 100%); color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:600; cursor:pointer; }
     .password-error{ color:#C73E1D; font-size:14px; margin-top:10px; display:none; }
     .password-error.show{ display:block; }
+    
+    /* 虚拟键盘样式 */
+    .virtual-keyboard {
+      margin-top: 15px;
+      padding: 15px;
+      background: #F0F8F9;
+      border-radius: 8px;
+      border: 2px solid #B8D4D6;
+    }
+    .keyboard-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2E4F7A;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .keyboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+      gap: 5px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .char-btn {
+      padding: 10px 5px;
+      background: #fff;
+      border: 1px solid #D4E4E7;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all .2s;
+      text-align: center;
+    }
+    .char-btn:hover {
+      background: #3E5F8A;
+      color: #fff;
+      transform: scale(1.05);
+    }
+    .char-btn:active {
+      transform: scale(0.95);
+    }
+    .keyboard-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .keyboard-control-btn {
+      flex: 1;
+      padding: 8px;
+      background: #E8F0F2;
+      border: 1px solid #B8D4D6;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all .2s;
+    }
+    .keyboard-control-btn:hover {
+      background: #D4E4E7;
+    }
+    .name-input-container {
+      position: relative;
+    }
+    .keyboard-toggle-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #3E5F8A;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .keyboard-toggle-btn:hover {
+      background: #2E4F7A;
+    }
   </style>
 </head>
 <body>
   <div id="app"></div>
 
   <script>
-    // ===================== 内置预设配置 =====================
-    const BUILT_IN_CONFIG = {"templates":{"contract":{"image":"contract_01.jpg","fields":{"name":{"x":245,"y":252,"lang":"zh","fontSize":16,"fontColor":"#000000"},"birthday":{"x":243,"y":290,"lang":"zh","fontSize":16,"fontColor":"#000000"},"address":{"x":244,"y":325,"lang":"zh","fontSize":16,"fontColor":"#000000"},"position":{"x":325,"y":358,"lang":"zh","fontSize":16,"fontColor":"#000000"},"passport":{"x":245,"y":387,"lang":"zh","fontSize":16,"fontColor":"#000000"},"phone":{"x":325,"y":420,"lang":"zh","fontSize":16,"fontColor":"#000000"},"experience":{"x":244,"y":454,"lang":"zh","fontSize":16,"fontColor":"#000000"},"checkmark":{"x":232,"y":539,"lang":"zh","fontSize":16,"fontColor":"#000000"},"month":{"x":432,"y":539,"lang":"zh","fontSize":16,"fontColor":"#000000"},"day":{"x":487,"y":539,"lang":"zh","fontSize":16,"fontColor":"#000000"},"signature":{"x":301,"y":549,"lang":"zh","fontSize":16,"fontColor":"#000000"}}},"form":{"image":"form_01.jpg","fields":{"name":{"x":127,"y":202,"lang":"ko","fontSize":14,"fontColor":"#000000"},"birthday":{"x":126,"y":234,"lang":"ko","fontSize":14,"fontColor":"#000000"},"address":{"x":126,"y":267,"lang":"ko","fontSize":14,"fontColor":"#000000"},"position":{"x":126,"y":299,"lang":"ko","fontSize":14,"fontColor":"#000000"},"residentNum":{"x":370,"y":202,"lang":"ko","fontSize":14,"fontColor":"#000000"},"phone":{"x":370,"y":234,"lang":"ko","fontSize":14,"fontColor":"#000000"},"experience":{"x":370,"y":267,"lang":"ko","fontSize":14,"fontColor":"#000000"},"checkmark":{"x":91,"y":385,"lang":"ko","fontSize":14,"fontColor":"#000000"},"month":{"x":281,"y":385,"lang":"ko","fontSize":14,"fontColor":"#000000"},"day":{"x":334,"y":385,"lang":"ko","fontSize":14,"fontColor":"#000000"},"signature":{"x":186,"y":400,"lang":"ko","fontSize":14,"fontColor":"#000000"}}}}};
-
     // ===================== 多语言与工种 =====================
     const translations = {
-      zh:{ title:'员工信息表单', selectLanguage:'选择语言', name:'姓名', translateName:'翻译', birthday:'生日', address:'地址', addressSearch:'搜索地址', position:'职位', positionCustom:'自填', positionSelect:'选择工种', passport:'护照号', phone:'手机号', experience:'工作经历', experienceYears:'年', signature:'签名', clearSignature:'清除签名', generate:'生成表单', sendToAdmin:'📱 发送至管理员', adminMode:'管理员模式', userMode:'用户模式', addressHint:'💡 在Naver地图中搜索地址,然后复制粘贴到输入框' },
-      ko:{ title:'직원 정보 양식', selectLanguage:'언어 선택', name:'성명', translateName:'번역', birthday:'생년월일', address:'주소', addressSearch:'주소 검색', position:'직종', positionCustom:'직접 입력', positionSelect:'선택', residentNum:'주민등록번호', phone:'전화번호', experience:'경력', experienceYears:'년', signature:'서명', clearSignature:'서명 지우기', generate:'양식 생성', sendToAdmin:'📱 관리자에게 전송', adminMode:'관리자 모드', userMode:'사용자 모드', addressHint:'💡 Naver 지도에서 주소를 검색한 후 입력란에 붙여넣기 하세요' },
-      vi:{ title:'Mẫu thông tin nhân viên', selectLanguage:'Chọn ngôn ngữ', name:'Họ và tên', translateName:'Dịch', birthday:'Ngày sinh', address:'Địa chỉ', addressSearch:'Tìm địa chỉ', position:'Vị trí', positionCustom:'Tự nhập', positionSelect:'Chọn', passport:'Số hộ chiếu', phone:'Số điện thoại', experience:'Kinh nghiệm', experienceYears:'năm', signature:'Chữ ký', clearSignature:'Xóa chữ ký', generate:'Tạo mẫu', sendToAdmin:'📱 Gửi cho quản trị viên', adminMode:'Chế độ quản trị', userMode:'Chế độ người dùng', addressHint:'💡 Tìm kiếm địa chỉ trên bản đồ Naver, sau đó sao chép và dán vào ô nhập' },
-      ru:{ title:'Форма информации о сотруднике', selectLanguage:'Выберите язык', name:'ФИО', translateName:'Перевод', birthday:'Дата рождения', address:'Адрес', addressSearch:'Поиск адреса', position:'Должность', positionCustom:'Ввести', positionSelect:'Выбрать', passport:'Номер паспорта', phone:'Телефон', experience:'Опыт работы', experienceYears:'лет', signature:'Подпись', clearSignature:'Очистить подпись', generate:'Создать форму', sendToAdmin:'📱 Отправить администратору', adminMode:'Режим администратора', userMode:'Режим пользователя', addressHint:'💡 Найдите адрес на карте Naver, затем скопируйте и вставьте в поле ввода' }
+      zh:{ title:'员工信息表单', selectLanguage:'选择语言', name:'姓名', translateName:'翻译', birthday:'生日', address:'地址', addressSearch:'搜索地址', position:'职位', positionCustom:'自填', positionSelect:'选择工种', passport:'护照号', phone:'手机号', experience:'工作经历', experienceYears:'年', signature:'签名', clearSignature:'清除签名', generate:'生成表单', complete:'✅ 完成填写', downloadTitle:'下载表单', backToForm:'← 返回表单', generateFirst:'① 下载劳动合同', generateSecond:'② 下载安全协议', sendToAdmin:'③ 发送至管理员', adminMode:'管理员模式', userMode:'用户模式', addressHint:'💡 在Naver地图中搜索地址,然后复制粘贴到输入框', downloadHint:'请按顺序下载两个表单，然后发送给管理员', keyboardHint:'💡 点击字符输入名字' },
+      ko:{ title:'직원 정보 양식', selectLanguage:'언어 선택', name:'성명', translateName:'번역', birthday:'생년월일', address:'주소', addressSearch:'주소 검색', position:'직종', positionCustom:'직접 입력', positionSelect:'선택', residentNum:'주민등록번호', phone:'전화번호', experience:'경력', experienceYears:'년', signature:'서명', clearSignature:'서명 지우기', generate:'양식 생성', complete:'✅ 작성 완료', downloadTitle:'양식 다운로드', backToForm:'← 양식으로 돌아가기', generateFirst:'① 근로계약서 다운로드', generateSecond:'② 안전협약 다운로드', sendToAdmin:'③ 관리자에게 전송', adminMode:'관리자 모드', userMode:'사용자 모드', addressHint:'💡 Naver 지도에서 주소를 검색한 후 입력란에 붙여넣기 하세요', downloadHint:'두 양식을 순서대로 다운로드한 후 관리자에게 전송하세요', keyboardHint:'💡 문자를 클릭하여 이름 입력' },
+      vi:{ title:'Mẫu thông tin nhân viên', selectLanguage:'Chọn ngôn ngữ', name:'Họ và tên', translateName:'Dịch', birthday:'Ngày sinh', address:'Địa chỉ', addressSearch:'Tìm địa chỉ', position:'Vị trí', positionCustom:'Tự nhập', positionSelect:'Chọn', passport:'Số hộ chiếu', phone:'Số điện thoại', experience:'Kinh nghiệm', experienceYears:'năm', signature:'Chữ ký', clearSignature:'Xóa chữ ký', generate:'Tạo mẫu', complete:'✅ Hoàn thành điền', downloadTitle:'Tải xuống mẫu', backToForm:'← Quay lại mẫu', generateFirst:'① Tải hợp đồng lao động', generateSecond:'② Tải thỏa thuận an toàn', sendToAdmin:'③ Gửi cho quản trị viên', adminMode:'Chế độ quản trị', userMode:'Chế độ người dùng', addressHint:'💡 Tìm kiếm địa chỉ trên bản đồ Naver, sau đó sao chép và dán vào ô nhập', downloadHint:'Vui lòng tải xuống hai mẫu theo thứ tự, sau đó gửi cho quản trị viên', keyboardHint:'💡 Nhấp vào ký tự để nhập tên' },
+      ru:{ title:'Форма информации о сотруднике', selectLanguage:'Выберите язык', name:'ФИО', translateName:'Перевод', birthday:'Дата рождения', address:'Адрес', addressSearch:'Поиск адреса', position:'Должность', positionCustom:'Ввести', positionSelect:'Выбрать', passport:'Номер паспорта', phone:'Телефон', experience:'Опыт работы', experienceYears:'лет', signature:'Подпись', clearSignature:'Очистить подпись', generate:'Создать форму', complete:'✅ Заполнение завершено', downloadTitle:'Скачать формы', backToForm:'← Вернуться к форме', generateFirst:'① Скачать трудовой договор', generateSecond:'② Скачать соглашение о безопасности', sendToAdmin:'③ Отправить администратору', adminMode:'Режим администратора', userMode:'Режим пользователя', addressHint:'💡 Найдите адрес на карте Naver, затем скопируйте и вставьте в поле ввода', downloadHint:'Пожалуйста, загрузите две формы по порядку, а затем отправьте администратору', keyboardHint:'💡 Нажмите на символ для ввода имени' }
     };
 
     const positionOptions = {
       zh:['整理','老炮','拆除','钢筋','浇筑','架子工','信号员','二炮','钢炮','碎石抹灰','安全'],
-      ko:['정리','형틀','해체','철근','타설','비계','신호수','알퍼','갱퍼','할석미장','안전'],
-      vi:['정리','형틀','해체','철근','타설','비계','신호수','알퍼','갱퍼','할석미장','안전'],
-      ru:['정리','형틀','해체','철근','타설','비계','신호수','알퍼','갱퍼','할석미장','안전']
+      ko:['정리','형틀','해체','철근','타설','비계','신호수','알폼','갱폼','할석미장','안전'],
+      vi:['Dọn dẹp','Ván khuôn','Phá dỡ','Cốt thép','Đổ bê tông','Giàn giáo','Nhân viên tín hiệu','Ván khuôn nhôm','Ván khuôn lớn','Trát đá nghiền','An toàn'],
+      ru:['Уборка','Опалубка','Демонтаж','Арматура','Заливка','Леса','Сигнальщик','Алюминиевая опалубка','Крупнощитовая опалубка','Штукатурка щебнем','Безопасность']
     };
 
     const positionMapping = {
-      '整理':'정리','老炮':'형틀','拆除':'해체','钢筋':'철근','浇筑':'타설','架子工':'비계','信号员':'신호수','二炮':'알퍼','钢炮':'갱퍼','碎石抹灰':'할석미장','安全':'안전'
+      '整理':'정리','老炮':'형틀','拆除':'해체','钢筋':'철근','浇筑':'타설','架子工':'비계','信号员':'신호수','二炮':'알폼','钢炮':'갱폼','碎石抹灰':'할석미장','安全':'안전'
     };
     function convertPositionToKorean(p){ return positionMapping[p] || p; }
 
@@ -128,79 +205,36 @@
     // 中文常见字到韩语的映射
     const chineseToKorean = {
       '李':'이','王':'왕','张':'장','刘':'유','陈':'진','杨':'양','黄':'황','赵':'조','吴':'오','周':'주',
-      '徐':'서','孙':'손','马':'마','朱':'주','胡':'호','郭':'곽','何':'하','高':'고','林':'림','郑':'정',
-      '小':'소','大':'대','明':'명','华':'화','东':'동','文':'문','建':'건','国':'국','军':'군','强':'강',
-      '伟':'위','勇':'용','磊':'뢰','涛':'도','鹏':'붕','杰':'걸','峰':'봉','超':'초','波':'파','辉':'휘',
-      '刚':'강','平':'평','飞':'비','宇':'우','浩':'호','志':'지','亮':'양','凯':'개','龙':'용','春':'춘',
-      '海':'해','斌':'빈','新':'신','晨':'신','雷':'뢰','健':'건','成':'성','鑫':'신','宁':'닝','静':'정',
-      '丽':'려','芳':'방','燕':'연','娟':'연','红':'홍','霞':'하','秀':'수','玲':'령','梅':'매','兰':'란',
-      '美':'미','婷':'정','倩':'천','敏':'민','莉':'리','英':'영','云':'운','慧':'혜','颖':'영','萍':'평',
-      '洁':'결','佳':'가','琳':'림','雪':'설','菊':'국','艳':'염','月':'월','凤':'봉','晶':'정','丹':'단',
-      '京':'경','安':'안','福':'복','祥':'상','武':'무','清':'청','正':'정','仁':'인','义':'의','德':'덕',
-      '松':'송','江':'강','山':'산','青':'청','友':'우','贵':'귀','兴':'흥','振':'진','晓':'효','亚':'아',
-      '永':'영','元':'원','长':'장','世':'세','中':'중','天':'천','宝':'보','生':'생','忠':'충','胜':'승',
-      '时':'시','思':'사','光':'광','南':'남','北':'북','方':'방','子':'자','民':'민','玉':'옥','树':'수',
-      '才':'재','有':'유','家':'가','业':'업','学':'학','利':'리','和':'화','立':'립','达':'달','金':'김',
-      '力':'력','贤':'현','显':'현','雅':'아','乐':'락','富':'부','豪':'호','泽':'택','锋':'봉','涵':'함',
-      '俊':'준','翔':'상','博':'박','远':'원','书':'서','启':'계','维':'유','道':'도','锦':'금','荣':'영',
-      '星':'성','银':'은','铁':'철','铜':'동','钢':'강','石':'석','水':'수','火':'화','风':'풍','雨':'우',
-      '花':'화','草':'초','林':'림','森':'삼','茂':'무','荣':'영','华':'화','富':'부','贵':'귀','康':'강',
-      '泰':'태','安':'안','乐':'락','寿':'수','吉':'길','祥':'상','福':'복','禄':'녹','喜':'희','庆':'경',
-      '发':'발','财':'재','进':'진','升':'승','登':'등','高':'고','远':'원','大':'대','广':'광','宏':'홍',
-      '俐':'리','娜':'나','婉':'완','柔':'유','温':'온','淑':'숙','端':'단','贞':'정','洪':'홍','汉':'한',
-      '爱':'애','仙':'선','凡':'범','冰':'빙','心':'심','怡':'이','惠':'혜','珍':'진','琪':'기','瑞':'서',
-      '璇':'선','瑶':'요','环':'환','畅':'창','真':'진','祺':'기','竹':'죽','笑':'소','筱':'소','纯':'순',
-      '绮':'기','翠':'취','聪':'총','艺':'예','芬':'분','芸':'운','若':'약','莹':'영','菁':'정','萌':'맹',
-      '虹':'홍','蝶':'접','诗':'시','语':'어','贺':'하','越':'월','迎':'영','连':'련','邦':'방','邑':'읍',
-      '采':'채','银':'은','锐':'예','陵':'릉','霖':'림','靖':'정','静':'정','韵':'운','颂':'송','鸿':'홍',
-      '宽':'관','厚':'후','善':'선','仪':'의','容':'용','宜':'의','寒':'한','廷':'정','延':'연','开':'개',
-      '恩':'은','慈':'자','懿':'의','戈':'과','才':'재','承':'승','拓':'탁','敬':'경','敦':'돈','斯':'사',
-      '旭':'욱','昊':'호','昌':'창','昭':'소','智':'지','暖':'난','曙':'서','朗':'랑','木':'목','本':'본',
-      '权':'권','柏':'백','栋':'동','梁':'양','楠':'남','欣':'흔','欢':'환','歌':'가','毅':'의','汝':'여',
-      '沛':'패','河':'하','泉':'천','洋':'양','浚':'준','淳':'순','深':'심','渊':'연','源':'원','溪':'계',
-      '滨':'빈','澄':'징','瀚':'한','炎':'염','烨':'엽','煊':'훤','熙':'희','燊':'신','牧':'목','理':'리',
-      '琛':'침','瑜':'유','璋':'장','璐':'로','甫':'보','田':'전','畅':'창','百':'백','盛':'성','睿':'예',
-      '知':'지','礼':'례','禹':'우','科':'과','秋':'추','程':'정','穆':'목','端':'단','策':'책','筠':'균',
-      '简':'간','米':'미','精':'정','绍':'소','继':'계','维':'유','绵':'면','缘':'연','翰':'한','翼':'익',
-      '腾':'등','良':'양','芝':'지','苗':'묘','茹':'여','茵':'인','荃':'전','荷':'하','荻':'적','菲':'비',
-      '萱':'훤','葵':'규','蓉':'용','蔚':'위','蕊':'예','蕾':'뢰','薇':'미','藤':'등','融':'융','行':'행',
-      '衡':'형','裕':'유','西':'서','要':'요','见':'견','言':'언','计':'계','记':'기','训':'훈','诚':'성',
-      '谊':'의','谦':'겸','豫':'예','贞':'정','跃':'약','轩':'헌','辰':'신','迪':'적','逸':'일','遥':'요',
-      '邵':'소','邻':'린','郁':'욱','都':'도','鉴':'감','锡':'석','锦':'금','镇':'진','镭':'뢰','闻':'문',
-      '阔':'활','阳':'양','际':'제','隆':'륭','雁':'안','集':'집','霄':'소','霁':'제','青':'청','韬':'도',
-      '顺':'순','颂':'송','风':'풍','飒':'살','馨':'형','骏':'준','魁':'괴','鸣':'명','鹤':'학','鹏':'붕',
-      '麒':'기','麟':'린','黎':'려','齐':'제'
+      '徐':'서','孙':'손','马':'마','朱':'주','胡':'호','郭':'곽','何':'하','高':'고','林':'림','郑':'정'
     };
 
-    // 越南语音节到韩语的映射
+    // 越南语到韩语的映射
     const vietnameseToKorean = {
-      // 声母
-      'Ph':'프','Th':'트','Kh':'크','Tr':'쯔','Ng':'응','Nh':'느','Ch':'쯔','Gi':'지','Qu':'꾸',
-      // 常见音节
-      'Phạm':'팜','Nguyễn':'응우옌','Trần':'쩐','Lê':'레','Hoàng':'호앙','Phan':'판','Vũ':'부','Đặng':'당',
-      'Bùi':'부이','Đỗ':'도','Hồ':'호','Ngô':'응오','Dương':'즈엉','Lý':'리',
-      // 名字常见音节
-      'Anh':'안','Tuấn':'두안','Hùng':'훙','Dũng':'중','Minh':'민','Quang':'꽝','Thành':'타인',
-      'Văn':'반','Hải':'하이','Đức':'득','Huy':'휘','Nam':'남','Long':'롱','Hoàng':'호앙',
-      'Thị':'티','Thúy':'투이','Linh':'린','Mai':'마이','Lan':'란','Hoa':'호아','Nga':'응아',
-      'Thi':'티','Van':'반','Tuan':'두안','Hung':'훙','Dung':'중','Thanh':'타인','Hai':'하이',
-      // 单音节
-      'a':'아','e':'에','i':'이','o':'오','u':'우','ô':'어','ơ':'어','ư':'으',
-      'An':'안','Ba':'바','Ca':'까','Da':'다','Ga':'가','Ha':'하','La':'라','Ma':'마',
-      'Na':'나','Pa':'빠','Ta':'따','Va':'바','Xa':'싸','Ya':'야'
+      'Nguyễn':'웬','Trần':'전','Lê':'레','Phạm':'팜','Hoàng':'황','Huỳnh':'후인','Phan':'판','Vũ':'부','Võ':'보','Đặng':'당',
+      'Bùi':'부이','Đỗ':'도','Hồ':'호','Ngô':'오','Dương':'중','Lý':'리'
     };
 
-    // 俄语字母到韩语的映射
+    // 俄语字母到韩语的映射（基础映射）
     const russianToKorean = {
-      'А':'아','Б':'브','В':'브','Г':'그','Д':'드','Е':'예','Ё':'요','Ж':'즈','З':'즈',
-      'И':'이','Й':'이','К':'크','Л':'ль','М':'므','Н':'느','О':'오','П':'프','Р':'르',
-      'С':'스','Т':'트','У':'우','Ф':'프','Х':'흐','Ц':'츠','Ч':'츠','Ш':'쉬','Щ':'시',
-      'Ъ':'','Ы':'으이','Ь':'','Э':'에','Ю':'유','Я':'야',
-      'а':'아','б':'브','в':'브','г':'그','д':'드','е':'예','ё':'요','ж':'즈','з':'즈',
-      'и':'이','й':'이','к':'크','л':'ль','м':'므','н':'느','о':'오','п':'프','р':'르',
-      'с':'스','т':'트','у':'우','ф':'프','х':'흐','ц':'츠','ч':'츠','ш':'쉬','щ':'시',
-      'ъ':'','ы':'으이','ь':'','э':'에','ю':'유','я':'야'
+      'А':'아','Б':'브','В':'브','Г':'그','Д':'드','Е':'예','Ё':'요','Ж':'주','З':'즈','И':'이',
+      'Й':'이','К':'크','Л':'ль','М':'므','Н':'느','О':'오','П':'프','Р':'르','С':'스','Т':'트',
+      'У':'우','Ф':'프','Х':'흐','Ц':'츠','Ч':'치','Ш':'시','Щ':'시','Ъ':'','Ы':'이','Ь':'',
+      'Э':'에','Ю':'유','Я':'야',
+      'а':'아','б':'브','в':'브','г':'그','д':'드','е':'예','ё':'요','ж':'주','з':'즈','и':'이',
+      'й':'이','к':'크','л':'ль','м':'므','н':'느','о':'오','п':'프','р':'르','с':'스','т':'트',
+      'у':'우','ф':'프','х':'흐','ц':'츠','ч':'치','ш':'시','щ':'시','ъ':'','ы':'이','ь':'',
+      'э':'에','ю':'유','я':'야'
     };
+
+    // 将字典对象挂载到window上，使其可以被外部JSON文件更新
+    window.chineseToKorean = chineseToKorean;
+    window.vietnameseToKorean = vietnameseToKorean;
+    window.russianToKorean = russianToKorean;
+    
+    // 俄文完整名字、后缀规则和集群规则（从JSON加载后填充）
+    window.russianUnits = {};
+    window.russianSuffix = {};
+    window.russianCluster = [];
 
     function translateName(){
       const name = state.formData['name'];
@@ -241,11 +275,8 @@
       }
       // 检测是否为俄语西里尔字母
       else if(/[А-Яа-яЁё]/.test(name)){
-        // 俄语翻译
-        for(let char of name){
-          if(char === ' ') translated += '';
-          else translated += russianToKorean[char] || char;
-        }
+        // 俄语翻译 - 使用改进的算法
+        translated = translateRussianName(name);
       }
       else {
         alert('无法识别的名字格式 / 이름 형식을 인식할 수 없습니다');
@@ -255,6 +286,49 @@
       // 更新状态并重新渲染
       state.formData['name'] = translated;
       render();
+    }
+    
+    // 改进的俄文名字翻译函数
+    function translateRussianName(name) {
+      // 1. 首先尝试完整匹配
+      if (window.russianUnits && window.russianUnits[name]) {
+        return window.russianUnits[name];
+      }
+      
+      // 2. 尝试后缀规则匹配
+      if (window.russianSuffix && Object.keys(window.russianSuffix).length > 0) {
+        for (const [suffix, replacement] of Object.entries(window.russianSuffix)) {
+          if (name.endsWith(suffix)) {
+            const base = name.slice(0, -suffix.length);
+            // 尝试匹配基础部分
+            if (window.russianUnits && window.russianUnits[base]) {
+              return window.russianUnits[base] + replacement;
+            }
+            // 如果基础部分不在units中，也可以直接返回
+            // 这里可以选择递归翻译base部分
+            return translateRussianName(base) + replacement;
+          }
+        }
+      }
+      
+      // 3. 尝试集群规则匹配
+      if (window.russianCluster && window.russianCluster.length > 0) {
+        let result = name;
+        for (const [pattern, replacement] of window.russianCluster) {
+          result = result.replace(new RegExp(pattern, 'g'), replacement);
+        }
+        if (result !== name) {
+          return result;
+        }
+      }
+      
+      // 4. 逐字符翻译（回退方案）
+      let result = '';
+      for(let char of name){
+        if(char === ' ') result += '';
+        else result += russianToKorean[char] || char;
+      }
+      return result;
     }
 
     function translateVietnamesePart(str){
@@ -281,6 +355,52 @@
       }
       return result;
     }
+    
+    // ===================== 虚拟键盘功能 =====================
+    let keyboardVisible = false;
+    
+    function toggleKeyboard() {
+      keyboardVisible = !keyboardVisible;
+      render();
+    }
+    
+    function insertChar(char) {
+      const currentName = state.formData['name'] || '';
+      state.formData['name'] = currentName + char;
+      render();
+    }
+    
+    function deleteLastChar() {
+      const currentName = state.formData['name'] || '';
+      if (currentName.length > 0) {
+        state.formData['name'] = currentName.slice(0, -1);
+        render();
+      }
+    }
+    
+    function clearName() {
+      state.formData['name'] = '';
+      render();
+    }
+    
+    function getKeyboardChars() {
+      const lang = state.language;
+      if (lang === 'zh') {
+        // 中文常用字
+        return Object.keys(window.chineseToKorean).slice(0, 100);
+      } else if (lang === 'vi') {
+        // 越南文常用字母组合
+        return Object.keys(window.vietnameseToKorean).slice(0, 100);
+      } else if (lang === 'ru') {
+        // 俄文字母
+        const russianAlphabet = [
+          'А','Б','В','Г','Д','Е','Ё','Ж','З','И','Й','К','Л','М','Н','О','П','Р','С','Т','У','Ф','Х','Ц','Ч','Ш','Щ','Ъ','Ы','Ь','Э','Ю','Я',
+          'а','б','в','г','д','е','ё','ж','з','и','й','к','л','м','н','о','п','р','с','т','у','ф','х','ц','ч','ш','щ','ъ','ы','ь','э','ю','я'
+        ];
+        return russianAlphabet;
+      }
+      return [];
+    }
 
     // ===================== 应用状态 =====================
     let state = {
@@ -290,7 +410,10 @@
       isDrawing:false,
       isAdminMode:false,
       showPasswordPage:false,
+      showDownloadPage:false,
       formsGenerated:false,
+      firstFormGenerated:false,
+      secondFormGenerated:false,
       templates:{ contract:{ zh:null, ko:null }, safety:{ zh:null, ko:null } },
       fieldPositions:{ contract:{ zh:{}, ko:{} }, safety:{ zh:{}, ko:{} } },
       currentTemplate:'contract',
@@ -299,33 +422,11 @@
       editingField:null,
       multiInstanceMode:false,
       repositionTarget:null,
-      positionMode:'custom'
+      positionMode:'select'
     };
 
-    // ===================== 本地存储/默认配置 =====================
-    function loadFromLocalStorage(){
-      try{
-        const saved = localStorage.getItem('formFillerConfig');
-        if(saved){
-          const config = JSON.parse(saved);
-          if(config.templates) state.templates = config.templates;
-          if(config.fieldPositions) state.fieldPositions = config.fieldPositions;
-          return true;
-        }
-      }catch(e){ console.error('加载配置失败:', e); }
-      return false;
-    }
-
+    // ===================== 强制从JSON加载配置 =====================
     async function loadDefaultConfig(){
-      // 优先使用内置配置
-      if(typeof BUILT_IN_CONFIG !== 'undefined' && BUILT_IN_CONFIG.templates){
-        console.log('使用内置预设配置');
-        if(BUILT_IN_CONFIG.templates) state.templates = BUILT_IN_CONFIG.templates;
-        if(BUILT_IN_CONFIG.fieldPositions) state.fieldPositions = BUILT_IN_CONFIG.fieldPositions;
-        return true;
-      }
-      
-      // 如果没有内置配置，尝试从外部文件加载
       try{
         const res = await fetch('form-config.json');
         if(res.ok){
@@ -334,23 +435,18 @@
           if(config.fieldPositions) state.fieldPositions = config.fieldPositions;
           return true;
         }
-      }catch(e){ /* ignore */ }
+      }catch(e){ 
+        console.error('加载form-config.json失败:', e); 
+      }
       return false;
     }
 
     function saveToLocalStorage(){
-      try{
-        const config = { 
-          templates: state.templates, 
-          fieldPositions: state.fieldPositions
-        };
-        localStorage.setItem('formFillerConfig', JSON.stringify(config));
-      }catch(e){ console.error('保存配置失败:', e); }
+      // 已禁用 - 强制使用JSON配置
     }
 
     async function initConfig(){
-      const hasLocal = loadFromLocalStorage();
-      if(!hasLocal){ await loadDefaultConfig(); }
+      await loadDefaultConfig();  // 强制只使用JSON配置
       render();
     }
 
@@ -420,575 +516,514 @@
     }
     function clearSignature(){ sigCtx.clearRect(0,0,signatureCanvas.width, signatureCanvas.height); state.signature=null; }
 
-    // ===================== 生成表单 =====================
-    async function generateForms(){
+    // ===================== PDF生成（使用jsPDF+html2canvas）=====================
+    async function generateDocument(templateKey){
       if(!state.signature){
-        const messages = { zh:'请先签名', ko:'서명을 해주세요', vi:'Vui lòng ký tên', ru:'Пожалуйста, подпишите' };
-        alert(messages[state.language] || '请先签名');
+        alert('请先签名 / 서명을 먼저 해주세요');
         return;
       }
-      const langKey = state.language === 'ko' ? 'ko' : 'zh';
-      
-      // 连续下载两张图片，中间添加延迟确保移动端兼容
-      await generateForm('contract', langKey);
-      await new Promise(resolve => setTimeout(resolve, 800)); // 延迟800ms
-      await generateForm('safety', langKey);
-      
-      // 下载完成，设置标记并弹窗提示
-      state.formsGenerated = true;
-      const successMessages = { 
-        zh:'✅ 已下载完成\n\n点击下方按钮发送给管理员', 
-        ko:'✅ 다운로드 완료\n\n아래 버튼을 클릭하여 관리자에게 전송', 
-        vi:'✅ Đã tải xuống hoàn tất\n\nNhấp vào nút bên dưới để gửi cho quản trị viên', 
-        ru:'✅ Загрузка завершена\n\nНажмите кнопку ниже, чтобы отправить администратору' 
-      };
-      setTimeout(() => {
-        alert(successMessages[state.language] || '✅ 已下载完成\n\n点击下方按钮发送给管理员');
-        render(); // 重新渲染以显示发送按钮
-      }, 500);
-    }
 
-    async function generateForm(templateType, langKey){
-      const template = state.templates[templateType][langKey];
-      const positions = state.fieldPositions[templateType][langKey];
-      if(!template || !positions || Object.keys(positions).length===0){ return; }
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-
-      await new Promise((resolve)=>{
-        img.onload = ()=>{
-          canvas.width = img.width; canvas.height = img.height;
-          ctx.drawImage(img,0,0); ctx.textBaseline='top';
-
-          // 写入文本
-          Object.keys(positions).forEach(key=>{
-            const pos = positions[key]; if(!pos) return;
-            const baseField = pos.baseField || key;
-            let textValue = '';
-            if(baseField==='month'){ textValue=getCurrentMonth(); }
-            else if(baseField==='day'){ textValue=getCurrentDay(); }
-            else if(baseField==='checkmark'){ textValue='✓'; }
-            else if(state.formData[baseField]){
-              textValue = state.formData[baseField];
-              if(baseField==='experience' && textValue){ textValue = textValue + (langKey==='ko'?'년':'年'); }
-              else if(baseField==='position' && textValue){ textValue = convertPositionToKorean(textValue); }
-            }
-            if(textValue){
-              ctx.font = `${pos.fontSize || 44}px Arial`;
-              ctx.fillStyle = pos.color || '#000';
-              ctx.fillText(textValue, pos.x, pos.y);
-            }
-          });
-
-          // 贴签名 - 收集所有签名位置
-          const signaturePositions = [];
-          Object.keys(positions).forEach(key=>{
-            const pos = positions[key];
-            if(!pos) return;
-            const baseField = pos.baseField || key;
-            if(baseField==='signature' && state.signature){
-              signaturePositions.push({x: pos.x, y: pos.y, width: pos.width || 150, height: pos.height || 50});
-            }
-          });
-
-          // 等待所有签名加载完成
-          if(signaturePositions.length > 0){
-            Promise.all(signaturePositions.map(sigPos => {
-              return new Promise((resolveSign) => {
-                const sigImg = new Image();
-                sigImg.onload = () => {
-                  ctx.drawImage(sigImg, sigPos.x, sigPos.y, sigPos.width, sigPos.height);
-                  resolveSign();
-                };
-                sigImg.onerror = () => resolveSign(); // 即使失败也继续
-                sigImg.src = state.signature;
-              });
-            })).then(() => {
-              // 所有签名绘制完成后再导出
-              canvas.toBlob(blob=>{
-                const filename = `${templateType==='contract'?'劳动合同':'安全协议'}_${langKey}.png`;
-                safeDownloadFromBlob(blob, filename);
-                resolve();
-              });
-            });
-          } else {
-            // 没有签名直接导出
-            canvas.toBlob(blob=>{
-              const filename = `${templateType==='contract'?'劳动合同':'安全协议'}_${langKey}.png`;
-              safeDownloadFromBlob(blob, filename);
-              resolve();
-            });
-          }
-        };
-        img.src = template;
-      });
-    }
-
-    // ===================== 上传/定位 =====================
-    function handleTemplateUpload(e, templateType, langKey){
-      const file = e.target.files[0];
-      if(file){
-        const reader = new FileReader();
-        reader.onload = (ev)=>{
-          state.templates[templateType][langKey] = ev.target.result;
-          saveToLocalStorage(); render(); setTimeout(renderFieldMarkers, 100);
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function handleImageClick(e){
-      const img = e.target;
-      const rect = img.getBoundingClientRect();
-      const scaleX = img.naturalWidth / rect.width;
-      const scaleY = img.naturalHeight / rect.height;
-      const x = (e.clientX - rect.left) * scaleX;
-      const y = (e.clientY - rect.top) * scaleY;
-      const positions = state.fieldPositions[state.currentTemplate][state.currentLang];
-      let fieldKey;
-
-      if(state.repositionTarget){ fieldKey = state.repositionTarget; state.repositionTarget=null; }
-      else if(state.selectedField){
-        fieldKey = state.selectedField;
-        if(state.multiInstanceMode && positions[fieldKey]){
-          let i=2; while(positions[`${state.selectedField}_${i}`]) i++;
-          fieldKey = `${state.selectedField}_${i}`;
-        }
-      } else { return; }
-
-      positions[fieldKey] = {
-        x:Math.round(x), y:Math.round(y),
-        fontSize: positions[fieldKey]?.fontSize || 44,
-        color: positions[fieldKey]?.color || '#000000',
-        baseField: positions[fieldKey]?.baseField || state.selectedField || fieldKey.replace(/_\\d+$/, ''),
-        width: (positions[fieldKey]?.baseField==='signature' || state.selectedField==='signature') ? (positions[fieldKey]?.width || 150) : undefined,
-        height:(positions[fieldKey]?.baseField==='signature' || state.selectedField==='signature') ? (positions[fieldKey]?.height|| 50) : undefined
-      };
-      saveToLocalStorage(); render(); setTimeout(renderFieldMarkers, 50);
-    }
-
-    function repositionField(key){ state.repositionTarget=key; state.selectedField=null; render(); }
-    function editField(name){ state.editingField=name; render(); }
-    function deleteField(name){
-      if(confirm('确定删除该字段配置吗?')){
-        delete state.fieldPositions[state.currentTemplate][state.currentLang][name];
-        saveToLocalStorage(); render(); setTimeout(renderFieldMarkers, 50);
-      }
-    }
-    function saveFieldParams(){
-      const fz = document.getElementById('editFontSize').value;
-      const color = document.getElementById('editColor').value;
-      const w = document.getElementById('editWidth')?.value;
-      const h = document.getElementById('editHeight')?.value;
-      const pos = state.fieldPositions[state.currentTemplate][state.currentLang][state.editingField];
-      pos.fontSize = parseInt(fz); pos.color = color;
-      if(w) pos.width = parseInt(w); if(h) pos.height = parseInt(h);
-      state.editingField=null; saveToLocalStorage(); render(); setTimeout(renderFieldMarkers, 50);
-    }
-
-    function downloadConfig(){
-      const conf = { templates: state.templates, fieldPositions: state.fieldPositions };
-      const blob = new Blob([JSON.stringify(conf,null,2)], {type:'application/json'});
-      safeDownloadFromBlob(blob, 'form-config.json');
-    }
-    function loadConfig(e){
-      const file = e.target.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev)=>{
-        try{
-          const conf = JSON.parse(ev.target.result);
-          state.templates = conf.templates || { contract:{ zh:null, ko:null }, safety:{ zh:null, ko:null } };
-          state.fieldPositions = conf.fieldPositions || { contract:{ zh:{}, ko:{} }, safety:{ zh:{}, ko:{} } };
-          saveToLocalStorage(); render(); setTimeout(renderFieldMarkers, 100);
-          alert('✅ 配置导入成功!');
-        }catch{ alert('❌ 配置文件格式错误'); }
-      };
-      reader.readAsText(file);
-    }
-    function clearAllData(){
-      if(confirm('⚠️ 确定要清空所有配置吗?此操作不可恢复!')){
-        localStorage.removeItem('formFillerConfig');
-        state.templates = { contract:{ zh:null, ko:null }, safety:{ zh:null, ko:null } };
-        state.fieldPositions = { contract:{ zh:{}, ko:{} }, safety:{ zh:{}, ko:{} } };
-        render(); alert('✅ 所有配置已清空');
-      }
-    }
-
-    // ===================== 模式切换 & 密码页 =====================
-    function toggleMode(){
-      if(!state.isAdminMode){ state.showPasswordPage=true; render(); }
-      else { state.isAdminMode=false; render(); }
-    }
-    function checkPassword(){
-      const pwd = document.getElementById('passwordInput').value;
-      const error = document.getElementById('errorMsg');
-      if(pwd==='admin123'){ state.showPasswordPage=false; state.isAdminMode=true; render(); }
-      else { error.classList.add('show'); setTimeout(()=>error.classList.remove('show'), 2000); }
-    }
-    function cancelPassword(){ state.showPasswordPage=false; render(); }
-    function handlePasswordKeyPress(e){ if(e.key==='Enter') checkPassword(); }
-
-    // ===================== 渲染辅助 =====================
-    function getExampleText(fieldKey, lang){
-      const base = fieldKey.replace(/_\\d+$/, '');
-      const examples = {
-        name:{ zh:'张三', ko:'김철수', vi:'Nguyễn Văn A', ru:'Иванов' },
-        birthday:{ zh:'1990-01-01', ko:'1990-01-01', vi:'1990-01-01', ru:'1990-01-01' },
-        address:{ zh:'北京市朝阳区', ko:'서울시 강남구', vi:'Hà Nội', ru:'Москва' },
-        position:{ zh:'整理', ko:'정리', vi:'정리', ru:'정리' },
-        passport:{ zh:'E12345678', ko:'M12345678', vi:'B1234567', ru:'AB1234567' },
-        phone:{ zh:'138-0013-8000', ko:'010-1234-5678', vi:'091-2345-678', ru:'+7 900 123-45-67' },
-        residentNum:{ zh:'110101-1990011234', ko:'900101-1234567', vi:'001090-0001234', ru:'123456-7890123' },
-        experience:{ zh:'3年', ko:'3년', vi:'3 năm', ru:'3 лет' },
-        month:{ zh:getCurrentMonth(), ko:getCurrentMonth(), vi:getCurrentMonth(), ru:getCurrentMonth() },
-        day:{ zh:getCurrentDay(), ko:getCurrentDay(), vi:getCurrentDay(), ru:getCurrentDay() },
-        checkmark:{ zh:'✓', ko:'✓', vi:'✓', ru:'✓' },
-        signature:{ zh:'张三', ko:'김철수', vi:'Nguyễn Văn A', ru:'Иванов' }
-      };
-      const langKey = (lang==='ko'||lang==='vi'||lang==='ru')?lang:'zh';
-      return examples[base]?.[langKey] || '示例';
-    }
-
-    function renderFieldMarkers(){
-      const img = document.getElementById('templateImage');
-      const container = document.getElementById('markersContainer');
-      if(!img || !container) return;
-      const positions = state.fieldPositions[state.currentTemplate][state.currentLang] || {};
-      container.innerHTML='';
-
-      const displayWidth = img.clientWidth, displayHeight = img.clientHeight;
-      const naturalWidth = img.naturalWidth, naturalHeight = img.naturalHeight;
-      const scaleX = displayWidth / naturalWidth, scaleY = displayHeight / naturalHeight;
-
-      let idx=1;
-      Object.keys(positions).forEach(key=>{
-        const pos = positions[key]; if(!pos || pos.x==null || pos.y==null) return;
-        const dx = pos.x * scaleX, dy = pos.y * scaleY;
-        const baseField = pos.baseField || key;
-
-        const marker = document.createElement('div'); marker.className='field-marker'; marker.textContent=idx;
-        marker.style.left = dx+'px'; marker.style.top = dy+'px';
-        const label = document.createElement('div'); label.className='field-label'; label.textContent=key; label.style.left=dx+'px'; label.style.top=dy+'px';
-        container.appendChild(marker); container.appendChild(label);
-
-        if(baseField!=='signature'){
-          const previewText = document.createElement('div');
-          previewText.className='field-preview-text';
-          previewText.textContent = getExampleText(key, state.currentLang);
-          previewText.style.left = dx+'px'; previewText.style.top = dy+'px';
-          previewText.style.fontSize = ((pos.fontSize||44) * scaleX) + 'px';
-          previewText.style.color = pos.color || '#000';
-          previewText.style.fontFamily = 'Arial';
-          container.appendChild(previewText);
-        }else{
-          const sigBox = document.createElement('div');
-          sigBox.style.position='absolute'; sigBox.style.left=dx+'px'; sigBox.style.top=dy+'px';
-          sigBox.style.width=((pos.width||150)*scaleX)+'px'; sigBox.style.height=((pos.height||50)*scaleY)+'px';
-          sigBox.style.border='2px dashed rgba(74,144,164,.6)'; sigBox.style.backgroundColor='rgba(74,144,164,.1)'; sigBox.style.zIndex='8';
-          container.appendChild(sigBox);
-        }
-        idx++;
-      });
-    }
-
-    function getFieldDisplayName(key){
-      const m = key.match(/^(.+)_([0-9]+)$/); if(m) return `${m[1]} (${m[2]})`; return key;
-    }
-
-    // ===================== UI渲染 =====================
-    function renderPasswordPage(){
-      return `
-        <div class="container password-container">
-          <h2 class="password-title">管理员验证</h2>
-          <p class="password-subtitle">请输入管理员密码以继续</p>
-          <input type="password" id="passwordInput" class="password-input" placeholder="请输入密码" onkeypress="handlePasswordKeyPress(event)" autofocus>
-          <button onclick="checkPassword()" class="password-btn">确认登录</button>
-          <p id="errorMsg" class="password-error">❌ 密码错误,请重试</p>
-          <button onclick="cancelPassword()" class="clear-btn">返回</button>
-        </div>
-      `;
-    }
-
-    function renderAdminMode(){
       const t = translations[state.language];
-      const positions = state.fieldPositions[state.currentTemplate][state.currentLang] || {};
-      const fieldsList = getFieldsList(state.currentLang);
-      return `
-        <div class="container admin-container">
-          <div class="admin-header">
-            <h1 class="admin-title">管理员配置模式</h1>
-            <button onclick="toggleMode()" class="toggle-btn">${t.userMode}</button>
-          </div>
+      const tpl = state.templates[templateKey][state.language];
+      if(!tpl){
+        alert('模板未找到 / 템플릿을 찾을 수 없습니다');
+        return;
+      }
 
-          <div class="admin-layout">
-            <div class="left-panel">
-              <h3 class="section-title">📋 模板配置</h3>
-              <div class="template-tabs">
-                <button onclick="state.currentTemplate='contract'; render(); setTimeout(renderFieldMarkers,100);" class="tab-btn ${state.currentTemplate==='contract'?'active':''}">劳动合同</button>
-                <button onclick="state.currentTemplate='safety'; render(); setTimeout(renderFieldMarkers,100);" class="tab-btn ${state.currentTemplate==='safety'?'active':''}">安全协议</button>
-              </div>
-              <div class="language-tabs">
-                <button onclick="state.currentLang='zh'; render(); setTimeout(renderFieldMarkers,100);" class="lang-btn ${state.currentLang==='zh'?'active':''}">中文/越南语/俄语</button>
-                <button onclick="state.currentLang='ko'; render(); setTimeout(renderFieldMarkers,100);" class="lang-btn ${state.currentLang==='ko'?'active':''}">한국어</button>
-              </div>
+      try {
+        const { jsPDF } = window.jspdf;
+        const positions = state.fieldPositions[templateKey][state.language];
 
-              <div class="upload-section">
-                <label>📤 上传 ${state.currentTemplate==='contract'?'劳动合同':'安全协议'} 模板 (${state.currentLang==='zh'?'中文/越南语/俄语':'한국어'})</label>
-                <input type="file" accept="image/*" onchange="handleTemplateUpload(event,'${state.currentTemplate}','${state.currentLang}')" style="margin-top:10px;">
-              </div>
+        const img = new Image();
+        img.src = tpl;
+        await new Promise((res,rej)=>{
+          img.onload=res;
+          img.onerror=()=>rej(new Error('图片加载失败'));
+        });
 
-              <div class="form-group">
-                <label>🎯 选择字段 (点击后再点击图片定位)</label>
-                <div class="field-buttons">
-                  ${fieldsList.map(f=>`<button onclick="state.selectedField='${f}'; render();" class="field-btn ${state.selectedField===f?'active':''}">${f==='checkmark'?'✓':f}</button>`).join('')}
-                </div>
-                <div class="mode-switch">
-                  <input type="checkbox" id="multiInstanceMode" ${state.multiInstanceMode?'checked':''} onchange="state.multiInstanceMode=this.checked; render();">
-                  <label for="multiInstanceMode">🔄 多实例模式(同一字段创建多个位置)</label>
-                </div>
-                <p class="note">${state.multiInstanceMode?'✅ 多实例模式: 点击图片会创建 name_2 / name_3...':'🔍 普通模式: 点击图片更新所选字段坐标'}</p>
-                <p class="note" style="color:#4A90A4;">💡 月份/日期/对号会自动填充当前值</p>
-              </div>
+        const pdf = new jsPDF({
+          orientation: img.width > img.height ? 'landscape' : 'portrait',
+          unit: 'mm',
+          format: 'a4'
+        });
 
-              ${state.templates[state.currentTemplate][state.currentLang] ? `
-                <div class="preview-box">
-                  <p style="margin-bottom:10px; font-weight:600; color:#2E4F7A;">
-                    ${state.repositionTarget ? `🎯 点击图片重新定位: ${getFieldDisplayName(state.repositionTarget)}` : (state.selectedField ? `✅ 已选择: ${state.selectedField}` : '⚠️ 请先选择一个字段')}
-                  </p>
-                  <div class="image-wrapper">
-                    <img id="templateImage" src="${state.templates[state.currentTemplate][state.currentLang]}" alt="template" onclick="handleImageClick(event)" onload="renderFieldMarkers()">
-                    <div id="markersContainer"></div>
-                  </div>
-                </div>
-              ` : '<p class="note" style="text-align:center; padding:40px;">请先上传模板图片</p>'}
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgAspect = img.width / img.height;
+        const pdfAspect = pdfWidth / pdfHeight;
+        let drawWidth, drawHeight, offsetX=0, offsetY=0;
+        if(imgAspect > pdfAspect){
+          drawWidth = pdfWidth;
+          drawHeight = pdfWidth / imgAspect;
+          offsetY = (pdfHeight - drawHeight)/2;
+        } else {
+          drawHeight = pdfHeight;
+          drawWidth = pdfHeight * imgAspect;
+          offsetX = (pdfWidth - drawWidth)/2;
+        }
+        pdf.addImage(img, 'PNG', offsetX, offsetY, drawWidth, drawHeight);
 
-              <div class="field-buttons" style="gap:15px; margin-top:10px;">
-                <button onclick="downloadConfig()" class="action-btn" style="background:#4A90A4; color:#fff;">📥 导出配置</button>
-                <label class="action-btn" style="background:#3E5F8A; color:#fff;">📤 导入配置
-                  <input type="file" accept=".json" onchange="loadConfig(event)" style="display:none">
-                </label>
-                <button onclick="clearAllData()" class="action-btn" style="background:#C73E1D; color:#fff;">🗑️ 清空配置</button>
-              </div>
-              <p class="note">💾 配置会自动保存到浏览器本地</p>
-            </div>
+        const scaleX = drawWidth / img.width;
+        const scaleY = drawHeight / img.height;
+        pdf.setFontSize(10);
 
-            <div class="right-panel">
-              <h3 class="section-title">⚙️ 已配置字段</h3>
-              ${Object.keys(positions).length===0 ? '<p class="note" style="text-align:center; padding:20px;">暂无配置</p>' :
-                `<div class="field-list">
-                  ${Object.keys(positions).map(k=>{
-                    const pos = positions[k]; const base = pos.baseField || k;
-                    return `
-                      <div class="field-item">
-                        <div class="field-item-header">
-                          <span class="field-name">📌 ${getFieldDisplayName(k)}</span>
-                          <div class="field-actions">
-                            <button onclick="repositionField('${k}')" class="reposition-btn">重新定位</button>
-                            <button onclick="editField('${k}')" class="edit-btn">编辑</button>
-                            <button onclick="deleteField('${k}')" class="delete-btn">删除</button>
-                          </div>
-                        </div>
-                        ${state.editingField===k ? `
-                          <div class="param-editor">
-                            <div class="param-row"><span class="param-label">字体大小:</span><input type="number" id="editFontSize" value="${pos.fontSize||44}" min="8" max="120"></div>
-                            <div class="param-row"><span class="param-label">颜色:</span><input type="color" id="editColor" value="${pos.color||'#000000'}" style="height:40px;"></div>
-                            ${base==='signature' ? `
-                              <div class="param-row"><span class="param-label">宽度:</span><input type="number" id="editWidth" value="${pos.width||150}" min="50" max="500"></div>
-                              <div class="param-row"><span class="param-label">高度:</span><input type="number" id="editHeight" value="${pos.height||50}" min="20" max="200"></div>` : ''}
-                            <button onclick="saveFieldParams()" class="save-param-btn">✅ 保存参数</button>
-                          </div>` :
-                          `<div class="field-params" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px; color:#5A7A8F;">
-                            <div>X: ${pos.x}</div><div>Y: ${pos.y}</div>
-                            <div>字号: ${pos.fontSize||44}px</div>
-                            <div>颜色: <span style="display:inline-block; width:20px; height:20px; background:${pos.color||'#000'}; border:1px solid #ccc; vertical-align:middle;"></span></div>
-                            ${pos.width?`<div>宽: ${pos.width}px</div>`:''}
-                            ${pos.height?`<div>高: ${pos.height}px</div>`:''}
-                          </div>`}
-                      </div>`;
-                  }).join('')}
-                </div>`}
-            </div>
-          </div>
-        </div>
-      `;
+        for(let [fieldName, posArr] of Object.entries(positions)){
+          if(!Array.isArray(posArr)) posArr=[posArr];
+          for(let pos of posArr){
+            let val = state.formData[fieldName];
+            if(fieldName==='name' && state.language!=='ko' && val) val += ' (' + val + ')';
+            if(fieldName==='position' && state.language!=='ko' && val) val = convertPositionToKorean(val);
+            if(fieldName==='checkmark') val='✔';
+            if(fieldName==='month') val=getCurrentMonth();
+            if(fieldName==='day') val=getCurrentDay();
+            if(fieldName==='signature' && state.signature) val='[已签名]';
+
+            if(val){
+              const x = offsetX + pos.x * scaleX;
+              const y = offsetY + pos.y * scaleY;
+              const fsize = pos.fontSize || 10;
+              pdf.setFontSize(fsize);
+              if(fieldName==='signature' && state.signature){
+                const sigW = (pos.width||50)*scaleX, sigH=(pos.height||20)*scaleY;
+                pdf.addImage(state.signature, 'PNG', x, y, sigW, sigH);
+              } else {
+                pdf.text(String(val), x, y + fsize*0.35);
+              }
+            }
+          }
+        }
+
+        const blob = pdf.output('blob');
+        const filename = `${templateKey}_${state.language}_${new Date().getTime()}.pdf`;
+        safeDownloadFromBlob(blob, filename);
+
+        if(templateKey==='contract'){ 
+          state.firstFormGenerated=true; 
+        } else if(templateKey==='safety'){ 
+          state.secondFormGenerated=true; 
+        }
+        state.formsGenerated = state.firstFormGenerated && state.secondFormGenerated;
+        render();
+      } catch(e){
+        console.error('PDF生成失败:', e);
+        alert('PDF生成失败，请重试');
+      }
     }
 
+    // ===================== 用户模式渲染 =====================
     function renderUserMode(){
       const t = translations[state.language];
-      const fields = getFieldsList(state.language).filter(f=>!['signature','month','day','checkmark'].includes(f));
+      const lang = state.language;
+
+      if(state.showDownloadPage){
+        return `
+          <div class="container">
+            <h1>${t.downloadTitle}</h1>
+            <p class="note" style="margin-bottom:30px;">${t.downloadHint}</p>
+            <button class="generate-btn" onclick="generateDocument('contract')" ${state.firstFormGenerated?'disabled':''}>
+              ${state.firstFormGenerated?'✅ ':''} ${t.generateFirst}
+            </button>
+            <button class="generate-btn" onclick="generateDocument('safety')" ${state.secondFormGenerated?'disabled':''}>
+              ${state.secondFormGenerated?'✅ ':''} ${t.generateSecond}
+            </button>
+            <button class="generate-btn" onclick="openSmsApp()" ${!state.formsGenerated?'disabled':''}>
+              ${t.sendToAdmin}
+            </button>
+            <button class="generate-btn" onclick="state.showDownloadPage=false;render();" style="background:#6c757d;margin-top:20px;">
+              ${t.backToForm}
+            </button>
+          </div>
+        `;
+      }
+
+      // 正常表单
       return `
         <div class="container">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <h1>${t.title}</h1>
-            <button onclick="toggleMode()" class="toggle-btn">${t.adminMode}</button>
-          </div>
-
+          <h1>${t.title}</h1>
+          
           <div class="form-group">
             <label>${t.selectLanguage}</label>
             <div class="language-buttons">
-              ${[{code:'zh',label:'中文'},{code:'ko',label:'한국어'},{code:'vi',label:'Tiếng Việt'},{code:'ru',label:'Русский'}].map(l=>`
-                <button onclick=\"state.language='${l.code}'; render();\" class=\"lang-btn ${state.language===l.code?'active':''}\">${l.label}</button>`).join('')}
+              <button class="lang-btn ${lang==='zh'?'active':''}" onclick="state.language='zh';keyboardVisible=false;render();">中文</button>
+              <button class="lang-btn ${lang==='ko'?'active':''}" onclick="state.language='ko';keyboardVisible=false;render();">한국어</button>
+              <button class="lang-btn ${lang==='vi'?'active':''}" onclick="state.language='vi';keyboardVisible=false;render();">Tiếng Việt</button>
+              <button class="lang-btn ${lang==='ru'?'active':''}" onclick="state.language='ru';keyboardVisible=false;render();">Русский</button>
             </div>
           </div>
 
-          ${fields.map(field=>{
-            if(field==='position'){
-              return `
-                <div class="form-group">
-                  <label>${t.position}</label>
-                  <div style="display:flex; gap:10px; margin-bottom:10px;">
-                    <button onclick="state.positionMode='custom'; render();" class="lang-btn ${state.positionMode==='custom'?'active':''}" style="flex:1;">${t.positionCustom}</button>
-                    <button onclick="state.positionMode='select'; render();" class="lang-btn ${state.positionMode==='select'?'active':''}" style="flex:1;">${t.positionSelect}</button>
-                  </div>
-                  ${state.positionMode==='custom'
-                    ? `<input type="text" value="${state.formData[field]||''}" oninput="state.formData['${field}']=this.value">`
-                    : `<select onchange="state.formData['${field}']=this.value"><option value="">-- ${t.positionSelect} --</option>${
-                        positionOptions[state.language].map(opt=>`<option value=\"${opt}\" ${state.formData[field]===opt?'selected':''}>${opt}</option>`).join('')
-                      }</select>`}
-                </div>`;
-            }else if(field==='phone'){
-              return `
-                <div class="form-group">
-                  <label>${t.phone}</label>
-                  <input type="text" value="${state.formData[field]||''}" oninput="
-                    (function(v){ const n=v.replace(/\\D/g,''); let out=n.length<=3?n:n.length<=7? n.slice(0,3)+'-'+n.slice(3) : n.slice(0,3)+'-'+n.slice(3,7)+'-'+n.slice(7,11); state.formData['${field}']=out; })(this.value);
-                    this.value = state.formData['${field}'];
-                  ">
-                </div>`;
-            }else if(field==='residentNum'){
-              return `
-                <div class="form-group">
-                  <label>居民/身份证号</label>
-                  <input type="text" value="${state.formData[field]||''}" oninput="
-                    (function(v){ const n=v.replace(/\\D/g,''); const out = n.length<=6 ? n : n.slice(0,6)+'-'+n.slice(6,13); state.formData['${field}']=out; })(this.value);
-                    this.value = state.formData['${field}'];
-                  ">
-                </div>`;
-            }else if(field==='experience'){
-              return `
-                <div class="form-group">
-                  <label>${t.experience}</label>
-                  <div style="position:relative;">
-                    <input type="text" value="${state.formData[field]||''}" oninput="(function(v){ const n=v.replace(/\\D/g,''); state.formData['${field}']=n; })(this.value); this.value = state.formData['${field}'];" style="padding-right:50px;">
-                    <span style="position:absolute; right:15px; top:50%; transform:translateY(-50%); color:#5A7A8F; font-size:14px; pointer-events:none;">${t.experienceYears}</span>
-                  </div>
-                </div>`;
-            }else if(field==='name'){
-              return `
-                <div class="form-group">
-                  <label>${t.name}</label>
-                  <div style="display:flex; gap:10px;">
-                    <input type="text" value="${state.formData[field]||''}" oninput="state.formData['${field}']=this.value" style="flex:1;">
-                    <button type="button" onclick="translateName()" class="lang-btn" style="background:#4A90A4; color:#fff;">🔄 ${t.translateName}</button>
-                  </div>
-                </div>`;
-            }else if(field==='address'){
-              return `
-                <div class="form-group">
-                  <label>${t.address}</label>
-                  <div style="display:flex; gap:10px;">
-                    <input type="text" value="${state.formData[field]||''}" oninput="state.formData['${field}']=this.value" style="flex:1;">
-                    <button type="button" onclick="openAddressSearch()" class="lang-btn" style="background:#3E5F8A; color:#fff;">🗺️ ${t.addressSearch}</button>
-                  </div>
-                  <p class="note">${t.addressHint}</p>
-                </div>`;
-            }else{
-              return `
-                <div class="form-group">
-                  <label>${t[field] || field}</label>
-                  <input type="${field==='birthday' ? 'date' : 'text'}" value="${state.formData[field]||''}" oninput="state.formData['${field}']=this.value">
-                </div>`;
-            }
-          }).join('')}
+          <div class="form-group">
+            <label>${t.name}</label>
+            <div class="name-input-container">
+              <input type="text" value="${state.formData['name']||''}" onchange="state.formData['name']=this.value;render();" placeholder="${t.name}" />
+              ${lang !== 'ko' ? `
+                <button class="keyboard-toggle-btn" onclick="toggleKeyboard()">
+                  ${keyboardVisible ? '隐藏' : '⌨️'}
+                </button>
+              ` : ''}
+            </div>
+            ${lang !== 'ko' && keyboardVisible ? `
+              <div class="virtual-keyboard">
+                <div class="keyboard-title">${t.keyboardHint}</div>
+                <div class="keyboard-grid">
+                  ${getKeyboardChars().map(char => `
+                    <button class="char-btn" onclick="insertChar('${char}')">${char}</button>
+                  `).join('')}
+                </div>
+                <div class="keyboard-controls">
+                  <button class="keyboard-control-btn" onclick="deleteLastChar()">⌫ 删除</button>
+                  <button class="keyboard-control-btn" onclick="clearName()">✕ 清空</button>
+                </div>
+              </div>
+            ` : ''}
+            ${lang!=='ko'?`<button class="generate-btn" style="margin-top:10px;" onclick="translateName()">${t.translateName}</button>`:''}
+          </div>
+
+          <div class="form-group">
+            <label>${t.birthday}</label>
+            <input type="date" value="${state.formData['birthday']||''}" onchange="state.formData['birthday']=this.value" />
+          </div>
+
+          <div class="form-group">
+            <label>${t.address}</label>
+            <input type="text" value="${state.formData['address']||''}" onchange="state.formData['address']=this.value" placeholder="${t.address}" />
+            <p class="note">${t.addressHint}</p>
+          </div>
+
+          ${lang==='ko'?`
+            <div class="form-group">
+              <label>${t.residentNum}</label>
+              <input type="text" value="${state.formData['residentNum']||''}" onchange="state.formData['residentNum']=this.value" placeholder="${t.residentNum}" />
+            </div>
+          `:`
+            <div class="form-group">
+              <label>${t.passport}</label>
+              <input type="text" value="${state.formData['passport']||''}" onchange="state.formData['passport']=this.value" placeholder="${t.passport}" />
+            </div>
+          `}
+
+          <div class="form-group">
+            <label>${t.phone}</label>
+            <input type="text" value="${state.formData['phone']||''}" onchange="state.formData['phone']=this.value" placeholder="${t.phone}" />
+          </div>
+
+          <div class="form-group">
+            <label>${t.position}</label>
+            <select onchange="state.formData['position']=this.value">
+              <option value="">${t.positionSelect}</option>
+              ${positionOptions[lang].map(p=>`<option value="${p}" ${state.formData['position']===p?'selected':''}>${p}</option>`).join('')}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>${t.experience}</label>
+            <input type="number" min="0" value="${state.formData['experience']||''}" onchange="state.formData['experience']=this.value" placeholder="${t.experienceYears}" />
+          </div>
 
           <div class="form-group">
             <label>${t.signature}</label>
             <div class="signature-container">
-              <canvas id="signatureCanvas" width="600" height="180"></canvas>
+              <canvas id="signatureCanvas" width="600" height="200"></canvas>
             </div>
-            <button onclick="clearSignature(); render();" class="clear-btn">${t.clearSignature}</button>
+            <button class="clear-btn" onclick="clearSignature()">${t.clearSignature}</button>
           </div>
 
-          <button class="generate-btn" onclick="generateForms()">🖼️ ${t.generate}</button>
-
-          ${state.formsGenerated ? `
-          <button class="generate-btn" onclick="openSmsApp()" style="margin-top:20px; background:linear-gradient(135deg,#4A90A4 0%, #3E5F8A 100%);">
-            ${t.sendToAdmin}
+          <button class="generate-btn" onclick="state.showDownloadPage=true;render();">
+            ${t.generate}
           </button>
-          ` : ''}
+
+          <div class="mode-switch">
+            <span>管理员? / 관리자?</span>
+            <button class="toggle-btn" onclick="state.showPasswordPage=true;render();">${t.adminMode}</button>
+          </div>
         </div>
       `;
     }
 
-    function openAddressSearch(){
-      const overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:999999; display:flex; align-items:center; justify-content:center; padding:20px;';
+    // ===================== 管理员模式渲染 =====================
+    function renderAdminMode(){
+      const t = translations['zh'];
+      const tpl = state.currentTemplate;
+      const lang = state.currentLang;
+      const pos = state.fieldPositions[tpl][lang];
+      const imgSrc = state.templates[tpl][lang];
 
-      const content = document.createElement('div');
-      content.style.cssText = 'background:#fff; border-radius:12px; width:95%; max-width:1100px; height:90vh; max-height:850px; display:flex; flex-direction:column; overflow:hidden;';
-      content.innerHTML = `
-        <div style="padding:16px 20px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center;">
-          <strong>🗺️ Naver 地图 - 地址搜索</strong>
-          <button class="lang-btn" style="background:#C73E1D; color:#fff;" onclick="document.getElementById('mapModal').remove(); document.body.style.overflow='';">✕ 关闭</button>
-        </div>
-        <div style="flex:1; padding:16px; display:flex; flex-direction:column; gap:12px; background:#f9fafb;">
-          <div style="background:#F0F8F9; border:2px solid #A8DADC; padding:12px; border-radius:8px; color:#2E4F7A;">
-            1) 在下方 Naver 地图中搜索你的地址 → 2) 复制完整地址 → 3) 返回表单粘贴
+      return `
+        <div class="container admin-container">
+          <div class="admin-header">
+            <h1 class="admin-title">管理员配置面板</h1>
+            <button class="toggle-btn" onclick="state.isAdminMode=false;render();">返回用户模式</button>
           </div>
-          <iframe src="https://map.naver.com/" style="width:100%; flex:1; border:2px solid #e5e7eb; border-radius:8px; background:#fff;"></iframe>
-        </div>`;
 
-      const wrapper = document.createElement('div');
-      wrapper.id = 'mapModal'; wrapper.appendChild(content);
-      overlay.appendChild(content);
-      wrapper.appendChild(overlay);
-      document.body.appendChild(wrapper);
-      document.body.style.overflow = 'hidden';
-      overlay.addEventListener('click', (e)=>{ if(e.target===overlay){ wrapper.remove(); document.body.style.overflow=''; } });
+          <div class="admin-layout">
+            <div class="left-panel">
+              <div class="section-title">模板预览与字段定位</div>
+              
+              <div class="template-tabs">
+                <button class="tab-btn ${tpl==='contract'?'active':''}" onclick="state.currentTemplate='contract';render();">劳动合同</button>
+                <button class="tab-btn ${tpl==='safety'?'active':''}" onclick="state.currentTemplate='safety';render();">安全协议</button>
+              </div>
+
+              <div class="language-tabs">
+                <button class="tab-btn ${lang==='zh'?'active':''}" onclick="state.currentLang='zh';render();">中文模板</button>
+                <button class="tab-btn ${lang==='ko'?'active':''}" onclick="state.currentLang='ko';render();">韩语模板</button>
+              </div>
+
+              <div class="upload-section">
+                <label>上传模板图片：</label>
+                <input type="file" accept="image/*" onchange="handleTemplateUpload(event,'${tpl}','${lang}')" />
+              </div>
+
+              ${imgSrc?`
+                <div class="preview-box">
+                  <div class="image-wrapper">
+                    <img src="${imgSrc}" id="templatePreview" onclick="handleImageClick(event)" />
+                    <div id="markersContainer">${renderMarkers(pos)}</div>
+                  </div>
+                </div>
+              `:'<p>未上传模板图片</p>'}
+            </div>
+
+            <div class="right-panel">
+              <div class="section-title">字段管理</div>
+              <div class="field-buttons">
+                ${getFieldsList(lang).map(f=>`
+                  <button class="field-btn ${state.selectedField===f?'active':''}" onclick="selectField('${f}')">${f}</button>
+                `).join('')}
+              </div>
+              
+              ${state.selectedField?`
+                <div style="background:#F0F8F9;padding:15px;border-radius:8px;margin-bottom:20px;border:2px solid #3E5F8A;">
+                  <p><strong>选中字段：</strong> ${state.selectedField}</p>
+                  <p>点击图片上的位置来定位此字段</p>
+                  <label style="margin-top:10px;display:flex;align-items:center;gap:8px;">
+                    <input type="checkbox" ${state.multiInstanceMode?'checked':''} onchange="state.multiInstanceMode=this.checked;render();" />
+                    多实例模式（允许同一字段多个位置）
+                  </label>
+                </div>
+              `:'<p style="color:#999;text-align:center;">请选择一个字段</p>'}
+
+              <div class="field-list">
+                <div class="section-title">已定位字段</div>
+                ${Object.keys(pos).length>0?Object.entries(pos).map(([fieldName,posArr])=>{
+                  if(!Array.isArray(posArr)) posArr=[posArr];
+                  return posArr.map((p,idx)=>`
+                    <div class="field-item">
+                      <div class="field-item-header">
+                        <span class="field-name">${fieldName}${posArr.length>1?' #'+(idx+1):''}</span>
+                        <div class="field-actions">
+                          <button class="edit-btn" onclick="editFieldParams('${fieldName}',${idx})">编辑参数</button>
+                          <button class="reposition-btn" onclick="repositionField('${fieldName}',${idx})">重新定位</button>
+                          <button class="delete-btn" onclick="deleteFieldPosition('${fieldName}',${idx})">删除</button>
+                        </div>
+                      </div>
+                      <div style="font-size:12px;color:#666;">
+                        位置: (${Math.round(p.x)}, ${Math.round(p.y)}) | 字号: ${p.fontSize||10}
+                        ${p.width?' | 宽:'+p.width:''}${p.height?' | 高:'+p.height:''}
+                      </div>
+                      ${state.editingField===fieldName+'-'+idx?`
+                        <div class="param-editor">
+                          <div class="param-row">
+                            <span class="param-label">X坐标:</span>
+                            <input type="number" id="editX" value="${p.x}" />
+                          </div>
+                          <div class="param-row">
+                            <span class="param-label">Y坐标:</span>
+                            <input type="number" id="editY" value="${p.y}" />
+                          </div>
+                          <div class="param-row">
+                            <span class="param-label">字号:</span>
+                            <input type="number" id="editFontSize" value="${p.fontSize||10}" />
+                          </div>
+                          ${fieldName==='signature'?`
+                            <div class="param-row">
+                              <span class="param-label">宽度:</span>
+                              <input type="number" id="editWidth" value="${p.width||50}" />
+                            </div>
+                            <div class="param-row">
+                              <span class="param-label">高度:</span>
+                              <input type="number" id="editHeight" value="${p.height||20}" />
+                            </div>
+                          `:''}
+                          <button class="save-param-btn" onclick="saveFieldParams('${fieldName}',${idx})">保存参数</button>
+                        </div>
+                      `:''}
+                    </div>
+                  `).join('');
+                }).join(''):'<p style="text-align:center;color:#999;">暂无字段定位</p>'}
+              </div>
+
+              <button class="generate-btn" onclick="downloadConfig()" style="margin-top:20px;">
+                下载配置JSON
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
-    function openSmsApp(){
-      const phone = state.formData.receiverPhone;
-      if(!phone){
-        const messages = { 
-          zh:'请先输入接收者手机号', 
-          ko:'수신 전화번호를 입력하세요', 
-          vi:'Vui lòng nhập số điện thoại nhận', 
-          ru:'Введите номер телефона получателя' 
-        };
-        alert(messages[state.language] || '请先输入接收者手机号');
+    function renderMarkers(positions){
+      let html='';
+      let idx=1;
+      for(let [fieldName,posArr] of Object.entries(positions)){
+        if(!Array.isArray(posArr)) posArr=[posArr];
+        posArr.forEach((pos,i)=>{
+          html+=`
+            <div class="field-marker" style="left:${pos.x}px;top:${pos.y}px;">${idx}</div>
+            <div class="field-label" style="left:${pos.x}px;top:${pos.y}px;">${fieldName}${posArr.length>1?' #'+(i+1):''}</div>
+          `;
+          idx++;
+        });
+      }
+      return html;
+    }
+
+    function selectField(fieldName){
+      state.selectedField = fieldName;
+      render();
+    }
+
+    function handleImageClick(e){
+      if(!state.selectedField){
+        alert('请先选择一个字段');
         return;
       }
+      const img = e.target;
+      const rect = img.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
       
-      // 移除手机号中的所有非数字字符
-      const cleanPhone = phone.replace(/\D/g, '');
+      const tpl=state.currentTemplate, lang=state.currentLang;
+      const fieldName = state.selectedField;
+
+      if(state.repositionTarget){
+        // 重新定位模式
+        const [targetField, targetIdx] = state.repositionTarget.split('-').map((v,i)=>i===1?parseInt(v):v);
+        let posArr = state.fieldPositions[tpl][lang][targetField];
+        if(!Array.isArray(posArr)) posArr=[posArr];
+        posArr[targetIdx].x = x;
+        posArr[targetIdx].y = y;
+        if(posArr.length===1) state.fieldPositions[tpl][lang][targetField]=posArr[0];
+        else state.fieldPositions[tpl][lang][targetField]=posArr;
+        state.repositionTarget=null;
+        alert('位置已更新');
+      } else {
+        // 新增位置
+        const newPos = { x, y, fontSize:10 };
+        if(fieldName==='signature'){ newPos.width=50; newPos.height=20; }
+
+        if(state.multiInstanceMode){
+          let existing = state.fieldPositions[tpl][lang][fieldName];
+          if(!existing){ state.fieldPositions[tpl][lang][fieldName]=[newPos]; }
+          else {
+            if(!Array.isArray(existing)) existing=[existing];
+            existing.push(newPos);
+            state.fieldPositions[tpl][lang][fieldName]=existing;
+          }
+        } else {
+          state.fieldPositions[tpl][lang][fieldName] = newPos;
+        }
+      }
+      render();
+    }
+
+    function repositionField(fieldName, idx){
+      state.repositionTarget = fieldName+'-'+idx;
+      alert('请在图片上点击新的位置');
+    }
+
+    function deleteFieldPosition(fieldName, idx){
+      const tpl=state.currentTemplate, lang=state.currentLang;
+      let posArr = state.fieldPositions[tpl][lang][fieldName];
+      if(!Array.isArray(posArr)) posArr=[posArr];
+      posArr.splice(idx,1);
+      if(posArr.length===0) delete state.fieldPositions[tpl][lang][fieldName];
+      else if(posArr.length===1) state.fieldPositions[tpl][lang][fieldName]=posArr[0];
+      else state.fieldPositions[tpl][lang][fieldName]=posArr;
+      render();
+    }
+
+    function editFieldParams(fieldName, idx){
+      state.editingField = fieldName+'-'+idx;
+      render();
+    }
+
+    function saveFieldParams(fieldName, idx){
+      const tpl=state.currentTemplate, lang=state.currentLang;
+      let posArr = state.fieldPositions[tpl][lang][fieldName];
+      if(!Array.isArray(posArr)) posArr=[posArr];
       
-      // 使用 sms: URL scheme 打开短信应用
-      const smsUrl = `sms:${cleanPhone}`;
+      posArr[idx].x = parseFloat(document.getElementById('editX').value);
+      posArr[idx].y = parseFloat(document.getElementById('editY').value);
+      posArr[idx].fontSize = parseInt(document.getElementById('editFontSize').value);
       
-      try {
-        window.location.href = smsUrl;
-      } catch(e) {
-        // 如果失败，尝试用 window.open
-        window.open(smsUrl, '_self');
+      if(fieldName==='signature'){
+        posArr[idx].width = parseInt(document.getElementById('editWidth').value);
+        posArr[idx].height = parseInt(document.getElementById('editHeight').value);
+      }
+
+      if(posArr.length===1) state.fieldPositions[tpl][lang][fieldName]=posArr[0];
+      else state.fieldPositions[tpl][lang][fieldName]=posArr;
+      
+      state.editingField=null;
+      render();
+    }
+
+    function handleTemplateUpload(e, tpl, lang){
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev)=>{
+        state.templates[tpl][lang] = ev.target.result;
+        render();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function downloadConfig(){
+      const config = {
+        templates: state.templates,
+        fieldPositions: state.fieldPositions
+      };
+      const blob = new Blob([JSON.stringify(config, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href=url;
+      a.download='form-config.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ===================== 密码验证页面 =====================
+    function renderPasswordPage(){
+      return `
+        <div class="container password-container">
+          <div class="password-title">🔒 管理员验证</div>
+          <div class="password-subtitle">请输入管理员密码</div>
+          <input type="password" class="password-input" id="adminPassword" placeholder="请输入密码" />
+          <button class="password-btn" onclick="checkPassword()">确认</button>
+          <div class="password-error" id="passwordError">密码错误，请重试</div>
+          <button class="clear-btn" onclick="state.showPasswordPage=false;render();" style="margin-top:20px;">返回</button>
+        </div>
+      `;
+    }
+
+    function checkPassword(){
+      const pwd = document.getElementById('adminPassword').value;
+      const correctPwd = '1234';
+      if(pwd === correctPwd){
+        state.isAdminMode = true;
+        state.showPasswordPage = false;
+        render();
+      } else {
+        document.getElementById('passwordError').classList.add('show');
       }
     }
 
     // ===================== 打开短信应用 =====================
     function openSmsApp(){
-      // 固定的管理员手机号
       const phone = '010-3742-0131';
-      
-      // 移除所有非数字字符
       const cleanPhone = phone.replace(/\D/g, '');
-      
-      // 构建SMS URL（不带预设消息）
       const smsUrl = `sms:${cleanPhone}`;
-      
-      // 打开短信应用
       try {
         window.location.href = smsUrl;
       } catch(e) {
@@ -1016,30 +1051,73 @@
   </script>
 
 <script>
-/* Loads external name-dicts.json (if present) and merges into in-memory maps.
-   Keeps existing maps as fallback; this allows easy updates without editing HTML.
+/* 加载外部字典文件：chinese_char_map.json, vietnamese_char_map.json, russian_char_map.json
+   将它们合并到内存中的映射表中。保留现有的映射作为回退方案。
 */
 (function(){
-  fetch('name-dicts.json').then(r=>{ if(!r.ok) throw new Error('no dict'); return r.json(); }).then(data=>{
-    // Merge maps if present
-    if(window.chineseSurnameMap && data.chineseSurnameMap){
-      Object.assign(window.chineseSurnameMap, data.chineseSurnameMap);
-    }
-    if(window.chineseCharMap && data.chineseCharMap){
-      Object.assign(window.chineseCharMap, data.chineseCharMap);
-    }
-    if(window.vietnameseNameMap && data.vietnameseNameMap){
-      Object.assign(window.vietnameseNameMap, data.vietnameseNameMap);
-    }
-    if(window.russianNameMap && data.russianNameMap){
-      Object.assign(window.russianNameMap, data.russianNameMap);
-    }
-    console.log('name-dicts.json loaded and merged.');
-  }).catch(err=>{
-    console.log('name-dicts.json not found or failed to load:', err.message);
-  });
+  // 加载中文字典
+  fetch('chinese_char_map.json')
+    .then(r=>{ if(!r.ok) throw new Error('no chinese dict'); return r.json(); })
+    .then(data=>{
+      // 合并中文姓氏映射
+      if(data.chineseSurnameMap){
+        Object.assign(window.chineseToKorean, data.chineseSurnameMap);
+        console.log('✅ Chinese surname map loaded:', Object.keys(data.chineseSurnameMap).length, 'entries');
+      }
+      // 合并中文字符映射
+      if(data.chineseCharMap){
+        Object.assign(window.chineseToKorean, data.chineseCharMap);
+        console.log('✅ Chinese character map loaded:', Object.keys(data.chineseCharMap).length, 'entries');
+      }
+      console.log('✅ chinese_char_map.json loaded successfully.');
+    })
+    .catch(err=>{
+      console.log('❌ chinese_char_map.json not found or failed to load:', err.message);
+    });
+
+  // 加载越南文字典  
+  fetch('vietnamese_char_map.json')
+    .then(r=>{ if(!r.ok) throw new Error('no vietnamese dict'); return r.json(); })
+    .then(data=>{
+      // 直接合并越南文映射（它是一个简单的键值对对象）
+      Object.assign(window.vietnameseToKorean, data);
+      console.log('✅ Vietnamese character map loaded:', Object.keys(data).length, 'entries');
+      console.log('✅ vietnamese_char_map.json loaded successfully.');
+    })
+    .catch(err=>{
+      console.log('❌ vietnamese_char_map.json not found or failed to load:', err.message);
+    });
+  
+  // 加载俄文字典
+  fetch('russian_char_map.json')
+    .then(r=>{ if(!r.ok) throw new Error('no russian dict'); return r.json(); })
+    .then(data=>{
+      // 合并俄文完整名字映射
+      if(data.units){
+        window.russianUnits = data.units;
+        console.log('✅ Russian name units loaded:', Object.keys(data.units).length, 'entries');
+      }
+      // 加载后缀规则
+      if(data.suffix){
+        window.russianSuffix = data.suffix;
+        console.log('✅ Russian suffix rules loaded:', Object.keys(data.suffix).length, 'rules');
+      }
+      // 加载集群规则
+      if(data.cluster && Array.isArray(data.cluster)){
+        window.russianCluster = data.cluster;
+        console.log('✅ Russian cluster rules loaded:', data.cluster.length, 'rules');
+      }
+      console.log('✅ russian_char_map.json loaded successfully.');
+    })
+    .catch(err=>{
+      console.log('❌ russian_char_map.json not found or failed to load:', err.message);
+    });
 })();
 </script>
+
+<!-- 引入jsPDF和html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 
 </html>
