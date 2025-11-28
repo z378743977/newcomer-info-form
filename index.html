@@ -726,7 +726,9 @@
             })).then(() => {
               // 所有签名绘制完成后再导出
               canvas.toBlob(blob=>{
-                const filename = `${templateType==='contract'?'劳动合同':'安全协议'}_${langKey}.png`;
+                const userName = state.formData['name'] || '未命名';
+                const docType = templateType==='contract'?'근로계약서':'안전협약';
+                const filename = `${userName}_${docType}.png`;
                 safeDownloadFromBlob(blob, filename);
                 resolve();
               });
@@ -734,7 +736,9 @@
           } else {
             // 没有签名直接导出
             canvas.toBlob(blob=>{
-              const filename = `${templateType==='contract'?'劳动合同':'安全协议'}_${langKey}.png`;
+              const userName = state.formData['name'] || '未命名';
+              const docType = templateType==='contract'?'근로계약서':'안전협약';
+              const filename = `${userName}_${docType}.png`;
               safeDownloadFromBlob(blob, filename);
               resolve();
             });
